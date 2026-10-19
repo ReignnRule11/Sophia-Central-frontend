@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { BookOpen, Filter, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ArrowUpRight, BookOpen, Filter, Search, Sparkles } from 'lucide-react';
 import { OverviewCard, SectionTitle } from '../components/layout/AppShell';
 import { sophiaApi } from '../api/sophiaApi';
 import { mockResources, resourceTypes } from '../lib/mock-data';
@@ -8,6 +8,8 @@ import type { Resource } from '../types';
 export function LibraryPage() {
   const [selectedType, setSelectedType] = useState('all');
   const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'verified' | 'pending'>('all');
+  const [sortBy, setSortBy] = useState<'relevance' | 'downloads' | 'recent'>('relevance');
   const [resources, setResources] = useState<Resource[]>(mockResources);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,16 +32,29 @@ export function LibraryPage() {
     fetchResources();
   }, []);
 
-  const filteredResources = resources.filter((resource) => {
-    const matchesType = selectedType === 'all' || resource.type === selectedType;
-    const matchesQuery =
-      !query ||
-      resource.title.toLowerCase().includes(query.toLowerCase()) ||
-      resource.topic.toLowerCase().includes(query.toLowerCase()) ||
-      resource.course.toLowerCase().includes(query.toLowerCase());
+  const filteredResources = useMemo(() => {
+    const current = resources.filter((resource) => {
+      const matchesType = selectedType === 'all' || resource.type === selectedType;
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'verified' && resource.isVerified) ||
+        (statusFilter === 'pending' && !resource.isVerified);
+      const matchesQuery =
+        !query ||
+        resource.title.toLowerCase().includes(query.toLowerCase()) ||
+        resource.topic.toLowerCase().includes(query.toLowerCase()) ||
+        resource.course.toLowerCase().includes(query.toLowerCase()) ||
+        resource.institution.toLowerCase().includes(query.toLowerCase());
 
-    return matchesType && matchesQuery;
-  });
+      return matchesType && matchesStatus && matchesQuery;
+    });
+
+    return [...current].sort((a, b) => {
+      if (sortBy === 'downloads') return b.downloads - a.downloads;
+      if (sortBy === 'recent') return Number(b.createdAt?.slice(-2) || 0) - Number(a.createdAt?.slice(-2) || 0);
+      return b.views - a.views;
+    });
+  }, [query, resources, selectedType, sortBy, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -54,7 +69,7 @@ export function LibraryPage() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search courses, topics, or resource titles"
+              placeholder="Search courses, topics, institutions, titles"
               className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
             />
           </label>
@@ -77,6 +92,22 @@ export function LibraryPage() {
               {type.replace('_', ' ')}
             </button>
           ))}
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as 'all' | 'verified' | 'pending')} className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white">
+            <option value="all">All statuses</option>
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+          </select>
+          <select value={sortBy} onChange={(event) => setSortBy(event.target.value as 'relevance' | 'downloads' | 'recent')} className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white">
+            <option value="relevance">Most relevant</option>
+            <option value="downloads">Most downloaded</option>
+            <option value="recent">Most recent</option>
+          </select>
+          <button className="rounded-xl border border-violet-500/30 bg-violet-500/10 px-3 py-2 text-sm text-violet-100">
+            Save search
+          </button>
         </div>
       </div>
 
@@ -120,7 +151,7 @@ export function LibraryPage() {
               <div className="mt-5 flex items-center justify-between text-xs uppercase tracking-[0.18em] text-slate-500">
                 <span>{resource.downloads} downloads</span>
                 <a href="#" className="inline-flex items-center gap-1 text-violet-200">
-                  Open <BookOpen size={14} />
+                  Open <ArrowUpRight size={14} />
                 </a>
               </div>
             </div>

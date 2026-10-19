@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { CheckCircle2, Clock3, ShieldCheck, XCircle } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Clock3, ShieldCheck, XCircle } from 'lucide-react';
 import { OverviewCard, SectionTitle } from '../components/layout/AppShell';
 import { sophiaApi } from '../api/sophiaApi';
 import type { ModerationItem } from '../types';

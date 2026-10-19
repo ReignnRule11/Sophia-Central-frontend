@@ -1,6 +1,7 @@
-import { Bell, BookOpen, BrainCircuit, LayoutGrid, LogOut, Search, ShieldCheck, Upload, WalletCards } from 'lucide-react';
+import { Bell, BookOpen, BrainCircuit, LayoutGrid, LogOut, Moon, Search, ShieldCheck, SunMedium, Upload, WalletCards } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { roleUsers } from '../../lib/mock-data';
 
 const studentNav = [
@@ -11,19 +12,30 @@ const studentNav = [
   { label: 'Wallet', href: '/wallet', icon: WalletCards },
 ];
 
-const moderatorNav = [
+const lecturerNav = [
+  { label: 'Overview', href: '/lecturer', icon: LayoutGrid },
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { label: 'Library', href: '/library', icon: BookOpen },
+  { label: 'Upload', href: '/upload', icon: Upload },
+  { label: 'AI Tutor', href: '/ai', icon: BrainCircuit },
+];
+
+const adminNav = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
   { label: 'Library', href: '/library', icon: BookOpen },
   { label: 'Moderation', href: '/moderation', icon: ShieldCheck },
+  { label: 'Analytics', href: '/analytics', icon: LayoutGrid },
   { label: 'Upload', href: '/upload', icon: Upload },
 ];
 
 export function AppShell({ children, title }: { children: React.ReactNode; title: string }) {
   const { user, logout } = useAuth();
-  const navItems = user?.role === 'moderator' || user?.role === 'admin' ? moderatorNav : studentNav;
+  const { theme, toggleTheme } = useTheme();
+
+  const navItems = user?.role === 'lecturer' ? lecturerNav : user?.role === 'moderator' || user?.role === 'admin' ? adminNav : studentNav;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 app-shell" data-theme={theme}>
       <div className="flex min-h-screen">
         <aside className="hidden w-72 border-r border-slate-800 bg-slate-950/80 p-5 lg:flex lg:flex-col">
           <div className="mb-8 flex items-center gap-3">
@@ -83,6 +95,9 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
                 <button className="hidden items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 md:flex">
                   <Search size={14} />
                   Search resources
+                </button>
+                <button className="rounded-xl border border-slate-700 bg-slate-900 p-2 text-slate-200 transition hover:text-violet-200" onClick={toggleTheme} aria-label="Toggle dark mode">
+                  {theme === 'dark' ? <SunMedium size={16} /> : <Moon size={16} />}
                 </button>
                 <button className="rounded-xl border border-slate-700 bg-slate-900 p-2 text-slate-200">
                   <Bell size={16} />

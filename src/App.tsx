@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { AppShell } from './components/layout/AppShell';
 import HomePage from './pages/HomePage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -8,13 +9,15 @@ import { UploadPage } from './pages/UploadPage';
 import { AITutorPage } from './pages/AITutorPage';
 import { WalletPage } from './pages/WalletPage';
 import { ModerationPage } from './pages/ModerationPage';
+import { LecturerDashboardPage } from './pages/LecturerDashboardPage';
+import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
 
 function LoginPage() {
   const { login } = useAuth();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget); 
     const email = String(formData.get('email') ?? '');
     const password = String(formData.get('password') ?? '');
     const role = String(formData.get('role') ?? 'student') as 'student' | 'lecturer' | 'moderator' | 'admin';
@@ -91,7 +94,7 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode;
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={user.role === 'moderator' || user.role === 'admin' ? '/moderation' : '/dashboard'} replace />;
   }
 
   return <>{children}</>;
@@ -101,16 +104,20 @@ export default function App() {
   const { isAuthenticated, user } = useAuth();
 
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : '/dashboard'} replace /> : <LoginPage />} />
-      <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Dashboard"><DashboardPage /></AppShell></ProtectedRoute>} />
-      <Route path="/library" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Library"><LibraryPage /></AppShell></ProtectedRoute>} />
-      <Route path="/upload" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Upload"><UploadPage /></AppShell></ProtectedRoute>} />
-      <Route path="/ai" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="AI Tutor"><AITutorPage /></AppShell></ProtectedRoute>} />
-      <Route path="/wallet" element={<ProtectedRoute allowedRoles={['student']}><AppShell title="Wallet"><WalletPage /></AppShell></ProtectedRoute>} />
-      <Route path="/moderation" element={<ProtectedRoute allowedRoles={['moderator', 'admin']}><AppShell title="Moderation"><ModerationPage /></AppShell></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to={isAuthenticated ? (user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : '/dashboard') : '/'} replace />} />
-    </Routes>
+    <ThemeProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : user?.role === 'lecturer' ? '/lecturer' : '/dashboard'} replace /> : <LoginPage />} />
+        <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Dashboard"><DashboardPage /></AppShell></ProtectedRoute>} />
+        <Route path="/lecturer" element={<ProtectedRoute allowedRoles={['lecturer']}><AppShell title="Lecturer Dashboard"><LecturerDashboardPage /></AppShell></ProtectedRoute>} />
+        <Route path="/library" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Library"><LibraryPage /></AppShell></ProtectedRoute>} />
+        <Route path="/upload" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Upload"><UploadPage /></AppShell></ProtectedRoute>} />
+        <Route path="/ai" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="AI Tutor"><AITutorPage /></AppShell></ProtectedRoute>} />
+        <Route path="/wallet" element={<ProtectedRoute allowedRoles={['student']}><AppShell title="Wallet"><WalletPage /></AppShell></ProtectedRoute>} />
+        <Route path="/moderation" element={<ProtectedRoute allowedRoles={['moderator', 'admin']}><AppShell title="Moderation"><ModerationPage /></AppShell></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute allowedRoles={['admin']}><AppShell title="Admin Analytics"><AdminAnalyticsPage /></AppShell></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? (user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : user?.role === 'lecturer' ? '/lecturer' : '/dashboard') : '/'} replace />} />
+      </Routes>
+    </ThemeProvider>
   );
 }
