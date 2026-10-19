@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, createContext, useMemo, useState, type ReactNode } from 'react';
 import type { User } from '../types';
 import { currentUser } from '../lib/mock-data';
 
@@ -7,6 +6,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   user: User | null;
   login: (email: string, password: string) => void;
+  register: (payload: Partial<User> & { email: string; password: string }) => void;
   logout: () => void;
 };
 
@@ -16,30 +16,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const storedAuth = localStorage.getItem('sophia-auth');
-    if (storedAuth === 'true') {
-      setUser(currentUser);
-      setIsAuthenticated(true);
-    }
-  }, []);
-
   const value = useMemo<AuthContextValue>(
     () => ({
       isAuthenticated,
       user,
-      login: (email: string, password: string) => {
-        if (email && password) {
-          setUser(currentUser);
-          setIsAuthenticated(true);
-          localStorage.setItem('sophia-auth', 'true');
-        }
+      login: (email, password) => {
+        if (!email || !password) return;
+
+        const nextUser = {
+          ...currentUser,
+          email,
+          name: email.split('@')[0]?.replace('.', ' ') || currentUser.name,
+        };
+
+        setUser(nextUser);
+        setIsAuthenticated(true);
+        localStorage.setItem('sophia-auth', 'true');
+        localStorage.setItem('sophia-user', JSON.stringify(nextUser));
+      },
+      register: (payload) => {
+        const nextUser: User = {
+          ...currentUser,
+          ...payload,
+          id: String(Date.now()),
+          name: `${payload.firstName || 'Sophia'} ${payload.lastName || 'Student'}`,
+          role: 'student',
+          avatar: 'ST',
+        };
+
+        setUser(nextUser);
+        setIsAuthenticated(true);
+        localStorage.setItem('sophia-auth', 'true');
+        localStorage.setItem('sophia-user', JSON.stringify(nextUser));
       },
       logout: () => {
         setUser(null);
         setIsAuthenticated(false);
         localStorage.removeItem('sophia-auth');
-      }
+        localStorage.removeItem('sophia-user');
+      },
     }),
     [isAuthenticated, user]
   );
@@ -48,11 +63,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
     throw new Error('useAuth must be used inside AuthProvider');
   }
 
-  return context;
+  return ctx;
 }

@@ -1,54 +1,141 @@
-import { ActivityItem, Insight, Metric, Project, TeamMember, User } from '../types';
+import { Resource, User } from '../types';
 
 export const currentUser: User = {
   id: 'u-1',
-  name: 'Maya Lopez',
-  email: 'maya@sophiacentral.com',
-  role: 'Head of Operations',
-  title: 'Executive Director',
-  team: 'Command Center',
-  avatar: 'ML'
+  name: 'Ayomide Okafor',
+  email: 'ayomide@sophia.central',
+  role: 'student',
+  institution: 'University of Lagos',
+  faculty: 'Engineering',
+  department: 'Computer Engineering',
+  avatar: 'AO',
+  isVerified: true,
 };
 
-export const navItems = [
-  { label: 'Overview', href: '/dashboard', icon: 'layout-grid' },
-  { label: 'Projects', href: '/projects', icon: 'folder-kanban' },
-  { label: 'Team', href: '/team', icon: 'users' },
-  { label: 'Insights', href: '/insights', icon: 'chart-no-axes-combined' }
+export const libraryStats = [
+  { label: 'Resources', value: '12.4k', helper: 'verified academic items', trend: 'up' as const },
+  { label: 'Active students', value: '48k', helper: 'across partner schools', trend: 'up' as const },
+  { label: 'Study streak', value: '14 days', helper: 'best in your cohort', trend: 'up' as const },
+  { label: 'Wisdom points', value: '1,420', helper: 'ready to redeem', trend: 'up' as const },
 ];
 
-export const metrics: Metric[] = [
-  { label: 'Active initiatives', value: '18', delta: '+3 this week', status: 'positive' },
-  { label: 'Completion rate', value: '84%', delta: '+6.4% vs last month', status: 'positive' },
-  { label: 'At-risk items', value: '5', delta: '2 require review', status: 'warning' },
-  { label: 'Avg. cycle time', value: '11.2d', delta: '-1.3d faster', status: 'positive' }
+export const resourceTypes = ['all', 'lecture_notes', 'past_question', 'research_paper', 'project', 'slides'];
+
+export const mockResources: Resource[] = [
+  {
+    id: 'res-1',
+    title: 'Digital Logic Design Notes',
+    description: 'Complete lecture notes covering Boolean algebra, combinational logic, and state machines for second-year engineering students.',
+    type: 'lecture_notes',
+    course: 'CPE 221',
+    topic: 'Digital Logic',
+    institution: 'University of Lagos',
+    level: '200',
+    author: 'Engr. T. Adebayo',
+    tags: ['logic', 'engineering', 'exam prep'],
+    views: 4800,
+    downloads: 1320,
+    moderationStatus: 'approved',
+    isVerified: true,
+    uploadedBy: 'lecturer',
+    createdAt: '2026-10-01',
+  },
+  {
+    id: 'res-2',
+    title: 'CPE 211 Past Questions 2022-2025',
+    description: 'A curated collection of past questions and solutions for core programming and data structures concepts.',
+    type: 'past_question',
+    course: 'CPE 211',
+    topic: 'Data Structures',
+    institution: 'University of Lagos',
+    level: '200',
+    author: 'Student Council',
+    tags: ['past questions', 'programming', 'revision'],
+    views: 6200,
+    downloads: 2100,
+    moderationStatus: 'approved',
+    isVerified: true,
+    uploadedBy: 'student',
+    createdAt: '2026-09-12',
+  },
+  {
+    id: 'res-3',
+    title: 'AI for Education: A Survey of Adaptive Learning Systems',
+    description: 'Recent research paper examining how AI-assisted learning improves retention and engagement among tertiary students.',
+    type: 'research_paper',
+    course: 'AI & Education',
+    topic: 'Adaptive Learning',
+    institution: 'University of Ibadan',
+    level: '400',
+    author: 'Dr. F. Okafor',
+    tags: ['ai', 'research', 'education'],
+    views: 3200,
+    downloads: 980,
+    moderationStatus: 'approved',
+    isVerified: true,
+    uploadedBy: 'lecturer',
+    createdAt: '2026-10-09',
+  },
+  {
+    id: 'res-4',
+    title: 'Final Year Project: Smart Campus Resource Allocation',
+    description: 'A complete final-year project proposal and implementation plan for optimizing campus infrastructure and resource planning.',
+    type: 'project',
+    course: 'Project',
+    topic: 'Smart campus',
+    institution: 'Babcock University',
+    level: '400',
+    author: 'Project Squad',
+    tags: ['project', 'proposal', 'systems'],
+    views: 5400,
+    downloads: 1600,
+    moderationStatus: 'approved',
+    isVerified: true,
+    uploadedBy: 'student',
+    createdAt: '2026-09-18',
+  },
+  {
+    id: 'res-5',
+    title: 'Operating Systems Revision Slides',
+    description: 'High-level slides explaining process scheduling, memory management, and synchronization techniques.',
+    type: 'slides',
+    course: 'CPE 312',
+    topic: 'Operating Systems',
+    institution: 'University of Lagos',
+    level: '300',
+    author: 'Dr. I. Adekunle',
+    tags: ['os', 'slides', 'revision'],
+    views: 2200,
+    downloads: 740,
+    moderationStatus: 'approved',
+    isVerified: true,
+    uploadedBy: 'lecturer',
+    createdAt: '2026-10-03',
+  },
 ];
 
-export const projects: Project[] = [
-  { id: 'p-1', name: 'AI Knowledge Hub', owner: 'Data Platform', progress: 76, risk: 'Low', due: 'Nov 12', status: 'On track' },
-  { id: 'p-2', name: 'Partner CRM rollout', owner: 'Revenue Ops', progress: 52, risk: 'Medium', due: 'Nov 19', status: 'In review' },
-  { id: 'p-3', name: 'Ops automation sprint', owner: 'Automation Guild', progress: 61, risk: 'Low', due: 'Nov 24', status: 'On track' },
-  { id: 'p-4', name: 'Security patch migration', owner: 'Infrastructure', progress: 34, risk: 'High', due: 'Dec 02', status: 'Needs escalation' }
+export const featuredCourses = [
+  { title: 'Computer Engineering', code: 'CPE 211', level: '200L', resources: 164 },
+  { title: 'Software Engineering', code: 'CSE 301', level: '300L', resources: 96 },
+  { title: 'Artificial Intelligence', code: 'CSE 420', level: '400L', resources: 133 },
+  { title: 'Research Methodology', code: 'RES 401', level: '400L', resources: 88 },
 ];
 
-export const teamMembers: TeamMember[] = [
-  { id: 'tm-1', name: 'Ariana Chen', role: 'Product Lead', capacity: 82, focus: 'Customer funnels', availability: 'Available now' },
-  { id: 'tm-2', name: 'Jordan Smith', role: 'Platform Engineer', capacity: 68, focus: 'System resilience', availability: '2h blocked' },
-  { id: 'tm-3', name: 'Priya Nair', role: 'Data Analyst', capacity: 91, focus: 'Insights', availability: 'Fully available' },
-  { id: 'tm-4', name: 'Noah Patel', role: 'Operations PM', capacity: 57, focus: 'Risk review', availability: '1 dependency' }
+export const studyGoals = [
+  'Finish 3 chapter summaries before Friday',
+  'Prepare for mid-semester revision pack',
+  'Download 5 past questions for CPE 211',
+  'Join the AI study room this evening',
 ];
 
-export const activities: ActivityItem[] = [
-  { id: 'a-1', title: 'Quarterly plan signed off', detail: 'Leadership approved the 2026 operating roadmap.', timestamp: '12 minutes ago', tone: 'positive' },
-  { id: 'a-2', title: 'Security review flagged 3 checks', detail: 'Infrastructure is triaging platform access permissions.', timestamp: '1 hour ago', tone: 'warning' },
-  { id: 'a-3', title: 'Partner feedback loop updated', detail: 'Customer success uploaded new churn signals to the Ops board.', timestamp: '3 hours ago', tone: 'neutral' },
-  { id: 'a-4', title: 'Automation adoption crossed 60%', detail: 'Workflow completion improved across key teams.', timestamp: 'Yesterday', tone: 'positive' }
+export const insightCards = [
+  { title: 'Most searched topic', value: 'Digital Logic', helper: '1.2k searches this week' },
+  { title: 'Top course resources', value: 'CPE 211', helper: 'A +12% engagement rise' },
+  { title: 'AI tutor usage', value: '4.8k queries', helper: 'downstream from uploads' },
 ];
 
-export const insights: Insight[] = [
-  { id: 'i-1', title: 'Faster handoff from sales to onboarding', summary: 'Lead routing and onboarding touchpoints were trimmed by 2 days for the top 3 accounts.', section: 'Revenue', confidence: 'High', impact: 'Large' },
-  { id: 'i-2', title: 'Support backlog trending down', summary: 'Support load is stabilizing after the new triage workflow.', section: 'Customer Success', confidence: 'Medium', impact: 'Medium' },
-  { id: 'i-3', title: 'Platform reliability risk elevated', summary: 'A small cluster of services still shows intermittent latency spikes during peak load.', section: 'Infrastructure', confidence: 'High', impact: 'Large' }
+export const walletBreakdown = [
+  { label: 'Available', value: 1420 },
+  { label: 'Earned this month', value: 610 },
+  { label: 'Redeemed', value: 280 },
 ];
-
-export const pipeline = [68, 54, 72, 85, 76, 92, 81];

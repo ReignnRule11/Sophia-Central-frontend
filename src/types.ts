@@ -1,58 +1,80 @@
-export type NavItem = {
-  label: string;
-  href: string;
-  icon: string;
-};
+export type UserRole = 'student' | 'lecturer' | 'moderator' | 'admin';
+export type ResourceType =
+  | 'lecture_notes'
+  | 'past_question'
+  | 'research_paper'
+  | 'project'
+  | 'slides'
+  | 'other';
 
-export type User = {
+export type ModerationStatus = 'draft' | 'pending' | 'approved' | 'rejected' | 'flagged';
+
+export interface User {
   id: string;
   name: string;
   email: string;
-  role: string;
-  title: string;
-  team: string;
-  avatar: string;
-};
+  role: UserRole;
+  institution?: string;
+  faculty?: string;
+  department?: string;
+  avatar?: string;
+  isVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
-export type Metric = {
+export interface Resource {
+  id: string;
+  title: string;
+  description: string;
+  type: ResourceType;
+  course: string;
+  topic: string;
+  institution: string;
+  level: string;
+  author?: string;
+  fileUrl?: string;
+  tags: string[];
+  views: number;
+  downloads: number;
+  moderationStatus: ModerationStatus;
+  isVerified: boolean;
+  uploadedBy?: string;
+  createdAt?: string;
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  code: string;
+  institution: string;
+  level: string;
+  description?: string;
+}
+
+export interface Institution {
+  id: string;
+  name: string;
+  country?: string;
+  city?: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  statusCode?: number;
+  timestamp?: string;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  user: User;
+}
+
+export interface DashboardStat {
   label: string;
   value: string;
-  delta: string;
-  status: 'positive' | 'neutral' | 'warning';
-};
-
-export type Project = {
-  id: string;
-  name: string;
-  owner: string;
-  progress: number;
-  risk: 'Low' | 'Medium' | 'High';
-  due: string;
-  status: string;
-};
-
-export type ActivityItem = {
-  id: string;
-  title: string;
-  detail: string;
-  timestamp: string;
-  tone: 'positive' | 'neutral' | 'warning';
-};
-
-export type TeamMember = {
-  id: string;
-  name: string;
-  role: string;
-  capacity: number;
-  focus: string;
-  availability: string;
-};
-
-export type Insight = {
-  id: string;
-  title: string;
-  summary: string;
-  section: string;
-  confidence: string;
-  impact: string;
-};
+  helper: string;
+  trend: 'up' | 'neutral' | 'down';
+}
