@@ -1,10 +1,9 @@
-import type { ReactNode } from 'react';
-import { Bell, BookOpen, BrainCircuit, LayoutGrid, LogOut, Search, Upload, WalletCards } from 'lucide-react';
+import { Bell, BookOpen, BrainCircuit, LayoutGrid, LogOut, Search, ShieldCheck, Upload, WalletCards } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { currentUser } from '../../lib/mock-data';
+import { roleUsers } from '../../lib/mock-data';
 
-const navItems = [
+const studentNav = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
   { label: 'Library', href: '/library', icon: BookOpen },
   { label: 'Upload', href: '/upload', icon: Upload },
@@ -12,8 +11,16 @@ const navItems = [
   { label: 'Wallet', href: '/wallet', icon: WalletCards },
 ];
 
-export function AppShell({ children, title }: { children: ReactNode; title: string }) {
-  const { logout } = useAuth();
+const moderatorNav = [
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { label: 'Library', href: '/library', icon: BookOpen },
+  { label: 'Moderation', href: '/moderation', icon: ShieldCheck },
+  { label: 'Upload', href: '/upload', icon: Upload },
+];
+
+export function AppShell({ children, title }: { children: React.ReactNode; title: string }) {
+  const { user, logout } = useAuth();
+  const navItems = user?.role === 'moderator' || user?.role === 'admin' ? moderatorNav : studentNav;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -36,9 +43,7 @@ export function AppShell({ children, title }: { children: ReactNode; title: stri
                 to={href}
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                    isActive
-                      ? 'bg-violet-500/15 text-violet-100 ring-1 ring-violet-500/30'
-                      : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                    isActive ? 'bg-violet-500/15 text-violet-100 ring-1 ring-violet-500/30' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
                   }`
                 }
               >
@@ -82,10 +87,7 @@ export function AppShell({ children, title }: { children: ReactNode; title: stri
                 <button className="rounded-xl border border-slate-700 bg-slate-900 p-2 text-slate-200">
                   <Bell size={16} />
                 </button>
-                <button
-                  onClick={logout}
-                  className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-100"
-                >
+                <button onClick={logout} className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
                   <LogOut size={14} />
                   Sign out
                 </button>
@@ -93,7 +95,7 @@ export function AppShell({ children, title }: { children: ReactNode; title: stri
             </div>
           </header>
 
-          <div className="p-4 sm:p-6">{children}</div>
+          <div className="page-shell p-4 sm:p-6">{children}</div>
         </main>
       </div>
     </div>
@@ -101,14 +103,17 @@ export function AppShell({ children, title }: { children: ReactNode; title: stri
 }
 
 export function UserBadge() {
+  const { user } = useAuth();
+  const current = user ?? roleUsers.student;
+
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-3">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-500 text-sm font-semibold text-white">
-        {currentUser.avatar}
+        {current.avatar}
       </div>
       <div>
-        <div className="text-sm font-medium text-white">{currentUser.name}</div>
-        <div className="text-xs text-slate-400">{currentUser.institution}</div>
+        <div className="text-sm font-medium text-white">{current.name}</div>
+        <div className="text-xs text-slate-400">{current.institution}</div>
       </div>
     </div>
   );
@@ -123,7 +128,7 @@ export function SectionTitle({ eyebrow, title }: { eyebrow: string; title: strin
   );
 }
 
-export function OverviewCard({ title, action, children }: { title: string; action?: string; children: ReactNode }) {
+export function OverviewCard({ title, action, children }: { title: string; action?: string; children: React.ReactNode }) {
   return (
     <div className="glass-panel p-5">
       <div className="mb-5 flex items-center justify-between">

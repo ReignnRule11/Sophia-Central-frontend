@@ -36,6 +36,24 @@ body {
   min-height: 100vh;
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); opacity: 0.8; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.page-shell {
+  animation: fadeUp 0.45s ease-out;
+}
+
+.hero-orb {
+  animation: float 10s ease-in-out infinite;
+}
+
 @layer base {
   h1, h2, h3, h4, h5, h6 {
     @apply text-slate-50;

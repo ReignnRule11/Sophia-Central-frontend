@@ -1,32 +1,42 @@
 import { useContext, createContext, useMemo, useState, type ReactNode } from 'react';
-import type { User } from '../types';
-import { currentUser } from '../lib/mock-data';
+import type { User, UserRole } from '../types';
+import { roleUsers } from '../lib/mock-data';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
   user: User | null;
-  login: (email: string, password: string) => void;
-  register: (payload: Partial<User> & { email: string; password: string }) => void;
+  login: (email: string, password: string, role?: UserRole) => void;
+  register: (payload: Partial<User> & { email: string; password: string; firstName?: string; lastName?: string; role?: UserRole }) => void;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const stored = localStorage.getItem('sophia-user');
+      const storedAuth = localStorage.getItem('sophia-auth');
+      return storedAuth === 'true' && stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('sophia-auth') === 'true');
 
   const value = useMemo<AuthContextValue>(
     () => ({
       isAuthenticated,
       user,
-      login: (email, password) => {
+      login: (email, password, role = 'student') => {
         if (!email || !password) return;
 
-        const nextUser = {
-          ...currentUser,
+        const fallback = roleUsers[role] ?? roleUsers.student;
+        const nextUser: User = {
+          ...fallback,
           email,
-          name: email.split('@')[0]?.replace('.', ' ') || currentUser.name,
+          name: email.split('@')[0]?.replace('.', ' ') || fallback.name,
+          role,
         };
 
         setUser(nextUser);
@@ -35,13 +45,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('sophia-user', JSON.stringify(nextUser));
       },
       register: (payload) => {
+        const role = payload.role ?? 'student';
+        const base = roleUsers[role] ?? roleUsers.student;
         const nextUser: User = {
-          ...currentUser,
+          ...base,
           ...payload,
           id: String(Date.now()),
-          name: `${payload.firstName || 'Sophia'} ${payload.lastName || 'Student'}`,
-          role: 'student',
-          avatar: 'ST',
+          name: `${payload.firstName || base.name.split(' ')[0] || 'Sophia'} ${payload.lastName || base.name.split(' ')[1] || 'Student'}`,
+          role,
+          avatar: (payload.firstName || 'S').slice(0, 2).toUpperCase(),
         };
 
         setUser(nextUser);

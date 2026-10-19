@@ -21,6 +21,8 @@ export interface User {
   isVerified?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface Resource {
@@ -77,4 +79,15 @@ export interface DashboardStat {
   value: string;
   helper: string;
   trend: 'up' | 'neutral' | 'down';
+}
+
+export interface ModerationItem {
+  id: string;
+  title: string;
+  type: ResourceType;
+  course: string;
+  institution: string;
+  uploadedBy: string;
+  summary: string;
+  status: ModerationStatus;
 }

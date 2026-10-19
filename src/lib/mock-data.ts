@@ -1,4 +1,18 @@
-import { Resource, User } from '../types';
+import { Resource, User, UserRole } from '../types';
+
+export const brandStats = [
+  { label: 'Verified resources', value: '12.4k+' },
+  { label: 'Student community', value: '48k' },
+  { label: 'Avg. search time', value: '5 mins' },
+  { label: 'AI study queries', value: '4.8k' },
+];
+
+export const featureHighlights = [
+  { title: 'Topic-based discovery', text: 'Search by course, topic, level, and institution without digging across multiple platforms.' },
+  { title: 'Verified academic library', text: 'All uploads go through curation and moderation before reaching the public library.' },
+  { title: 'AI tutor support', text: 'Students can ask study questions and get educational guidance grounded in their resources.' },
+  { title: 'Wisdom Points economy', text: 'Earn rewards for uploads and referrals, then redeem for premium features and access.' },
+];
 
 export const currentUser: User = {
   id: 'u-1',
@@ -10,6 +24,50 @@ export const currentUser: User = {
   department: 'Computer Engineering',
   avatar: 'AO',
   isVerified: true,
+};
+
+export const roleUsers: Record<UserRole, User> = {
+  student: {
+    ...currentUser,
+    id: 'u-student',
+    name: 'Ayomide Okafor',
+    email: 'ayomide@sophia.central',
+    role: 'student',
+    avatar: 'AO',
+  },
+  lecturer: {
+    id: 'u-lecturer',
+    name: 'Dr. Folake Adebayo',
+    email: 'folake@sophia.central',
+    role: 'lecturer',
+    institution: 'University of Lagos',
+    faculty: 'Engineering',
+    department: 'Computer Engineering',
+    avatar: 'FA',
+    isVerified: true,
+  },
+  moderator: {
+    id: 'u-moderator',
+    name: 'Samuel Obi',
+    email: 'samuel@sophia.central',
+    role: 'moderator',
+    institution: 'Sophia Central',
+    faculty: 'Operations',
+    department: 'Quality & Trust',
+    avatar: 'SO',
+    isVerified: true,
+  },
+  admin: {
+    id: 'u-admin',
+    name: 'Mariam Yusuf',
+    email: 'mariam@sophia.central',
+    role: 'admin',
+    institution: 'Sophia Central',
+    faculty: 'Leadership',
+    department: 'Platform Strategy',
+    avatar: 'MY',
+    isVerified: true,
+  },
 };
 
 export const libraryStats = [
@@ -112,6 +170,12 @@ export const mockResources: Resource[] = [
     uploadedBy: 'lecturer',
     createdAt: '2026-10-03',
   },
+];
+
+export const moderationQueue = [
+  { id: 'mod-1', title: 'Microcontroller Programming Handout', type: 'lecture_notes', course: 'CPE 331', institution: 'University of Lagos', uploadedBy: 'Dr. M. Akinola', summary: 'New lecture pack for embedded systems labs and practicals.', status: 'pending' },
+  { id: 'mod-2', title: '2024 Data Science Past Questions', type: 'past_question', course: 'DSC 301', institution: 'University of Ibadan', uploadedBy: 'Ada Eze', summary: 'Past papers with original exam patterns for revision.', status: 'pending' },
+  { id: 'mod-3', title: 'Cloud Systems Research Summary', type: 'research_paper', course: 'CSE 423', institution: 'Babcock University', uploadedBy: 'Musa A.', summary: 'Research notes on cloud migration with case studies.', status: 'flagged' },
 ];
 
 export const featuredCourses = [
