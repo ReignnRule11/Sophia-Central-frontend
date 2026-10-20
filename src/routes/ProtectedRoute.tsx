@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -5,7 +6,7 @@ export function ProtectedRoute({
   children,
   allowedRoles,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   allowedRoles: Array<'student' | 'lecturer' | 'moderator' | 'admin'>;
 }) {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -20,7 +21,7 @@ export function ProtectedRoute({
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={user.role === 'moderator' || user.role === 'admin' ? '/moderation' : '/dashboard'} replace />;
   }
 
   return <>{children}</>;

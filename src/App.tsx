@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppShell } from './components/layout/AppShell';
@@ -11,18 +13,32 @@ import { WalletPage } from './pages/WalletPage';
 import { ModerationPage } from './pages/ModerationPage';
 import { LecturerDashboardPage } from './pages/LecturerDashboardPage';
 import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
+import { ProtectedRoute } from './routes/ProtectedRoute';
+import { loginSchema, type LoginValues } from './lib/validation';
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget); 
-    const email = String(formData.get('email') ?? '');
-    const password = String(formData.get('password') ?? '');
-    const role = String(formData.get('role') ?? 'student') as 'student' | 'lecturer' | 'moderator' | 'admin';
-    login(email, password, role);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: 'ayomide@sophia.central',
+      password: 'sophia123',
+      role: 'student',
+    },
+  });
+
+  const onSubmit = async (values: LoginValues) => {
+    await login(values.email, values.password, values.role);
   };
+
+  if (isAuthenticated && user) {
+    return <Navigate to={user.role === 'moderator' || user.role === 'admin' ? '/moderation' : user.role === 'lecturer' ? '/lecturer' : '/dashboard'} replace />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-10">
@@ -48,7 +64,7 @@ function LoginPage() {
         </div>
 
         <div className="flex items-center justify-center p-8">
-          <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-6" noValidate>
             <div>
               <p className="text-[10px] uppercase tracking-[0.22em] text-violet-200">Welcome back</p>
               <h2 className="mt-2 text-3xl font-semibold text-white">Sign in</h2>
@@ -57,17 +73,30 @@ function LoginPage() {
             <div className="space-y-4">
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Email</label>
-                <input name="email" type="email" defaultValue="ayomide@sophia.central" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-violet-400" />
+                <input
+                  {...register('email')}
+                  type="email"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-violet-400"
+                />
+                {errors.email && <p className="mt-1 text-sm text-rose-300">{errors.email.message}</p>}
               </div>
 
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Password</label>
-                <input name="password" type="password" defaultValue="sophia123" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-violet-400" />
+                <input
+                  {...register('password')}
+                  type="password"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-violet-400"
+                />
+                {errors.password && <p className="mt-1 text-sm text-rose-300">{errors.password.message}</p>}
               </div>
 
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Role</label>
-                <select name="role" defaultValue="student" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-violet-400">
+                <select
+                  {...register('role')}
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-violet-400"
+                >
                   <option value="student">Student</option>
                   <option value="lecturer">Lecturer</option>
                   <option value="moderator">Moderator</option>
@@ -76,28 +105,18 @@ function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-3 font-semibold text-white shadow-lg shadow-violet-500/20">
-              Access portal
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-3 font-semibold text-white shadow-lg shadow-violet-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSubmitting ? 'Signing in...' : 'Access portal'}
             </button>
           </form>
         </div>
       </div>
     </div>
   );
-}
-
-function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: Array<'student' | 'lecturer' | 'moderator' | 'admin'> }) {
-  const { isAuthenticated, user } = useAuth();
-
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to={user.role === 'moderator' || user.role === 'admin' ? '/moderation' : '/dashboard'} replace />;
-  }
-
-  return <>{children}</>;
 }
 
 export default function App() {
@@ -116,7 +135,7 @@ export default function App() {
         <Route path="/wallet" element={<ProtectedRoute allowedRoles={['student']}><AppShell title="Wallet"><WalletPage /></AppShell></ProtectedRoute>} />
         <Route path="/moderation" element={<ProtectedRoute allowedRoles={['moderator', 'admin']}><AppShell title="Moderation"><ModerationPage /></AppShell></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute allowedRoles={['admin']}><AppShell title="Admin Analytics"><AdminAnalyticsPage /></AppShell></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to={isAuthenticated ? (user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : user?.role === 'lecturer' ? '/lecturer' : '/dashboard') : '/'} replace />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? (user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : user?.role === 'lecturer' ? '/lecturer' : '/dashboard') : '/login'} replace />} />
       </Routes>
     </ThemeProvider>
   );
