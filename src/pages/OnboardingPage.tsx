@@ -20,14 +20,21 @@ export function OnboardingPage() {
       email: '',
       password: '',
       role: 'student',
+      handle: '',
+      socialLinks: {
+        linkedin: '',
+        instagram: '',
+        twitter: '',
+      },
     },
   });
 
   const onSubmit = async (values: RegisterValues) => {
     await registerUser({
       ...values,
-      handle: `${values.firstName.toLowerCase()}.${values.lastName.toLowerCase()}`,
+      handle: values.handle || `${values.firstName.toLowerCase()}.${values.lastName.toLowerCase()}`,
       authProvider: 'email',
+      socialLinks: values.socialLinks,
     });
     navigate('/dashboard');
   };
@@ -36,6 +43,9 @@ export function OnboardingPage() {
     { label: 'Continue with Google', provider: 'google' },
     { label: 'Continue with Apple', provider: 'apple' },
     { label: 'Continue with GitHub', provider: 'github' },
+    { label: 'Continue with LinkedIn', provider: 'linkedin' },
+    { label: 'Continue with Instagram', provider: 'instagram' },
+    { label: 'Continue with Twitter', provider: 'twitter' },
   ];
 
   return (
@@ -164,6 +174,36 @@ export function OnboardingPage() {
                   <option value="moderator">Moderator</option>
                   <option value="admin">Admin</option>
                 </select>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="mb-2 block text-sm text-slate-300">LinkedIn</label>
+                  <input
+                    type="text"
+                    placeholder="linkedin.com/in/yourprofile"
+                    {...register('socialLinks.linkedin')}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none transition focus:border-violet-400"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm text-slate-300">Instagram</label>
+                  <input
+                    type="text"
+                    placeholder="@yourhandle"
+                    {...register('socialLinks.instagram')}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none transition focus:border-violet-400"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm text-slate-300">Twitter</label>
+                  <input
+                    type="text"
+                    placeholder="@yourhandle"
+                    {...register('socialLinks.twitter')}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none transition focus:border-violet-400"
+                  />
+                </div>
               </div>
 
               <button
