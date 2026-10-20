@@ -23,6 +23,8 @@ export interface User {
   updatedAt?: string;
   firstName?: string;
   lastName?: string;
+  handle?: string;
+  authProvider?: 'email' | 'google' | 'apple' | 'github';
 }
 
 export interface Resource {

@@ -15,6 +15,7 @@ import { LecturerDashboardPage } from './pages/LecturerDashboardPage';
 import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { loginSchema, type LoginValues } from './lib/validation';
+import { OnboardingPage } from './pages/OnboardingPage';
 
 function LoginPage() {
   const { login, isAuthenticated, user } = useAuth();
@@ -64,13 +65,34 @@ function LoginPage() {
         </div>
 
         <div className="flex items-center justify-center p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md space-y-6" noValidate>
+          <div className="w-full max-w-md space-y-6">
             <div>
               <p className="text-[10px] uppercase tracking-[0.22em] text-violet-200">Welcome back</p>
               <h2 className="mt-2 text-3xl font-semibold text-white">Sign in</h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
+              {['Google', 'Apple', 'GitHub'].map((provider) => (
+                <button
+                  key={provider}
+                  type="button"
+                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:border-violet-400 hover:text-violet-100"
+                >
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-800 text-[10px] font-bold uppercase">
+                    {provider.slice(0, 1)}
+                  </span>
+                  Continue with {provider}
+                </button>
+              ))}
+            </div>
+
+            <div className="my-3 flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+              <div className="h-px flex-1 bg-slate-800" />
+              or
+              <div className="h-px flex-1 bg-slate-800" />
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Email</label>
                 <input
@@ -103,16 +125,21 @@ function LoginPage() {
                   <option value="admin">Admin</option>
                 </select>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-3 font-semibold text-white shadow-lg shadow-violet-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting ? 'Signing in...' : 'Access portal'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-3 font-semibold text-white shadow-lg shadow-violet-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? 'Signing in...' : 'Access portal'}
+              </button>
+
+              <div className="text-center text-sm text-slate-400">
+                Need an account?{' '}
+                <a href="/onboarding" className="font-medium text-violet-200 hover:text-violet-100">Create one</a>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -127,6 +154,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : user?.role === 'lecturer' ? '/lecturer' : '/dashboard'} replace /> : <LoginPage />} />
+        <Route path="/onboarding" element={isAuthenticated ? <Navigate to={user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : user?.role === 'lecturer' ? '/lecturer' : '/dashboard'} replace /> : <OnboardingPage />} />
         <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Dashboard"><DashboardPage /></AppShell></ProtectedRoute>} />
         <Route path="/lecturer" element={<ProtectedRoute allowedRoles={['lecturer']}><AppShell title="Lecturer Dashboard"><LecturerDashboardPage /></AppShell></ProtectedRoute>} />
         <Route path="/library" element={<ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}><AppShell title="Library"><LibraryPage /></AppShell></ProtectedRoute>} />
