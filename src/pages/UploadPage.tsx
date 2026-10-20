@@ -1,77 +1,172 @@
 import { useState } from 'react';
-import { BookOpen, CheckCircle2, FileUp, Sparkles } from 'lucide-react';
-import { OverviewCard, SectionTitle } from '../components/layout/AppShell';
-import { sophiaApi } from '../api/sophiaApi';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { resourcesApi } from '../api/resources';
+import { useAuth } from '../context/AuthContext';
+import { resourceUploadSchema, type ResourceUploadValues } from '../lib/validation';
 
 export function UploadPage() {
-  const [form, setForm] = useState({ title: '', course: '', topic: '', institution: '', description: '', type: 'lecture_notes' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const { token } = useAuth();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ResourceUploadValues>({
+    resolver: zodResolver(resourceUploadSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      course: '',
+      topic: '',
+      institution: '',
+      level: '',
+      type: 'lecture_notes',
+      tags: '',
+    },
+  });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-    setError('');
-    setMessage('');
-
+  const onSubmit = async (values: ResourceUploadValues) => {
     try {
-      const created = await sophiaApi.resources.create({
-        title: form.title,
-        course: form.course,
-        topic: form.topic,
-        institution: form.institution,
-        description: form.description,
-        type: form.type,
-      });
+      setSubmitError(null);
+      setSuccessMessage(null);
 
-      setMessage(`Resource submitted successfully: ${created?.title || form.title}`);
-      setForm({ title: '', course: '', topic: '', institution: '', description: '', type: 'lecture_notes' });
-    } catch {
-      setError('Submission could not be completed right now. The backend is unreachable, but your upload is queued for moderation.');
-    } finally {
-      setIsSubmitting(false);
+      const payload = {
+        title: values.title,
+        description: values.description,
+        course: values.course,
+        topic: values.topic,
+        institution: values.institution,
+        level: values.level,
+        type: values.type,
+        tags: values.tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+      };
+
+      await resourcesApi.create(payload, token);
+
+      setSuccessMessage('Resource submitted successfully and sent to moderation.');
+      reset();
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Upload failed. Please try again.');
     }
   };
 
   return (
-    <div className="space-y-6">
-      <SectionTitle eyebrow="Contribute" title="Upload a learning resource" />
-
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <OverviewCard title="Why upload?" action="Community">
-          <div className="space-y-4 text-sm text-slate-300">
-            <div className="flex items-start gap-3"><CheckCircle2 size={16} className="mt-1 text-emerald-300" /> Help students at your institution access the right study material faster.</div>
-            <div className="flex items-start gap-3"><Sparkles size={16} className="mt-1 text-violet-300" /> Earn Wisdom Points for high-quality, verified uploads and referrals.</div>
-            <div className="flex items-start gap-3"><BookOpen size={16} className="mt-1 text-sky-300" /> Support an education-first resource ecosystem with trusted academic content.</div>
-          </div>
-        </OverviewCard>
-
-        <form onSubmit={handleSubmit} className="glass-panel p-5">
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="space-y-2 text-sm text-slate-300 md:col-span-2">
-              <span>Resource title</span>
-              <input name="title" value={form.title} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white outline-none focus:border-violet-400" placeholder="Introduction to Data Structures" required />
-            </label>
-
-            <label className="space-y-2 text-sm text-slate-300"><span>Course</span><input name="course" value={form.course} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white outline-none focus:border-violet-400" placeholder="CPE 211" required /></label>
-            <label className="space-y-2 text-sm text-slate-300"><span>Topic</span><input name="topic" value={form.topic} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white outline-none focus:border-violet-400" placeholder="Data structures" required /></label>
-            <label className="space-y-2 text-sm text-slate-300"><span>Institution</span><input name="institution" value={form.institution} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white outline-none focus:border-violet-400" placeholder="University of Lagos" required /></label>
-            <label className="space-y-2 text-sm text-slate-300"><span>Resource type</span><select name="type" value={form.type} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white outline-none focus:border-violet-400"><option value="lecture_notes">Lecture notes</option><option value="past_question">Past question</option><option value="research_paper">Research paper</option><option value="project">Project</option><option value="slides">Slides</option></select></label>
-            <label className="space-y-2 text-sm text-slate-300 md:col-span-2"><span>Description</span><textarea name="description" value={form.description} onChange={handleChange} className="min-h-28 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white outline-none focus:border-violet-400" placeholder="Describe what this resource helps students learn and how it can be used." required /></label>
-          </div>
-
-          <div className="mt-5 flex items-center justify-between gap-3"><div className="flex items-center gap-2 text-slate-400"><FileUp size={16} /> File upload will be connected to the backend storage flow.</div><button type="submit" disabled={isSubmitting} className="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-2.5 font-medium text-white disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? 'Submitting...' : 'Submit resource'}</button></div>
-
-          {message ? <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">{message}</div> : null}
-          {error ? <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">{error}</div> : null}
-        </form>
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
+      <div className="mb-6">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-violet-200">New upload</p>
+        <h2 className="text-2xl font-semibold text-white">Submit academic resource</h2>
       </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block text-sm text-slate-300">Title</label>
+            <input
+              {...register('title')}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            />
+            {errors.title && <p className="mt-1 text-sm text-rose-300">{errors.title.message}</p>}
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-slate-300">Resource type</label>
+            <select
+              {...register('type')}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            >
+              <option value="lecture_notes">Lecture Notes</option>
+              <option value="past_question">Past Question</option>
+              <option value="research_paper">Research Paper</option>
+              <option value="project">Project</option>
+              <option value="slides">Slides</option>
+              <option value="other">Other</option>
+            </select>
+            {errors.type && <p className="mt-1 text-sm text-rose-300">{errors.type.message}</p>}
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-slate-300">Course</label>
+            <input
+              {...register('course')}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            />
+            {errors.course && <p className="mt-1 text-sm text-rose-300">{errors.course.message}</p>}
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-slate-300">Topic</label>
+            <input
+              {...register('topic')}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            />
+            {errors.topic && <p className="mt-1 text-sm text-rose-300">{errors.topic.message}</p>}
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-slate-300">Institution</label>
+            <input
+              {...register('institution')}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            />
+            {errors.institution && <p className="mt-1 text-sm text-rose-300">{errors.institution.message}</p>}
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-slate-300">Level</label>
+            <input
+              {...register('level')}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+            />
+            {errors.level && <p className="mt-1 text-sm text-rose-300">{errors.level.message}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm text-slate-300">Description</label>
+          <textarea
+            {...register('description')}
+            rows={5}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+          />
+          {errors.description && <p className="mt-1 text-sm text-rose-300">{errors.description.message}</p>}
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm text-slate-300">Tags</label>
+          <input
+            {...register('tags')}
+            placeholder="ai, logistics, research"
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+          />
+        </div>
+
+        {submitError && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-200">
+            {submitError}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-200">
+            {successMessage}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="rounded-xl bg-violet-500 px-4 py-3 font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit resource'}
+        </button>
+      </form>
     </div>
   );
 }

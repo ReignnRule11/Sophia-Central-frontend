@@ -13,7 +13,7 @@ export const storage = {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch {
-      // Ignore storage write failures in restricted or private browsing modes.
+      // Ignore localStorage issues in restricted or private browsing modes.
     }
   },
 
@@ -21,7 +21,7 @@ export const storage = {
     try {
       localStorage.removeItem(key);
     } catch {
-      // Ignore storage removal failures.
+      // Ignore removal errors.
     }
   },
 };
