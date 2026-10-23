@@ -1,4 +1,4 @@
-import { appConfig } from '../config/env';
+import { appConfig } from '../../config/env';
 
 export type ApiRequestOptions = RequestInit;
 let csrfToken: string | null = null;
