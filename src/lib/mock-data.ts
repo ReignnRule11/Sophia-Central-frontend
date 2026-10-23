@@ -1,25 +1,10 @@
 import { Resource, User, UserRole } from '../types';
 
-export const brandStats = [
-  { label: 'Verified resources', value: '12.4k+' },
-  { label: 'Student community', value: '48k' },
-  { label: 'Avg. search time', value: '5 mins' },
-  { label: 'AI study queries', value: '4.8k' },
-];
-export const featureHighlights = [
-  { title: 'Topic-based discovery', text: 'Search by course, topic, level, and institution without digging across multiple platforms.' },
-  { title: 'Verified academic library', text: 'All uploads go through curation and moderation before reaching the public library.' },
-  { title: 'AI tutor support', text: 'Students can ask study questions and get educational guidance grounded in their resources.' },
-  { title: 'Wisdom Points economy', text: 'Earn rewards for uploads and referrals, then redeem for premium features and access.' },
-];
+export const brandStats = [{ label: 'Verified resources', value: '12.4k+' }, { label: 'Student community', value: '48k' }, { label: 'Avg. search time', value: '5 mins' }, { label: 'AI study queries', value: '4.8k' }];
+export const featureHighlights = [{ title: 'Topic-based discovery', text: 'Search by course, topic, level, and institution without digging across multiple platforms.' }, { title: 'Verified academic library', text: 'All uploads go through curation and moderation before reaching the public library.' }, { title: 'AI tutor support', text: 'Students can ask study questions and get educational guidance grounded in their resources.' }, { title: 'Wisdom Points economy', text: 'Earn rewards for uploads and referrals, then redeem for premium features and access.' }];
 export const currentUser: User = { id: 'u-1', name: 'Ayomide Okafor', email: 'ayomide@sophia.central', role: 'student', institution: 'University of Lagos', faculty: 'Engineering', department: 'Computer Engineering', avatar: 'AO', isVerified: true };
-export const roleUsers: Record<UserRole, User> = { student: { ...currentUser, id: 'u-student', avatar: 'AO' }, lecturer: { id: 'u-lecturer', name: 'Dr. Folake Adebayo', email: 'folake@sophia.central', role: 'lecturer', institution: 'University of Lagos', faculty: 'Engineering', department: 'Computer Engineering', avatar: 'FA', isVerified: true }, moderator: { id: 'u-moderator', name: 'Samuel Obi', email: 'samuel@sophia.central', role: 'moderator', institution: 'Sophia Central', faculty: 'Operations', department: 'Quality & Trust', avatar: 'SO', isVerified: true }, admin: { id: 'u-admin', name: 'Mariam Yusuf', email: 'mariam@sophia.central', role: 'admin', institution: 'Sophia Central', faculty: 'Leadership', department: 'Platform Strategy', avatar: 'MY', isVerified: true } };
-export const libraryStats = [
-  { label: 'Resources', value: '12.4k', helper: 'verified academic items', trend: 'up' as const },
-  { label: 'Active students', value: '48k', helper: 'across partner schools', trend: 'up' as const },
-  { label: 'Study streak', value: '14 days', helper: 'best in your cohort', trend: 'up' as const },
-  { label: 'Wisdom points', value: '1,420', helper: 'ready to redeem', trend: 'up' as const },
-];
+export const roleUsers: Record<UserRole, User> = { student: { ...currentUser, id: 'u-student' }, lecturer: { id: 'u-lecturer', name: 'Dr. Folake Adebayo', email: 'folake@sophia.central', role: 'lecturer', institution: 'University of Lagos', faculty: 'Engineering', department: 'Computer Engineering', avatar: 'FA', isVerified: true }, moderator: { id: 'u-moderator', name: 'Samuel Obi', email: 'samuel@sophia.central', role: 'moderator', institution: 'Sophia Central', faculty: 'Operations', department: 'Quality & Trust', avatar: 'SO', isVerified: true }, admin: { id: 'u-admin', name: 'Mariam Yusuf', email: 'mariam@sophia.central', role: 'admin', institution: 'Sophia Central', faculty: 'Leadership', department: 'Platform Strategy', avatar: 'MY', isVerified: true } };
+export const libraryStats = [{ label: 'Resources', value: '12.4k', helper: 'verified academic items', trend: 'up' as const }, { label: 'Active students', value: '48k', helper: 'across partner schools', trend: 'up' as const }, { label: 'Study streak', value: '14 days', helper: 'best in your cohort', trend: 'up' as const }, { label: 'Wisdom points', value: '1,420', helper: 'ready to redeem', trend: 'up' as const }];
 export const resourceTypes = ['all', 'lecture_notes', 'past_question', 'research_paper', 'project', 'slides'];
 export const mockResources: Resource[] = [
   { id: 'res-1', title: 'Digital Logic Design Notes', description: 'Complete lecture notes covering Boolean algebra, combinational logic, and state machines for second-year engineering students.', type: 'lecture_notes', course: 'CPE 221', topic: 'Digital Logic', institution: 'University of Lagos', level: '200', author: 'Engr. T. Adebayo', tags: ['logic', 'engineering', 'exam prep'], views: 4800, downloads: 1320, moderationStatus: 'approved', isVerified: true, uploadedBy: 'lecturer', createdAt: '2026-10-01' },
@@ -28,24 +13,11 @@ export const mockResources: Resource[] = [
   { id: 'res-4', title: 'Final Year Project: Smart Campus Resource Allocation', description: 'A complete final-year project proposal and implementation plan for optimizing campus infrastructure and resource planning.', type: 'project', course: 'Project', topic: 'Smart campus', institution: 'Babcock University', level: '400', author: 'Project Squad', tags: ['project', 'proposal', 'systems'], views: 5400, downloads: 1600, moderationStatus: 'approved', isVerified: true, uploadedBy: 'student', createdAt: '2026-09-18' },
   { id: 'res-5', title: 'Operating Systems Revision Slides', description: 'High-level slides explaining process scheduling, memory management, and synchronization techniques.', type: 'slides', course: 'CPE 312', topic: 'Operating Systems', institution: 'University of Lagos', level: '300', author: 'Dr. I. Adekunle', tags: ['os', 'slides', 'revision'], views: 2200, downloads: 740, moderationStatus: 'approved', isVerified: true, uploadedBy: 'lecturer', createdAt: '2026-10-03' },
 ];
-export const moderationQueue = [
-  { id: 'mod-1', title: 'Microcontroller Programming Handout', type: 'lecture_notes', course: 'CPE 331', institution: 'University of Lagos', uploadedBy: 'Dr. M. Akinola', summary: 'New lecture pack for embedded systems labs and practicals.', status: 'pending' },
-  { id: 'mod-2', title: '2024 Data Science Past Questions', type: 'past_question', course: 'DSC 301', institution: 'University of Ibadan', uploadedBy: 'Ada Eze', summary: 'Past papers with original exam patterns for revision.', status: 'pending' },
-  { id: 'mod-3', title: 'Cloud Systems Research Summary', type: 'research_paper', course: 'CSE 423', institution: 'Babcock University', uploadedBy: 'Musa A.', summary: 'Research notes on cloud migration with case studies.', status: 'flagged' },
-];
-export const featuredCourses = [
-  { title: 'Computer Engineering', code: 'CPE 211', level: '200L', resources: 164 },
-  { title: 'Software Engineering', code: 'CSE 301', level: '300L', resources: 96 },
-  { title: 'Artificial Intelligence', code: 'CSE 420', level: '400L', resources: 133 },
-  { title: 'Research Methodology', code: 'RES 401', level: '400L', resources: 88 },
-];
+export const moderationQueue = [{ id: 'mod-1', title: 'Microcontroller Programming Handout', type: 'lecture_notes', course: 'CPE 331', institution: 'University of Lagos', uploadedBy: 'Dr. M. Akinola', summary: 'New lecture pack for embedded systems labs and practicals.', status: 'pending' }, { id: 'mod-2', title: '2024 Data Science Past Questions', type: 'past_question', course: 'DSC 301', institution: 'University of Ibadan', uploadedBy: 'Ada Eze', summary: 'Past papers with original exam patterns for revision.', status: 'pending' }, { id: 'mod-3', title: 'Cloud Systems Research Summary', type: 'research_paper', course: 'CSE 423', institution: 'Babcock University', uploadedBy: 'Musa A.', summary: 'Research notes on cloud migration with case studies.', status: 'flagged' }];
+export const featuredCourses = [{ title: 'Computer Engineering', code: 'CPE 211', level: '200L', resources: 164 }, { title: 'Software Engineering', code: 'CSE 301', level: '300L', resources: 96 }, { title: 'Artificial Intelligence', code: 'CSE 420', level: '400L', resources: 133 }, { title: 'Research Methodology', code: 'RES 401', level: '400L', resources: 88 }];
 export const studyGoals = ['Finish 3 chapter summaries before Friday', 'Prepare for mid-semester revision pack', 'Download 5 past questions for CPE 211', 'Join the AI study room this evening'];
-export const insightCards = [
-  { title: 'Most searched topic', value: 'Digital Logic', helper: '1.2k searches this week' },
-  { title: 'Top course resources', value: 'CPE 211', helper: 'A +12% engagement rise' },
-  { title: 'AI tutor usage', value: '4.8k queries', helper: 'downstream from uploads' },
-];
+export const insightCards = [{ title: 'Most searched topic', value: 'Digital Logic', helper: '1.2k searches this week' }, { title: 'Top course resources', value: 'CPE 211', helper: 'A +12% engagement rise' }, { title: 'AI tutor usage', value: '4.8k queries', helper: 'downstream from uploads' }];
 export const walletBreakdown = [{ label: 'Available', value: 1420 }, { label: 'Earned this month', value: 610 }, { label: 'Redeemed', value: 280 }];
-export const insights = insightCards.map((item, index) => ({ id: `insight-${index + 1}`, title: item.title, section: 'Platform', summary: `${item.value} — ${item.helper}`, impact: 'High' }));
-export const projects = [{ id: 'project-1', name: 'Academic resource trust', owner: 'Sophia Central', status: 'active', progress: 82 }, { id: 'project-2', name: 'AI tutor rollout', owner: 'Learning team', status: 'active', progress: 64 }];
-export const teamMembers = Object.values(roleUsers).map((user) => ({ id: user.id, name: user.name, role: user.role, department: user.department ?? 'Platform', status: 'active' }));
+export const insights = insightCards.map((item, index) => ({ id: `insight-${index + 1}`, title: item.title, section: 'Platform', summary: `${item.value} — ${item.helper}`, impact: 'High', confidence: 'High' }));
+export const projects = [{ id: 'project-1', name: 'Academic resource trust', owner: 'Sophia Central', status: 'active', progress: 82, due: '2026-11-15' }, { id: 'project-2', name: 'AI tutor rollout', owner: 'Learning team', status: 'active', progress: 64, due: '2026-12-01' }];
+export const teamMembers = Object.values(roleUsers).map((user) => ({ id: user.id, name: user.name, role: user.role, department: user.department ?? 'Platform', status: 'active', capacity: '80%', focus: user.department ?? 'Platform', availability: 'Available' }));
