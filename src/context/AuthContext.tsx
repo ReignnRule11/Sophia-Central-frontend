@@ -1,14 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { authApi } from '../api/auth';
-import { storage } from '../lib/storage';
+import { setCsrfToken } from '../lib/api/client';
 import type { User, UserRole } from '../types';
 
 type RegisterPayload = {
@@ -24,45 +16,39 @@ type RegisterPayload = {
 
 type AuthContextValue = {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string, _role?: UserRole) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => storage.get<User>('user') ?? null);
-  const [token, setToken] = useState<string | null>(() => storage.get<string>('access_token') ?? null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const clearSession = useCallback(() => {
-    storage.remove('access_token');
-    storage.remove('user');
-    setToken(null);
-    setUser(null);
+  const initializeCsrf = useCallback(async () => {
+    const response = await authApi.csrf();
+    setCsrfToken(response.csrfToken);
   }, []);
 
-  const logout = useCallback(() => clearSession(), [clearSession]);
+  const clearSession = useCallback(() => {
+    setUser(null);
+    setCsrfToken(null);
+  }, []);
 
   const refreshSession = useCallback(async () => {
-    if (!token) throw new Error('No access token available.');
-    const response = await authApi.me(token);
-    storage.set('user', response.user);
+    const response = await authApi.me();
     setUser(response.user);
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     const bootstrap = async () => {
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
       try {
+        await initializeCsrf();
         await refreshSession();
       } catch {
         clearSession();
@@ -71,17 +57,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
     void bootstrap();
-  }, [clearSession, refreshSession, token]);
+  }, [clearSession, initializeCsrf, refreshSession]);
 
   const login = useCallback(async (email: string, password: string, _role?: UserRole) => {
+    await initializeCsrf();
     const response = await authApi.login({ email, password });
-    storage.set('access_token', response.accessToken);
-    storage.set('user', response.user);
-    setToken(response.accessToken);
     setUser(response.user);
-  }, []);
+    const refreshed = await authApi.csrf();
+    setCsrfToken(refreshed.csrfToken);
+  }, [initializeCsrf]);
 
   const register = useCallback(async (payload: RegisterPayload) => {
+    await initializeCsrf();
     const response = await authApi.register({
       email: payload.email,
       password: payload.password,
@@ -91,15 +78,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       department: typeof payload.department === 'string' ? payload.department : undefined,
       faculty: typeof payload.faculty === 'string' ? payload.faculty : undefined,
     });
-    storage.set('access_token', response.accessToken);
-    storage.set('user', response.user);
-    setToken(response.accessToken);
     setUser(response.user);
-  }, []);
+    const refreshed = await authApi.csrf();
+    setCsrfToken(refreshed.csrfToken);
+  }, [initializeCsrf]);
+
+  const logout = useCallback(async () => {
+    try {
+      await authApi.logout();
+    } finally {
+      clearSession();
+    }
+  }, [clearSession]);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, token, isAuthenticated: Boolean(token && user), isLoading, login, register, logout, refreshSession }),
-    [user, token, isLoading, login, register, logout, refreshSession]
+    () => ({ user, isAuthenticated: Boolean(user), isLoading, login, register, logout, refreshSession }),
+    [user, isLoading, login, register, logout, refreshSession]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
