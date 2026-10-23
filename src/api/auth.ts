@@ -1,11 +1,7 @@
-import { apiRequest } from './client';
+import { apiRequest } from '../lib/api/client';
 import type { User } from '../types';
 
-type LoginPayload = {
-  email: string;
-  password: string;
-};
-
+type LoginPayload = { email: string; password: string };
 type RegisterPayload = {
   email: string;
   password: string;
@@ -17,24 +13,9 @@ type RegisterPayload = {
 };
 
 export const authApi = {
-  login: async (payload: LoginPayload) => {
-    return apiRequest<{ accessToken: string; user: User }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  },
-
-  register: async (payload: RegisterPayload) => {
-    return apiRequest<{ accessToken: string; user: User }>('/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  },
-
-  me: async (token: string) => {
-    return apiRequest<{ user: User }>('/auth/me', {
-      method: 'GET',
-      token,
-    });
-  },
+  csrf: () => apiRequest<{ csrfToken: string }>('/auth/csrf'),
+  login: (payload: LoginPayload) => apiRequest<{ user: User }>('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
+  register: (payload: RegisterPayload) => apiRequest<{ user: User }>('/auth/signup', { method: 'POST', body: JSON.stringify(payload) }),
+  me: () => apiRequest<{ user: User }>('/auth/me'),
+  logout: () => apiRequest<{ success: boolean }>('/auth/logout', { method: 'POST' }),
 };
