@@ -1,5 +1,5 @@
 # Sophia Central Frontend
-
+[![Frontend CI](https://github.com/ReignnRule11/Sophia-Central-frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/ReignnRule11/Sophia-Central-frontend/actions/workflows/ci.yml)
 A production-oriented React + Vite + TypeScript MVP for Sophia Central, designed as an academic operations platform for students, lecturers, moderators, and administrators.
 
 ## Features
