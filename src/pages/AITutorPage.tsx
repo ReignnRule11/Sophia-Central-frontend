@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BrainCircuit, SendHorizonal } from 'lucide-react';
 import { OverviewCard, SectionTitle } from '../components/layout/AppShell';
-import { sophiaApi } from '../api/sophiaApi';
+import { aiService } from '../api/sophiaApi';
 
 export function AITutorPage() {
   const [question, setQuestion] = useState('How should I revise for my digital logic exam in the next 48 hours?');
@@ -13,7 +13,7 @@ export function AITutorPage() {
     setAnswer('');
 
     try {
-      const response = await sophiaApi.ai.ask({
+      const response = await aiService.ask({
         question,
         resourceId: 'res-1',
       });

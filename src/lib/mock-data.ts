@@ -203,3 +203,81 @@ export const walletBreakdown = [
   { label: 'Earned this month', value: 610 },
   { label: 'Redeemed', value: 280 },
 ];
+
+export const insights = [
+  {
+    id: 'insight-1',
+    section: 'Resource Discovery',
+    title: 'Most searched topic',
+    summary: 'Digital Logic is attracting the most student searches this week.',
+    confidence: '94%',
+    impact: 'High',
+  },
+  {
+    id: 'insight-2',
+    section: 'Course Engagement',
+    title: 'Top course resources',
+    summary: 'CPE 211 resources are seeing increased student engagement.',
+    confidence: '88%',
+    impact: 'High',
+  },
+  {
+    id: 'insight-3',
+    section: 'AI Tutor',
+    title: 'Study support activity',
+    summary: 'Students are using AI tutor support to reinforce their learning.',
+    confidence: '82%',
+    impact: 'Medium',
+  },
+];
+
+export const projects = [
+  {
+    id: 'project-1',
+    name: 'Sophis Central',
+    description: 'An academic resource and research platform for tertiary students.',
+    owner: 'Frontend Developer',
+    status: 'In progress',
+    progress: 65,
+    due: 'In development',
+  },
+  {
+    id: 'project-2',
+    name: 'Resource Verification',
+    description: 'A workflow for reviewing and verifying uploaded academic resources.',
+    owner: 'Backend Developer',
+    status: 'Planning',
+    progress: 30,
+    due: 'To be confirmed',
+  },
+];
+
+export const teamMembers = [
+  {
+    id: 'member-1',
+    name: 'Frontend Developer',
+    role: 'Frontend',
+    initials: 'FD',
+    capacity: 80,
+    focus: 'User interface and frontend integration',
+    availability: 'In progress',
+  },
+  {
+    id: 'member-2',
+    name: 'Backend Developer',
+    role: 'Backend',
+    initials: 'BD',
+    capacity: 75,
+    focus: 'API and server integration',
+    availability: 'In progress',
+  },
+  {
+    id: 'member-3',
+    name: 'Product Designer',
+    role: 'Design',
+    initials: 'PD',
+    capacity: 50,
+    focus: 'Product interface and user experience',
+    availability: 'Availability to be confirmed',
+  },
+];
