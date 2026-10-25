@@ -1,4 +1,11 @@
+
 export type UserRole = 'student' | 'lecturer' | 'moderator' | 'admin';
+
+export interface SocialLinks {
+  linkedin?: string;
+  instagram?: string;
+  twitter?: string;
+}
 
 export interface User {
   id: string;
@@ -15,8 +22,9 @@ export interface User {
   firstName?: string;
   lastName?: string;
   handle?: string;
-  authProvider?: 'email' | 'google' | 'apple' | 'github' | 'linkedin' | 'instagram' | 'twitter';
-  socialLinks?: { linkedin?: string; instagram?: string; twitter?: string };
+  socialHandle?: string;
+  authProvider?: 'email' | 'google' | 'apple' | 'github' | 'instagram' | 'twitter' | 'linkedin';
+  socialLinks?: SocialLinks;
 }
 
 export interface Resource {

@@ -7,11 +7,22 @@ type LoginPayload = {
   password: string;
 };
 
+type SocialLinksPayload = {
+  linkedin?: string;
+  instagram?: string;
+  twitter?: string;
+};
+
 type RegisterPayload = {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
+  institution?: string;
+  faculty?: string;
+  department?: string;
+  socialHandle?: string;
+  socialLinks?: SocialLinksPayload;
 };
 
 export const authApi = {

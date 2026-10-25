@@ -32,6 +32,28 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+function optionalText(value: unknown): string | undefined {
+  const text = String(value ?? '').trim();
+  return text || undefined;
+}
+
+function optionalSocialLinks(value: unknown) {
+  if (!value || typeof value !== 'object') {
+    return undefined;
+  }
+
+  const links = value as Record<string, unknown>;
+  const normalized = {
+    linkedin: optionalText(links.linkedin),
+    instagram: optionalText(links.instagram),
+    twitter: optionalText(links.twitter),
+  };
+
+  return Object.values(normalized).some(Boolean)
+    ? normalized
+    : undefined;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,10 +106,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await initializeCsrf();
 
       const response = await authApi.register({
-        email: payload.email,
-        password: payload.password,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
+        email: String(payload.email ?? '').trim(),
+        password: String(payload.password ?? ''),
+        firstName: String(payload.firstName ?? '').trim(),
+        lastName: String(payload.lastName ?? '').trim(),
+        institution: optionalText(payload.institution),
+        faculty: optionalText(payload.faculty),
+        department: optionalText(payload.department),
+        socialHandle: optionalText(payload.handle),
+        socialLinks: optionalSocialLinks(payload.socialLinks),
       });
 
       setUser(response.user);
