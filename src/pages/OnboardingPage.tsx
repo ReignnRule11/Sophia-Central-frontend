@@ -21,6 +21,9 @@ export function OnboardingPage() {
       lastName: '',
       email: '',
       password: '',
+      institution: '',
+      faculty: '',
+      department: '',
       handle: '',
       socialLinks: {
         linkedin: '',
@@ -180,6 +183,23 @@ export function OnboardingPage() {
                     {errors.email.message}
                   </p>
                 )}
+              </div>
+
+              <div>
+                <label htmlFor="institution" className="mb-2 block text-sm text-slate-300">Institution</label>
+                <input id="institution" {...register('institution')} autoComplete="organization" placeholder="University or college name" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none transition focus:border-violet-400" />
+                {errors.institution && <p className="mt-1 text-sm text-rose-300">{errors.institution.message}</p>}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="faculty" className="mb-2 block text-sm text-slate-300">Faculty <span className="text-slate-500">(optional)</span></label>
+                  <input id="faculty" {...register('faculty')} placeholder="Faculty / school" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none transition focus:border-violet-400" />
+                </div>
+                <div>
+                  <label htmlFor="department" className="mb-2 block text-sm text-slate-300">Department <span className="text-slate-500">(optional)</span></label>
+                  <input id="department" {...register('department')} placeholder="Department" className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-white outline-none transition focus:border-violet-400" />
+                </div>
               </div>
 
               <div>
