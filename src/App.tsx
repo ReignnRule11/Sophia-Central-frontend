@@ -17,6 +17,7 @@ import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { loginSchema, type LoginValues } from './lib/validation';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { ResourceReaderPage } from './pages/ResourceReaderPage';
 
 function destinationForRole(role?: string) {
   if (role === 'moderator' || role === 'admin') return '/moderation';
@@ -290,11 +291,20 @@ export default function App() {
         />
 
         <Route
+          path="/resource/:id"
+          element={
+            <ProtectedRoute allowedRoles={['student', 'lecturer', 'moderator', 'admin']}>
+              <AppShell title="Resource Reader">
+                <ResourceReaderPage />
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/upload"
           element={
-            <ProtectedRoute
-              allowedRoles={['student', 'lecturer', 'moderator', 'admin']}
-            >
+            <ProtectedRoute allowedRoles={['lecturer']}>
               <AppShell title="Upload">
                 <UploadPage />
               </AppShell>

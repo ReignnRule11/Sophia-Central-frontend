@@ -88,6 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password: payload.password,
         firstName: payload.firstName,
         lastName: payload.lastName,
+        institution: String(payload.institution ?? ''),
+        faculty: String(payload.faculty ?? ''),
+        department: String(payload.department ?? ''),
       });
 
       setUser(response.user);

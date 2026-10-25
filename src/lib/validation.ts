@@ -12,6 +12,9 @@ export const registerSchema = z.object({
   lastName: z.string().min(2, 'Last name is required'),
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  institution: z.string().min(2, 'Institution is required'),
+  faculty: z.string().optional(),
+  department: z.string().optional(),
   handle: z.string().min(2, 'Social handle must be at least 2 characters').optional(),
   socialLinks: z.object({
     linkedin: z.string().optional(),
