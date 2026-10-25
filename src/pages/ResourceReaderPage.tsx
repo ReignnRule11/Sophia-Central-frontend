@@ -46,7 +46,7 @@ export function ResourceReaderPage() {
     <article className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70">
       <div className="border-b border-slate-800 bg-slate-950/60 p-6 sm:p-8">
         <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-violet-500/15 px-3 py-1 uppercase tracking-wide text-violet-200">{resource.type.replaceAll('_', ' ')}</span>
+          <span className="rounded-full bg-violet-500/15 px-3 py-1 uppercase tracking-wide text-violet-200">{resource.type.replace(/_/g, ' ')}</span>
           <span className={`rounded-full px-3 py-1 capitalize ${status === 'approved' ? 'bg-emerald-500/10 text-emerald-300' : status === 'rejected' ? 'bg-rose-500/10 text-rose-300' : 'bg-amber-500/10 text-amber-200'}`}>{status}</span>
         </div>
         <h2 className="text-2xl font-semibold text-white sm:text-3xl">{resource.title}</h2>
