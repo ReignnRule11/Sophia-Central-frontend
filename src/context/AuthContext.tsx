@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { authApi } from '../api/auth';
 import { setCsrfToken } from '../lib/api/client';
 import type { User, UserRole } from '../types';
@@ -8,9 +17,6 @@ type RegisterPayload = {
   password: string;
   firstName: string;
   lastName: string;
-  institution?: string;
-  department?: string;
-  faculty?: string;
   [key: string]: unknown;
 };
 
@@ -56,32 +62,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     };
+
     void bootstrap();
   }, [clearSession, initializeCsrf, refreshSession]);
 
-  const login = useCallback(async (email: string, password: string, _role?: UserRole) => {
-    await initializeCsrf();
-    const response = await authApi.login({ email, password });
-    setUser(response.user);
-    const refreshed = await authApi.csrf();
-    setCsrfToken(refreshed.csrfToken);
-  }, [initializeCsrf]);
+  const login = useCallback(
+    async (email: string, password: string, _role?: UserRole) => {
+      await initializeCsrf();
 
-  const register = useCallback(async (payload: RegisterPayload) => {
-    await initializeCsrf();
-    const response = await authApi.register({
-      email: payload.email,
-      password: payload.password,
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      institution: typeof payload.institution === 'string' ? payload.institution : undefined,
-      department: typeof payload.department === 'string' ? payload.department : undefined,
-      faculty: typeof payload.faculty === 'string' ? payload.faculty : undefined,
-    });
-    setUser(response.user);
-    const refreshed = await authApi.csrf();
-    setCsrfToken(refreshed.csrfToken);
-  }, [initializeCsrf]);
+      const response = await authApi.login({ email, password });
+      setUser(response.user);
+
+      const refreshed = await authApi.csrf();
+      setCsrfToken(refreshed.csrfToken);
+    },
+    [initializeCsrf],
+  );
+
+  const register = useCallback(
+    async (payload: RegisterPayload) => {
+      await initializeCsrf();
+
+      const response = await authApi.register({
+        email: payload.email,
+        password: payload.password,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+      });
+
+      setUser(response.user);
+
+      const refreshed = await authApi.csrf();
+      setCsrfToken(refreshed.csrfToken);
+    },
+    [initializeCsrf],
+  );
 
   const logout = useCallback(async () => {
     try {
@@ -92,15 +107,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clearSession]);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isAuthenticated: Boolean(user), isLoading, login, register, logout, refreshSession }),
-    [user, isLoading, login, register, logout, refreshSession]
+    () => ({
+      user,
+      isAuthenticated: Boolean(user),
+      isLoading,
+      login,
+      register,
+      logout,
+      refreshSession,
+    }),
+    [user, isLoading, login, register, logout, refreshSession],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used inside AuthProvider');
+
+  if (!context) {
+    throw new Error('useAuth must be used inside AuthProvider');
+  }
+
   return context;
 }
