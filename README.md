@@ -1,8 +1,8 @@
-# Sophia Central Frontend
+# Sophis Central Frontend
 
 [![Frontend CI](https://github.com/ReignnRule11/Sophia-Central-frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/ReignnRule11/Sophia-Central-frontend/actions/workflows/ci.yml)
 
-Sophia Central is an academic resource and research platform for students, lecturers, moderators, and administrators. This repository contains the React web client and implements the core MVP user journeys defined by the Sophia Central wireframe.
+Sophis Central is an academic resource and research platform for students, lecturers, moderators, and administrators. This repository contains the React web client and implements the core MVP user journeys defined by the Sophia Central wireframe.
 
 ## Core user journeys
 
