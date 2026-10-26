@@ -11,6 +11,7 @@ export interface User {
   programme?: string;
   coursesTaught?: string[];
   studyLevel?: string;
+  bio?: string;
   isProfileComplete?: boolean;
   avatar?: string;
   isVerified?: boolean;
