@@ -1,11 +1,7 @@
 import { apiRequest } from '../lib/api/client';
 import type { User, UserRole } from '../types';
 
-type LoginPayload = {
-  email: string;
-  password: string;
-};
-
+type LoginPayload = { email: string; password: string };
 type RegisterPayload = {
   email: string;
   password: string;
@@ -25,4 +21,6 @@ export const authApi = {
   register: (payload: RegisterPayload) => apiRequest<{ user: User; csrfToken?: string }>('/auth/signup', { method: 'POST', body: JSON.stringify(payload) }),
   me: () => apiRequest<{ user: User }>('/auth/me'),
   logout: () => apiRequest<{ success: boolean }>('/auth/logout', { method: 'POST' }),
+  requestPasswordReset: (email: string) => apiRequest<{ message: string }>('/auth/password-reset/request', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (token: string, password: string) => apiRequest<{ message: string }>('/auth/password-reset/confirm', { method: 'POST', body: JSON.stringify({ token, password }) }),
 };
