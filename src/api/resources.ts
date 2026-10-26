@@ -11,7 +11,7 @@ export const resourcesApi = {
   },
 
   create: async (payload: Record<string, unknown>, token?: string | null) => {
-    return apiRequest<{ success: true; data: Record<string, unknown> }>('/resources', {
+    return apiRequest<Record<string, unknown>>('/resources', {
       method: 'POST',
       body: JSON.stringify(payload),
     }, token ?? null);
