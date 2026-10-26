@@ -12,6 +12,9 @@ type RegisterPayload = {
   password: string;
   firstName: string;
   lastName: string;
+  institution: string;
+  faculty?: string;
+  department?: string;
 };
 
 export const authApi = {
