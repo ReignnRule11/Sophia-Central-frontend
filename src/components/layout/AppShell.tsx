@@ -205,7 +205,6 @@ export function AppShell({
                   )}
                 </button>
 
-                {/* Open the notifications centre */}
                 <button
                   type="button"
                   onClick={() => navigate('/notifications')}
