@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Download, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Bookmark, BookOpen, Download, ExternalLink } from 'lucide-react';
 import { resourcesApi } from '../api/resources';
 import { useAuth } from '../context/AuthContext';
+import { getSavedResourceIds, setResourceSaved } from '../lib/savedResources';
 import { LoadingState } from '../components/states/LoadingState';
 import { ErrorState } from '../components/states/ErrorState';
 import type { Resource } from '../types';
@@ -11,10 +12,11 @@ type ResourceWithFile = Resource & { fileUrl?: string; file_url?: string; url?: 
 
 export function ResourceReaderPage() {
   const { id = '' } = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [resource, setResource] = useState<ResourceWithFile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -23,7 +25,10 @@ export function ResourceReaderPage() {
         setLoading(true);
         setError('');
         const result = await resourcesApi.byId(id);
-        if (active) setResource(result as ResourceWithFile);
+        if (active) {
+          setResource(result as ResourceWithFile);
+          if (user) setSaved(getSavedResourceIds(user.id).includes(id));
+        }
       } catch (err) {
         if (active) setError(err instanceof Error ? err.message : 'Unable to open this resource.');
       } finally {
@@ -32,7 +37,7 @@ export function ResourceReaderPage() {
     };
     if (isAuthenticated && id) void load();
     return () => { active = false; };
-  }, [id, isAuthenticated]);
+  }, [id, isAuthenticated, user]);
 
   if (loading) return <LoadingState message="Opening resource..." />;
   if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />;
@@ -49,8 +54,10 @@ export function ResourceReaderPage() {
           <span className="rounded-full bg-violet-500/15 px-3 py-1 uppercase tracking-wide text-violet-200">{resource.type.replace(/_/g, ' ')}</span>
           <span className={`rounded-full px-3 py-1 capitalize ${status === 'approved' ? 'bg-emerald-500/10 text-emerald-300' : status === 'rejected' ? 'bg-rose-500/10 text-rose-300' : 'bg-amber-500/10 text-amber-200'}`}>{status}</span>
         </div>
-        <h2 className="text-2xl font-semibold text-white sm:text-3xl">{resource.title}</h2>
-        <p className="mt-3 text-sm text-slate-400">{[resource.course, resource.topic, resource.level, resource.institution].filter(Boolean).join(' · ')}</p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div><h2 className="text-2xl font-semibold text-white sm:text-3xl">{resource.title}</h2><p className="mt-3 text-sm text-slate-400">{[resource.course, resource.topic, resource.level, resource.institution].filter(Boolean).join(' · ')}</p></div>
+          {user?.role === 'student' && <button type="button" onClick={() => { if (!user) return; const next = !saved; setResourceSaved(user.id, id, next); setSaved(next); }} className={`inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold ${saved ? 'border-violet-400 bg-violet-500/15 text-violet-100' : 'border-slate-700 text-slate-200 hover:border-violet-400'}`}><Bookmark size={16} fill={saved ? 'currentColor' : 'none'} /> {saved ? 'Saved' : 'Save resource'}</button>}
+        </div>
       </div>
       <div className="space-y-6 p-6 sm:p-8">
         <section><h3 className="mb-2 flex items-center gap-2 font-semibold text-white"><BookOpen size={17} /> Resource details</h3><p className="whitespace-pre-wrap leading-7 text-slate-300">{resource.description || 'No description was provided for this resource.'}</p></section>
