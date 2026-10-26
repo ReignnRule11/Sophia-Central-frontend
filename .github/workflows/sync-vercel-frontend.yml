@@ -1,3 +1,4 @@
+
 name: Sync main to Vercel deployment repo
 
 on:
@@ -16,20 +17,24 @@ concurrency:
 jobs:
   sync-to-vercel:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Push source main to the Vercel-connected repository
         env:
           SYNC_TOKEN: ${{ secrets.MADDIIE_SYNC_TOKEN }}
         run: |
           if [ -z "$SYNC_TOKEN" ]; then
-            echo "::error::Add the MADDIIE_SYNC_TOKEN Actions secret to this repository."
+            echo "::error::The MADDIIE_SYNC_TOKEN secret is missing or empty."
             exit 1
           fi
 
           AUTH_HEADER="$(printf 'x-access-token:%s' "$SYNC_TOKEN" | base64 -w0)"
-          git -c http.extraheader="AUTHORIZATION: basic ${AUTH_HEADER}" push https://github.com/maddiiedev/sophia-central-frontend.git HEAD:main
+
+          git -c http.extraheader="AUTHORIZATION: basic ${AUTH_HEADER}" \
+            push https://github.com/maddiiedev/sophia-central-frontend.git HEAD:main
