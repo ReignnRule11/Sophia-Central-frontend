@@ -17,7 +17,7 @@ export const registerSchema = z.object({
   institution: z.string().trim().max(160, 'Institution name is too long').optional(),
   faculty: z.string().trim().max(160, 'Faculty name is too long').optional(),
   department: z.string().trim().max(160, 'Department name is too long').optional(),
-  handle: z.string().min(2, 'Social handle must be at least 2 characters').optional(),
+  handle: z.string().trim().max(80, 'Social handle is too long').optional().or(z.literal('')),
   socialLinks: z.object({
     linkedin: z.string().optional(),
     instagram: z.string().optional(),
