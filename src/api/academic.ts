@@ -28,18 +28,22 @@ export interface CourseOption {
   institutionId?: string;
 }
 
+export interface CompleteOnboardingPayload {
+  institution: string;
+  faculty: string;
+  department: string;
+  programme?: string;
+  studyLevel?: string;
+  coursesTaught?: string[];
+  bio?: string;
+  socialHandle?: string;
+}
+
 export const academicApi = {
   institutions: () => apiRequest<InstitutionOption[]>('/institutions'),
   courses: (institutionId: string) =>
     apiRequest<CourseOption[]>(`/courses?institutionId=${encodeURIComponent(institutionId)}`),
-  completeOnboarding: (payload: {
-    institution: string;
-    faculty: string;
-    department: string;
-    programme?: string;
-    studyLevel?: string;
-    coursesTaught?: string[];
-  }) =>
+  completeOnboarding: (payload: CompleteOnboardingPayload) =>
     apiRequest<{ user: import('../types').User }>('/auth/onboarding', {
       method: 'POST',
       body: JSON.stringify(payload),
