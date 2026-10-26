@@ -8,6 +8,10 @@ export interface User {
   institution?: string;
   faculty?: string;
   department?: string;
+  programme?: string;
+  coursesTaught?: string[];
+  studyLevel?: string;
+  isProfileComplete?: boolean;
   avatar?: string;
   isVerified?: boolean;
   createdAt?: string;

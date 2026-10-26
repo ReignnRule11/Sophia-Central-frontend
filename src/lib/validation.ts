@@ -12,6 +12,11 @@ export const registerSchema = z.object({
   lastName: z.string().min(2, 'Last name is required'),
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  // Institution is captured during onboarding but must not block account creation.
+  // The backend treats these profile fields as optional.
+  institution: z.string().trim().max(160, 'Institution name is too long').optional(),
+  faculty: z.string().trim().max(160, 'Faculty name is too long').optional(),
+  department: z.string().trim().max(160, 'Department name is too long').optional(),
   handle: z.string().min(2, 'Social handle must be at least 2 characters').optional(),
   socialLinks: z.object({
     linkedin: z.string().optional(),
