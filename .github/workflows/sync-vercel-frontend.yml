@@ -1,5 +1,5 @@
 
-name: Sync main to Vercel deployment repo
+name: Sync frontend to Vercel repository
 
 on:
   push:
@@ -22,13 +22,18 @@ jobs:
       - name: Checkout source repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
 
-      - name: Push source main to the Vercel-connected repository
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
+      - name: Clone Vercel deployment repository
         env:
           SYNC_TOKEN: ${{ secrets.MADDIIE_SYNC_TOKEN }}
         run: |
+          set -e
+
           if [ -z "$SYNC_TOKEN" ]; then
             echo "::error::The MADDIIE_SYNC_TOKEN secret is missing or empty."
             exit 1
@@ -36,5 +41,44 @@ jobs:
 
           AUTH_HEADER="$(printf 'x-access-token:%s' "$SYNC_TOKEN" | base64 -w0)"
 
+          echo "Cloning the Vercel deployment repository..."
+
           git -c http.extraheader="AUTHORIZATION: basic ${AUTH_HEADER}" \
-            push https://github.com/maddiiedev/sophia-central-frontend.git HEAD:main
+            clone --branch main --single-branch \
+            https://github.com/maddiiedev/sophia-central-frontend.git \
+            "$RUNNER_TEMP/vercel-frontend"
+
+      - name: Copy frontend files without the sync workflow
+        run: |
+          set -e
+
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='/.github/workflows/sync-vercel-frontend.yml' \
+            ./ "$RUNNER_TEMP/vercel-frontend/"
+
+      - name: Commit and push frontend updates
+        env:
+          SYNC_TOKEN: ${{ secrets.MADDIIE_SYNC_TOKEN }}
+        run: |
+          set -e
+
+          DEST="$RUNNER_TEMP/vercel-frontend"
+          AUTH_HEADER="$(printf 'x-access-token:%s' "$SYNC_TOKEN" | base64 -w0)"
+
+          cd "$DEST"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No frontend changes to sync."
+            exit 0
+          fi
+
+          git commit -m "Sync frontend from Sophia Central source repository"
+
+          git -c http.extraheader="AUTHORIZATION: basic ${AUTH_HEADER}" \
+            push origin HEAD:main
