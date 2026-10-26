@@ -8,6 +8,7 @@ export const resourceUploadSchema = z.object({
   institution: z.string().min(2, 'Institution is required'),
   level: z.string().min(1, 'Level is required'),
   type: z.enum(['lecture_notes', 'past_question', 'research_paper', 'project', 'slides', 'other']),
+  fileUrl: z.union([z.literal(''), z.string().url('Enter a valid HTTPS resource URL').startsWith('https://', 'Use a secure HTTPS URL')]).optional().default(''),
   tags: z.string().optional().default(''),
 });
 
