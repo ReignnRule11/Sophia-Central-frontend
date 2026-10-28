@@ -35,6 +35,11 @@ export const moderationApi = {
       title: resource.title,
       status: resource.moderationStatus ?? 'pending',
       summary: resource.description ?? undefined,
+      course: resource.course ?? undefined,
+      institution: resource.institution ?? undefined,
+      level: resource.level ?? undefined,
+      topic: resource.topic ?? undefined,
+      fileUrl: resource.fileUrl ?? undefined,
       uploadedBy:
         resource.uploader?.name ??
         [resource.uploader?.firstName, resource.uploader?.lastName].filter(Boolean).join(' ') ??
