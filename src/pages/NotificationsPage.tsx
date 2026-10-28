@@ -1,27 +1,19 @@
-import { Bell, Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Bell, CheckCheck, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { sophiaApi } from '../api/sophiaApi';
+import { LoadingState } from '../components/states/LoadingState';
+import { useAuth } from '../context/AuthContext';
+
+type Notification = { id: string; type: string; title: string; message: string; link?: string | null; isRead: boolean; createdAt: string };
 
 export function NotificationsPage() {
-  return (
-    <section className="mx-auto max-w-3xl space-y-6">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 sm:p-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-200">
-          <Bell size={22} aria-hidden="true" />
-        </div>
-        <h2 className="mt-5 text-2xl font-semibold text-white">Your notifications</h2>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
-          Updates about your learning activity will appear here when the notification service is enabled.
-        </p>
-        <div className="mt-6 flex gap-3 rounded-xl border border-slate-700 bg-slate-950/70 p-4">
-          <Info size={18} className="mt-0.5 shrink-0 text-slate-400" aria-hidden="true" />
-          <p className="text-sm leading-6 text-slate-300">
-            The notification centre page is available, but live notifications and unread counts are not yet connected. No sample alerts are shown as if they were real.
-          </p>
-        </div>
-        <Link to="/dashboard" className="mt-6 inline-flex rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-500">
-          Back to dashboard
-        </Link>
-      </div>
-    </section>
-  );
+  const { isAuthenticated } = useAuth(); const [items,setItems]=useState<Notification[]>([]); const [loading,setLoading]=useState(true); const [error,setError]=useState(''); const [saving,setSaving]=useState(false);
+  const load=async()=>{setLoading(true);setError('');try{const data=await sophiaApi.notifications.list();setItems(Array.isArray(data)?data:[]);}catch(cause){setError(cause instanceof Error?cause.message:'Unable to load notifications.');}finally{setLoading(false);}};
+  useEffect(()=>{if(isAuthenticated)void load();},[isAuthenticated]);
+  const markRead=async(id:string)=>{try{await sophiaApi.notifications.markRead(id);setItems(current=>current.map(item=>item.id===id?{...item,isRead:true}:item));}catch(cause){setError(cause instanceof Error?cause.message:'Unable to update notification.');}};
+  const markAll=async()=>{setSaving(true);setError('');try{await sophiaApi.notifications.markAllRead();setItems(current=>current.map(item=>({...item,isRead:true})));}catch(cause){setError(cause instanceof Error?cause.message:'Unable to mark notifications as read.');}finally{setSaving(false);}};
+  if(loading)return <LoadingState message="Loading your notifications..."/>;
+  const unread=items.filter(item=>!item.isRead).length;
+  return <div className="mx-auto max-w-4xl space-y-6"><section className="rounded-3xl bg-[#2C36D9] p-6 text-white shadow-sm sm:p-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="flex items-center gap-3"><span className="rounded-2xl bg-[#6121D0] p-3"><Bell size={24}/></span><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">Activity centre</p><h2 className="mt-1 text-3xl font-bold">Notifications</h2></div></div><p className="mt-3 text-sm text-white/90">Stay current on resource activity, account updates and learning events.</p></div><button type="button" onClick={()=>void markAll()} disabled={!unread||saving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#5120B0] disabled:opacity-50"><CheckCheck size={16}/>{saving?'Updating…':`Mark all read${unread?` (${unread})`:''}`}</button></div></section>{error&&<div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>}{items.length===0?<section className="rounded-3xl border border-[#DCE4EF] bg-white p-10 text-center shadow-sm"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6121D0]/10 text-[#6121D0]"><Bell size={24}/></div><h3 className="mt-4 text-xl font-bold text-[#091F5B]">You’re all caught up</h3><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#5C6982]">New notifications from your Sophia Central account will appear here.</p><Link to="/dashboard" className="mt-6 inline-flex rounded-xl bg-[#6121D0] px-5 py-3 font-semibold text-white">Back to dashboard</Link></section>:<section className="overflow-hidden rounded-3xl border border-[#DCE4EF] bg-white shadow-sm"><div className="divide-y divide-[#DCE4EF]">{items.map(item=><article key={item.id} className={`p-5 transition ${item.isRead?'bg-white':'bg-[#F8F5FF]'}`}><div className="flex gap-4"><div className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${item.isRead?'bg-[#DCE4EF]':'bg-[#6121D0]'}`} aria-hidden="true"/><div className="min-w-0 flex-1"><div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between"><div><h3 className="font-semibold text-[#091F5B]">{item.title}</h3><p className="mt-1 text-sm leading-6 text-[#5C6982]">{item.message}</p></div><time className="shrink-0 text-xs text-[#71809A]" dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString()}</time></div><div className="mt-4 flex flex-wrap gap-2">{!item.isRead&&<button type="button" onClick={()=>void markRead(item.id)} className="rounded-lg border border-[#DCE4EF] px-3 py-2 text-xs font-semibold text-[#091F5B] hover:border-[#6121D0]">Mark read</button>}{item.link&&<Link to={item.link} className="inline-flex items-center gap-1 rounded-lg bg-[#6121D0] px-3 py-2 text-xs font-semibold text-white">Open <ExternalLink size={13}/></Link>}</div></div></div></article>)}</div></section>}</div>;
 }
