@@ -65,7 +65,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const nav = (
     <nav aria-label="Main navigation" className="space-y-1">
       {navItems.map(({ href, label, icon: Icon }) => (
-        <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'bg-[#F3F6FC] text-[#004BEC] ring-1 ring-[#004BEC]/20' : 'text-[#1F2937] hover:bg-[#F3F6FC] hover:text-[#091F5B]'}`}>
+        <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'bg-[#F3F0FF] text-[#6121D0] ring-1 ring-[#6121D0]/20' : 'text-[#1F2937] hover:bg-[#F3F0FF] hover:text-[#6121D0]'}`}>
           <Icon size={17} />
           {label}
         </NavLink>
@@ -74,7 +74,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
         { label: 'Profile', href: '/profile', icon: UserCircle },
         { label: 'Settings', href: '/settings', icon: Settings },
       ].map(({ label, href, icon: Icon }) => (
-        <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'bg-[#F3F6FC] text-[#004BEC] ring-1 ring-[#004BEC]/20' : 'text-[#1F2937] hover:bg-[#F3F6FC] hover:text-[#091F5B]'}`}>
+        <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'bg-[#F3F0FF] text-[#6121D0] ring-1 ring-[#6121D0]/20' : 'text-[#1F2937] hover:bg-[#F3F0FF] hover:text-[#6121D0]'}`}>
           <Icon size={17} />
           {label}
         </NavLink>
@@ -108,9 +108,9 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
               <div className="flex shrink-0 items-center gap-2">
                 <button type="button" onClick={goBack} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] transition hover:border-[#6121D0] hover:bg-[#F3F0FF] hover:text-[#6121D0]" aria-label="Go back" title="Go back"><ArrowLeft size={16} /></button>
                 <button type="button" onClick={() => navigate('/')} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] transition hover:border-[#6121D0] hover:bg-[#F3F0FF] hover:text-[#6121D0]" aria-label="Go to homepage" title="Homepage"><Home size={16} /></button>
-                <button type="button" onClick={() => navigate('/library')} className="flex items-center gap-2 rounded-xl border border-[#D7DEEA] bg-white px-3 py-2 text-sm font-medium text-[#091F5B] hover:border-[#004BEC]" aria-label="Search academic resources"><Search size={15} /><span className="hidden sm:inline">Search resources</span></button>
-                <button type="button" onClick={() => navigate('/notifications')} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] hover:border-[#004BEC]" aria-label="Open notifications" title="Open notifications"><Bell size={16} /></button>
-                <button type="button" onClick={() => void logout()} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-sm font-semibold text-[#091F5B] hover:border-[#004BEC] sm:px-3 sm:py-2"><LogOut size={15} className="sm:mr-2 sm:inline" /><span className="hidden sm:inline">Sign out</span></button>
+                <button type="button" onClick={() => navigate('/library')} className="flex items-center gap-2 rounded-xl border border-[#D7DEEA] bg-white px-3 py-2 text-sm font-medium text-[#091F5B] hover:border-[#6121D0]" aria-label="Search academic resources"><Search size={15} /><span className="hidden sm:inline">Search resources</span></button>
+                <button type="button" onClick={() => navigate('/notifications')} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] hover:border-[#6121D0]" aria-label="Open notifications" title="Open notifications"><Bell size={16} /></button>
+                <button type="button" onClick={() => void logout()} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-sm font-semibold text-[#091F5B] hover:border-[#6121D0] sm:px-3 sm:py-2"><LogOut size={15} className="sm:mr-2 sm:inline" /><span className="hidden sm:inline">Sign out</span></button>
               </div>
             </div>
             {mobileNavOpen && <div className="mt-4 rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-sm lg:hidden">{nav}</div>}
@@ -125,7 +125,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
 export function UserBadge() {
   const { user } = useAuth();
   const current = user ?? roleUsers.student;
-  return <div className="flex items-center gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-sm"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#004BEC] text-sm font-semibold text-white">{current.avatar || current.name?.slice(0, 1)}</div><div><div className="text-sm font-semibold text-[#091F5B]">{current.name}</div><div className="text-xs text-[#4B5563]">{current.institution || 'Institution not set'}</div></div></div>;
+  return <div className="flex items-center gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-sm"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2C36D9] text-sm font-semibold text-white">{current.avatar || current.name?.slice(0, 1)}</div><div><div className="text-sm font-semibold text-[#091F5B]">{current.name}</div><div className="text-xs text-[#4B5563]">{current.institution || 'Institution not set'}</div></div></div>;
 }
 
 export function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
