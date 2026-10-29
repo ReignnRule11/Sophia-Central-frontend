@@ -5,7 +5,7 @@ import { brandStats, featureHighlights } from '../lib/mock-data';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white text-[#1F2937]">
+    <div className="homepage min-h-screen bg-white text-[#1F2937]">
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 bg-white px-4 py-3 sm:px-6 lg:px-8">
         <BrandLogo variant="full" tone="dark" />
         <nav aria-label="Primary navigation" className="hidden items-center gap-7 text-sm font-medium text-[#091F5B] md:flex">
