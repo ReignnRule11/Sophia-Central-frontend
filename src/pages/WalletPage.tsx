@@ -27,10 +27,10 @@ export function WalletPage() {
     setLoading(true); setError('');
     try {
       const [balanceResult, referralResult, statsResult, transactionResult] = await Promise.all([
-        apiRequest<number>('/points/me/balance'),
+        apiRequest<number>('/points/my-wallet/balance'),
         apiRequest<ReferralCodeResponse>('/referrals/generate-code', { method: 'POST', body: JSON.stringify({}) }),
         apiRequest<ReferralStats>(`/referrals/${encodeURIComponent(user.id)}/referrals`),
-        apiRequest<PointTransaction[]>(`/points/me/transactions?limit=8`),
+        apiRequest<PointTransaction[]>(`/points/my-wallet/transactions?limit=8`),
       ]);
       setBalance(typeof balanceResult === 'number' ? balanceResult : Number(balanceResult));
       setCode(referralResult.code || '');
