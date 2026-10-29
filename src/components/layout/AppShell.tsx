@@ -1,4 +1,6 @@
 import {
+  ArrowLeft,
+  Home,
   Bell,
   BookOpen,
   Bookmark,
@@ -54,6 +56,11 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const navItems = user?.role === 'lecturer' ? lecturerNav : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : studentNav;
+  const goBack = () => {
+    const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (historyIndex > 0) navigate(-1);
+    else navigate(user?.role === 'lecturer' ? '/lecturer' : user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : '/dashboard');
+  };
 
   const nav = (
     <nav aria-label="Main navigation" className="space-y-1">
@@ -99,6 +106,8 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-2">
+                <button type="button" onClick={goBack} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] transition hover:border-[#6121D0] hover:bg-[#F3F0FF] hover:text-[#6121D0]" aria-label="Go back" title="Go back"><ArrowLeft size={16} /></button>
+                <button type="button" onClick={() => navigate('/')} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] transition hover:border-[#6121D0] hover:bg-[#F3F0FF] hover:text-[#6121D0]" aria-label="Go to homepage" title="Homepage"><Home size={16} /></button>
                 <button type="button" onClick={() => navigate('/library')} className="flex items-center gap-2 rounded-xl border border-[#D7DEEA] bg-white px-3 py-2 text-sm font-medium text-[#091F5B] hover:border-[#004BEC]" aria-label="Search academic resources"><Search size={15} /><span className="hidden sm:inline">Search resources</span></button>
                 <button type="button" onClick={() => navigate('/notifications')} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-[#091F5B] hover:border-[#004BEC]" aria-label="Open notifications" title="Open notifications"><Bell size={16} /></button>
                 <button type="button" onClick={() => void logout()} className="rounded-xl border border-[#D7DEEA] bg-white p-2 text-sm font-semibold text-[#091F5B] hover:border-[#004BEC] sm:px-3 sm:py-2"><LogOut size={15} className="sm:mr-2 sm:inline" /><span className="hidden sm:inline">Sign out</span></button>
