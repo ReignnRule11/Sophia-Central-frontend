@@ -308,3 +308,43 @@ html[data-theme='dark'] [data-logo-tone] img {
 .app-shell [class*="bg-indigo-"][class~="text-white"] {
   color: #FFFFFF !important;
 }
+
+/* The public homepage follows the selected theme too, keeping the white logo visible in dark mode. */
+html[data-theme='dark'] .homepage {
+  background-color: #0B1120 !important;
+  color: #E2E8F0 !important;
+}
+html[data-theme='dark'] .homepage header,
+html[data-theme='dark'] .homepage section[class~="bg-white"],
+html[data-theme='dark'] .homepage [class~="bg-white"] {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+}
+html[data-theme='dark'] .homepage [class~="bg-[#F8FAFD]"],
+html[data-theme='dark'] .homepage [class~="bg-[#F3F6FC]"],
+html[data-theme='dark'] .homepage [class~="bg-[#F3F0FF]"] {
+  background-color: #172033 !important;
+}
+html[data-theme='dark'] .homepage [class*="border-[#E5E7EB]"],
+html[data-theme='dark'] .homepage [class*="border-[#DCE4EF]"] {
+  border-color: #334155 !important;
+}
+html[data-theme='dark'] .homepage [class~="text-[#091F5B]"],
+html[data-theme='dark'] .homepage [class~="text-[#1F2937]"] {
+  color: #F1F5F9 !important;
+}
+html[data-theme='dark'] .homepage [class~="text-[#4B5563]"],
+html[data-theme='dark'] .homepage [class~="text-[#374151]"],
+html[data-theme='dark'] .homepage [class~="text-[#5C6982]"] {
+  color: #CBD5E1 !important;
+}
+html[data-theme='dark'] .homepage [class~="text-white"] {
+  color: #FFFFFF !important;
+}
+html[data-theme='dark'] .homepage [class*="bg-[#6121D0]"] [class~="text-white"],
+html[data-theme='dark'] .homepage [class*="bg-[#2C36D9]"] [class~="text-white"] {
+  color: #FFFFFF !important;
+}
+html[data-theme='dark'] .homepage footer {
+  background-color: #050B18 !important;
+}
