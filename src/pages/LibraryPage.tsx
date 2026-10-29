@@ -17,7 +17,7 @@ type AcademicResource = Resource & {
 
 function academicValue(resource: Resource, key: 'faculty' | 'department' | 'institution') {
   const academic = resource as AcademicResource;
-  if (key === 'institution') return String(resource.institution || academic.uploader?.institution || '').trim();
+  if (key === 'institution') return String(academic.uploader?.institution || resource.institution || '').trim();
   return String(academic.uploader?.[key] || '').trim();
 }
 
@@ -59,7 +59,7 @@ export function LibraryPage() {
       if (institution && academicValue(resource, 'institution') !== institution) return false;
       if (faculty && academicValue(resource, 'faculty') !== faculty) return false;
       if (department && academicValue(resource, 'department') !== department) return false;
-      if (normalized && ![resource.title, resource.description, resource.course, resource.topic, resource.institution, ...(resource.tags ?? []), academicValue(resource, 'faculty'), academicValue(resource, 'department')].filter(Boolean).join(' ').toLowerCase().includes(normalized)) return false;
+      if (normalized && ![resource.title, resource.description, resource.course, resource.topic, academicValue(resource, 'institution'), ...(resource.tags ?? []), academicValue(resource, 'faculty'), academicValue(resource, 'department')].filter(Boolean).join(' ').toLowerCase().includes(normalized)) return false;
       if (materialFilter === 'academic') {
         if (course && !String(resource.course ?? '').toLowerCase().includes(course.trim().toLowerCase())) return false;
         if (topic && !String(resource.topic ?? '').toLowerCase().includes(topic.trim().toLowerCase())) return false;
@@ -97,7 +97,7 @@ export function LibraryPage() {
       const research = /research|paper|journal|thesis|dissertation/i.test([resource.type, resource.title].join(' '));
       const facultyValue = academicValue(resource, 'faculty');
       const departmentValue = academicValue(resource, 'department');
-      return <button type="button" key={resource.id} onClick={() => navigate(`/resource/${encodeURIComponent(resource.id)}`)} className="group rounded-2xl border border-[#DCE4EF] bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-[#6121D0] hover:bg-[#F8F5FF] focus:outline-none focus:ring-2 focus:ring-[#2C36D9]"><div className="mb-4 flex items-center justify-between gap-3"><span className="inline-flex items-center gap-2 rounded-full bg-[#F3F0FF] px-3 py-1 text-xs font-semibold text-[#6121D0]">{research ? <FlaskConical size={14} /> : <FileText size={14} />}{research ? 'Research' : 'Academic'}</span><BookOpen size={17} className="text-[#5C6982] transition group-hover:text-[#6121D0]" /></div><h3 className="text-lg font-semibold text-[#091F5B]">{resource.title}</h3><p className="mt-2 line-clamp-3 text-sm leading-6 text-[#4B5563]">{resource.description || 'Open this resource to view its details.'}</p><div className="mt-4 flex flex-wrap gap-2 text-xs text-[#5C6982]">{resource.course && <span>{resource.course}</span>}{resource.topic && <span>· {resource.topic}</span>}{resource.institution && <span>· {resource.institution}</span>}{facultyValue && <span>· {facultyValue}</span>}{departmentValue && <span>· {departmentValue}</span>}</div><div className="mt-5 flex items-center gap-2 border-t border-[#DCE4EF] pt-3 text-sm font-semibold text-[#6121D0] group-hover:text-[#2C36D9]"><BookOpen size={15} /> Open resource <span aria-hidden="true" className="transition group-hover:translate-x-1">→</span></div></button>;
+      return <button type="button" key={resource.id} onClick={() => navigate(`/resource/${encodeURIComponent(resource.id)}`)} className="group rounded-2xl border border-[#DCE4EF] bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-[#6121D0] hover:bg-[#F8F5FF] focus:outline-none focus:ring-2 focus:ring-[#2C36D9]"><div className="mb-4 flex items-center justify-between gap-3"><span className="inline-flex items-center gap-2 rounded-full bg-[#F3F0FF] px-3 py-1 text-xs font-semibold text-[#6121D0]">{research ? <FlaskConical size={14} /> : <FileText size={14} />}{research ? 'Research' : 'Academic'}</span><BookOpen size={17} className="text-[#5C6982] transition group-hover:text-[#6121D0]" /></div><h3 className="text-lg font-semibold text-[#091F5B]">{resource.title}</h3><p className="mt-2 line-clamp-3 text-sm leading-6 text-[#4B5563]">{resource.description || 'Open this resource to view its details.'}</p><div className="mt-4 flex flex-wrap gap-2 text-xs text-[#5C6982]">{resource.course && <span>{resource.course}</span>}{resource.topic && <span>· {resource.topic}</span>}{academicValue(resource, 'institution') && <span>· {academicValue(resource, 'institution')}</span>}{facultyValue && <span>· {facultyValue}</span>}{departmentValue && <span>· {departmentValue}</span>}</div><div className="mt-5 flex items-center gap-2 border-t border-[#DCE4EF] pt-3 text-sm font-semibold text-[#6121D0] group-hover:text-[#2C36D9]"><BookOpen size={15} /> Open resource <span aria-hidden="true" className="transition group-hover:translate-x-1">→</span></div></button>;
     })}</div>}
   </div>;
 }
