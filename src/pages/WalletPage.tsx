@@ -34,7 +34,7 @@ export function WalletPage() {
       ]);
       setBalance(typeof balanceResult === 'number' ? balanceResult : Number(balanceResult));
       setCode(referralResult.code || '');
-      setShareLink(referralResult.link || `${window.location.origin}/login?ref=${encodeURIComponent(referralResult.code || '')}`);
+      setShareLink(referralResult.link?.startsWith('http') ? referralResult.link : `${window.location.origin}/login?ref=${encodeURIComponent(referralResult.code || '')}`);
       setStats(statsResult);
       setTransactions(Array.isArray(transactionResult) ? transactionResult : []);
     } catch (cause) {
@@ -73,7 +73,7 @@ export function WalletPage() {
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
       <OverviewCard title="Available balance" action="Live balance">
         <div className="space-y-5">
-          <div className="text-5xl font-semibold text-[#091F5B]">{loading ? '…' : (balance ?? '—').toLocaleString?.() ?? balance}</div>
+          <div className="text-5xl font-semibold text-[#091F5B]">{loading ? '…' : balance === null ? '—' : balance.toLocaleString()}</div>
           <p className="text-sm leading-6 text-[#4B5563]">Your balance is loaded from your account wallet, not a sample figure.</p>
           <div className="flex flex-wrap gap-3">
             <button type="button" onClick={() => setShowRedeemInfo(true)} className="inline-flex items-center gap-2 rounded-xl bg-[#6121D0] px-4 py-2.5 font-semibold text-white transition hover:bg-[#2C36D9] focus:outline-none focus:ring-2 focus:ring-[#2C36D9] focus:ring-offset-2"><Gift size={16}/> Redeem points</button>
