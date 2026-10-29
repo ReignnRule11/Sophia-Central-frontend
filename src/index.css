@@ -275,3 +275,36 @@ html[data-theme='dark'] .app-shell [class*="bg-[#6121D0]"][class~="text-white"],
 html[data-theme='dark'] .app-shell [class*="bg-[#2C36D9]"][class~="text-white"] {
   color: #FFFFFF !important;
 }
+
+
+/* In dark mode, invert transparent brand artwork to the white logo treatment. */
+html[data-theme='dark'] [data-logo-tone] img {
+  filter: brightness(0) invert(1) !important;
+}
+/* Light theme: keep legacy dark utility surfaces and their text readable. */
+.app-shell [class*="bg-slate-950"],
+.app-shell [class*="bg-slate-900"] {
+  background-color: #F8FAFD !important;
+}
+.app-shell [class*="bg-slate-950"] [class~="text-white"],
+.app-shell [class*="bg-slate-900"] [class~="text-white"] {
+  color: #091F5B !important;
+}
+.app-shell [class~="text-slate-300"],
+.app-shell [class~="text-slate-400"],
+.app-shell [class~="text-slate-500"] {
+  color: #4B5563 !important;
+}
+.app-shell [class~="text-white"] {
+  color: #091F5B !important;
+}
+.app-shell [class*="bg-[#2C36D9]"] [class~="text-white"],
+.app-shell [class*="bg-[#6121D0]"] [class~="text-white"],
+.app-shell [class*="bg-violet-"] [class~="text-white"],
+.app-shell [class*="bg-indigo-"] [class~="text-white"],
+.app-shell [class*="bg-[#2C36D9]"][class~="text-white"],
+.app-shell [class*="bg-[#6121D0]"][class~="text-white"],
+.app-shell [class*="bg-violet-"][class~="text-white"],
+.app-shell [class*="bg-indigo-"][class~="text-white"] {
+  color: #FFFFFF !important;
+}
