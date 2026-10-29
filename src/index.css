@@ -214,3 +214,13 @@ html[data-theme='dark'] .app-shell [class~="hover:bg-[#F3F6FC]"]:hover,
 html[data-theme='dark'] .app-shell [class~="hover:bg-[#F8F5FF]"]:hover {
   background-color: #26314A !important;
 }
+
+html[data-theme='dark'] .app-shell .glass-panel,
+html[data-theme='dark'] .app-shell .brand-card {
+  background-color: #172033 !important;
+  border-color: #334155 !important;
+}
+html[data-theme='dark'] .app-shell [class~="hover:bg-[#F3F6FC]"]:hover,
+html[data-theme='dark'] .app-shell [class~="hover:bg-white"]:hover {
+  background-color: #26314A !important;
+}
