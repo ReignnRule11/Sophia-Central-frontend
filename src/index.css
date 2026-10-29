@@ -253,3 +253,25 @@ html[data-theme='dark'] .app-shell [class*="border-slate-800"],
 html[data-theme='dark'] .app-shell [class*="border-slate-700"] {
   border-color: #334155 !important;
 }
+
+/* Preserve white labels on purple/indigo controls while converting legacy card text to navy. */
+.app-shell [class*="bg-violet-"] [class~="text-white"],
+.app-shell [class*="bg-indigo-"] [class~="text-white"],
+.app-shell [class*="bg-[#6121D0]"] [class~="text-white"],
+.app-shell [class*="bg-[#2C36D9]"] [class~="text-white"],
+.app-shell [class*="bg-violet-"][class~="text-white"],
+.app-shell [class*="bg-indigo-"][class~="text-white"],
+.app-shell [class*="bg-[#6121D0]"][class~="text-white"],
+.app-shell [class*="bg-[#2C36D9]"][class~="text-white"] {
+  color: #FFFFFF !important;
+}
+html[data-theme='dark'] .app-shell [class*="bg-violet-"] [class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-indigo-"] [class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-[#6121D0]"] [class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-[#2C36D9]"] [class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-violet-"][class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-indigo-"][class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-[#6121D0]"][class~="text-white"],
+html[data-theme='dark'] .app-shell [class*="bg-[#2C36D9]"][class~="text-white"] {
+  color: #FFFFFF !important;
+}
