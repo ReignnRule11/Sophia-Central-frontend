@@ -224,3 +224,23 @@ html[data-theme='dark'] .app-shell [class~="hover:bg-[#F3F6FC]"]:hover,
 html[data-theme='dark'] .app-shell [class~="hover:bg-white"]:hover {
   background-color: #26314A !important;
 }
+
+
+/* Catch legacy opacity-suffixed slate utilities too, so every app-shell section stays light-first and readable. */
+.app-shell [class*="bg-slate-950"],
+.app-shell [class*="bg-slate-900"] {
+  background-color: #FFFFFF !important;
+}
+.app-shell [class*="border-slate-800"],
+.app-shell [class*="border-slate-700"] {
+  border-color: #E5E7EB !important;
+}
+.app-shell [class*="bg-violet-600"] {
+  background-color: #6121D0 !important;
+}
+.app-shell [class*="hover:bg-violet-500"]:hover {
+  background-color: #2C36D9 !important;
+}
+.app-shell [class*="hover:border-violet-"]:hover {
+  border-color: #6121D0 !important;
+}
