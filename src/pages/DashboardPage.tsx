@@ -34,7 +34,8 @@ export function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const firstName = user?.firstName?.trim() || user?.name?.trim().split(/\\s+/)[0] || 'there';
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const firstName = user?.firstName?.trim() || user?.name?.trim().split(/\s+/)[0] || 'there';
 
   useEffect(() => {
     let active = true;
@@ -51,12 +52,12 @@ export function DashboardPage() {
         if (active) { setLoading(false); setRefreshing(false); }
       }
     };
-    void fetchResources();
+    void fetchResources(refreshVersion > 0);
     const interval = window.setInterval(() => { void fetchResources(true); }, 60_000);
     const onFocus = () => { void fetchResources(true); };
     window.addEventListener('focus', onFocus);
     return () => { active = false; window.clearInterval(interval); window.removeEventListener('focus', onFocus); };
-  }, []);
+  }, [refreshVersion]);
 
   const relatedResources = useMemo(() => {
     if (!user?.institution || !user?.faculty || !user?.department) return [];
@@ -94,7 +95,7 @@ export function DashboardPage() {
       </div>
     </section>
 
-    {error && <div role="status" className="rounded-2xl border border-[#E6B800]/30 bg-[#FFF8D9] px-4 py-3 text-sm text-[#6B5200]">{error}<button type="button" onClick={() => window.dispatchEvent(new Event('focus'))} className="ml-2 font-semibold underline">Retry</button></div>}
+    {error && <div role="status" className="rounded-2xl border border-[#E6B800]/30 bg-[#FFF8D9] px-4 py-3 text-sm text-[#6B5200]">{error}<button type="button" onClick={() => setRefreshVersion((value) => value + 1)} className="ml-2 font-semibold underline">Retry</button></div>}
 
     <section aria-label="Student account" className="grid gap-4 sm:grid-cols-2">
       <Link to="/profile" className="group flex items-start gap-4 rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm transition hover:border-[#6121D0] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#6121D0]">
@@ -119,7 +120,7 @@ export function DashboardPage() {
     <section aria-label="Latest resources for your academic community" className="rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Your academic community</p><h2 className="mt-1 text-xl font-bold text-[#091F5B]">Latest resources</h2><p className="mt-1 text-sm text-[#5C6982]">{[user?.institution, user?.faculty, user?.department].filter(Boolean).join(' · ') || 'Set your academic profile to see relevant resources.'}</p></div>
-        <div className="flex items-center gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECFDF3] px-2.5 py-1 text-xs font-semibold text-[#166534]"><span className="h-2 w-2 animate-pulse rounded-full bg-[#16A34A]" /> Live</span><button type="button" onClick={() => window.dispatchEvent(new Event('focus'))} disabled={refreshing} aria-label="Refresh latest resources" title="Refresh latest resources" className="rounded-lg border border-[#DCE4EF] p-2 text-[#6121D0] hover:bg-[#F3F0FF] disabled:opacity-50"><RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} /></button></div>
+        <div className="flex items-center gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECFDF3] px-2.5 py-1 text-xs font-semibold text-[#166534]"><span className="h-2 w-2 animate-pulse rounded-full bg-[#16A34A]" /> Live</span><button type="button" onClick={() => setRefreshVersion((value) => value + 1)} disabled={refreshing} aria-label="Refresh latest resources" title="Refresh latest resources" className="rounded-lg border border-[#DCE4EF] p-2 text-[#6121D0] hover:bg-[#F3F0FF] disabled:opacity-50"><RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} /></button></div>
       </div>
       {loading ? <p className="rounded-xl bg-[#F8FAFD] p-5 text-sm text-[#5C6982]">Loading approved resources for your department…</p>
         : !user?.institution || !user?.faculty || !user?.department ? <div className="rounded-xl border border-dashed border-[#DCE4EF] bg-[#F8FAFD] p-5 text-sm text-[#4B5563]">Your school, faculty and department need to be set on your account before we can personalize this feed. <Link to="/profile" className="font-semibold text-[#6121D0] underline">Update academic profile</Link>.</div>
