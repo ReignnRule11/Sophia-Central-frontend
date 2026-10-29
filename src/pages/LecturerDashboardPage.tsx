@@ -16,7 +16,9 @@ export function LecturerDashboardPage() {
     queryKey: ['resources', 'mine', user?.id],
     queryFn: () => resourcesApi.mine(),
     enabled: Boolean(user?.id),
-    staleTime: 30_000,
+    staleTime: 15_000,
+    refetchInterval: 15_000,
+    refetchOnWindowFocus: true,
   });
 
   const ownResources = useMemo(
