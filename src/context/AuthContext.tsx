@@ -38,12 +38,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     const bootstrap = async () => {
-      // Do not serialize two network calls before the app can leave its session-loading state.
-      const [csrfResult, sessionResult] = await Promise.allSettled([initializeCsrf(), refreshSession()]);
-      if (!active) return;
-      if (csrfResult.status === 'rejected') setCsrfToken(null);
-      if (sessionResult.status === 'rejected') clearSession();
-      setIsLoading(false);
+      // CSRF refresh is non-blocking on page load; session state is the only gate for protected routes.
+      void initializeCsrf().catch(() => setCsrfToken(null));
+      try {
+        await refreshSession();
+      } catch {
+        clearSession();
+      } finally {
+        if (active) setIsLoading(false);
+      }
     };
     void bootstrap();
     return () => { active = false; };
@@ -53,13 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await initializeCsrf();
     const response = await authApi.login({ email, password });
     setUser(response.user);
-    try {
-      const refreshed = await authApi.csrf();
-      setCsrfToken(refreshed.csrfToken);
-    } catch {
-      // A successful login should not be reported as failed solely because CSRF refresh lagged.
-      setCsrfToken(null);
-    }
+    void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
   }, [initializeCsrf]);
 
   const register = useCallback(async (payload: RegisterPayload) => {
@@ -82,12 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } : undefined,
     });
     setUser(response.user);
-    try {
-      const refreshed = await authApi.csrf();
-      setCsrfToken(refreshed.csrfToken);
-    } catch {
-      setCsrfToken(null);
-    }
+    void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
   }, [initializeCsrf]);
 
   const completeOnboarding = useCallback(async (payload: OnboardingPayload) => {
