@@ -34,7 +34,7 @@ export function WalletPage() {
       ]);
       setBalance(typeof balanceResult === 'number' ? balanceResult : Number(balanceResult));
       setCode(referralResult.code || '');
-      setShareLink(referralResult.link?.startsWith('http') ? referralResult.link : `${window.location.origin}/login?ref=${encodeURIComponent(referralResult.code || '')}`);
+      setShareLink(`${window.location.origin}/onboarding?ref=${encodeURIComponent(referralResult.code || '')}`);
       setStats(statsResult);
       setTransactions(Array.isArray(transactionResult) ? transactionResult : []);
     } catch (cause) {
