@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { profileImageApi } from '../api/upload';
+import { AdminProfilePage } from './AdminProfilePage';
 
 export function ProfileSettingsPage() {
   const { user, completeOnboarding, refreshSession } = useAuth();
@@ -26,6 +27,7 @@ export function ProfileSettingsPage() {
   }, [user]);
 
   if (!user) return null;
+  if (user.role === 'moderator' || user.role === 'admin') return <AdminProfilePage />;
   const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
   const uploadPhoto = async (file?: File) => {
     if (!file) return;
