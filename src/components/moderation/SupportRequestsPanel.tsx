@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CheckCircle2, Clock3, ExternalLink, FileImage, RefreshCw, Send, ShieldCheck } from 'lucide-react';
-import { supportApi, type SupportRequest, type SupportRequestStatus } from '../api/support';
+import { supportApi, type SupportRequest, type SupportRequestStatus } from '../../api/support';
 
 export function SupportRequestsPanel() {
   const [status, setStatus] = useState<SupportRequestStatus>('pending');
