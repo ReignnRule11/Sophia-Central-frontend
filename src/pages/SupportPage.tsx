@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { AlertCircle, CheckCircle2, FileImage, Link2, LifeBuoy, Loader2, Paperclip, Send, ExternalLink, RefreshCw } from 'lucide-react';
 import { supportApi, type SupportRequest } from '../api/support';
 import { supportAttachmentApi } from '../api/upload';
@@ -62,7 +62,7 @@ export function SupportPage() {
     } finally { setUploading(false); }
   };
 
-  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(''); setConfirmation('');
     const links = linkText.split('\n').map(value => value.trim()).filter(Boolean);
