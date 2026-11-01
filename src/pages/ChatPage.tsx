@@ -96,7 +96,7 @@ export function ChatPage() {
         setError(e instanceof Error ? e.message : 'Could not load older messages.');
       }
     } finally {
-      if (requestSequence === requestSequenceRef.current && conversationKey === activeConversationRef.current) setLoadingOlder(false);
+      if (conversationKey === activeConversationRef.current) setLoadingOlder(false);
     }
   };
 
