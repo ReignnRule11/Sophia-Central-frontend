@@ -1,10 +1,17 @@
 import { apiRequest } from './client';
+import { appConfig } from '../config/env';
 
 export type ChatContact = { id: string; academicHandle: string; role: 'student' | 'lecturer'; institution?: string; faculty?: string; department?: string };
 export type ChatMessage = { id: string; kind: 'group' | 'direct'; senderId: string; senderHandle: string; contentType: 'text' | 'voice'; text: string | null; voiceUrl: string | null; isDeleted: boolean; editedAt: string | null; createdAt: string; isOwn: boolean };
 export type ChatPage = { items: ChatMessage[]; hasMore: boolean; nextBefore: string | null };
 
 export const chatApi = {
+  subscribe: (onRefresh: () => void) => {
+    const baseUrl = appConfig.apiBaseUrl.replace(/\\/$/, '');
+    const source = new EventSource(`${baseUrl}/chat/events`, { withCredentials: true });
+    source.onmessage = () => onRefresh();
+    return () => source.close();
+  },
   contacts: () => apiRequest<ChatContact[]>('/chat/contacts'),
   groupHistory: (limit = 40, before?: string) => apiRequest<ChatPage>(`/chat/group/messages?limit=${limit}${before ? `&before=${encodeURIComponent(before)}` : ''}`),
   directHistory: (userId: string, limit = 40, before?: string) => apiRequest<ChatPage>(`/chat/direct/${encodeURIComponent(userId)}/messages?limit=${limit}${before ? `&before=${encodeURIComponent(before)}` : ''}`),
