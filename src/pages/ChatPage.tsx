@@ -7,7 +7,7 @@ const EMOJI = ['😀', '😂', '🥹', '😊', '😍', '👍', '👏', '🙏', '
 
 export function ChatPage() {
   const { user } = useAuth();
-  const [mode, setMode] = useState<Mode>('group');
+  const [mode, setMode] = useState<Mode>(user?.role === 'student' ? 'group' : 'direct');
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [recipient, setRecipient] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
