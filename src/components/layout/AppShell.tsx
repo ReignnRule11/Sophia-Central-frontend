@@ -37,7 +37,6 @@ const lecturerNav = [
   { label: 'Dashboard', href: '/lecturer', icon: LayoutGrid },
   { label: 'Resource library', href: '/library', icon: BookOpen },
   { label: 'Submit resource', href: '/upload', icon: Upload },
-  { label: 'Analytics', href: '/lecturer/analytics', icon: ChartNoAxesCombined },
 ];
 
 const moderatorNav = [
@@ -107,6 +106,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
         ...(user?.role === 'student' || user?.role === 'lecturer' ? [{ label: 'Contact support', href: '/support', icon: LifeBuoy }] : []),
         { label: 'Profile', href: '/profile', icon: UserCircle },
         { label: 'Settings', href: '/settings', icon: Settings },
+        ...(user?.role === 'lecturer' ? [{ label: 'Analytics', href: '/lecturer/analytics', icon: ChartNoAxesCombined }] : []),
       ].map(({ label, href, icon: Icon }) => (
         <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `sidebar-nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'is-active bg-[#F3F0FF] text-[#6121D0] ring-1 ring-[#6121D0]/20' : 'text-[#1F2937] hover:bg-[#F3F0FF] hover:text-[#6121D0]'}`}>
           <Icon size={17} />
