@@ -105,7 +105,11 @@ export function ChatPage() {
     if (location.pathname === '/chat/group' && user?.role === 'student') setMode('group');
     else if (location.pathname === '/messages') setMode('direct');
   }, [location.pathname, user?.role]);
-  useEffect(() => { setMessages([]); setHasMore(false); setNextBefore(null); void loadMessages(); }, [loadMessages]);
+  useEffect(() => {
+    setMessages([]); setHasMore(false); setNextBefore(null); setLoadingOlder(false);
+    preserveScrollRef.current = null;
+    void loadMessages();
+  }, [loadMessages]);
   useEffect(() => {
     const timer = window.setInterval(() => { void loadMessages(true); }, 10000);
     return () => window.clearInterval(timer);
