@@ -110,8 +110,9 @@ export function ChatPage() {
     preserveScrollRef.current = null;
     void loadMessages();
   }, [loadMessages]);
+  useEffect(() => chatApi.subscribe(() => { void loadMessages(true); }), [loadMessages]);
   useEffect(() => {
-    const timer = window.setInterval(() => { void loadMessages(true); }, 10000);
+    const timer = window.setInterval(() => { void loadMessages(true); }, 30000);
     return () => window.clearInterval(timer);
   }, [loadMessages]);
   useEffect(() => {
