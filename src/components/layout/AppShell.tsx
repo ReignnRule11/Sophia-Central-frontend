@@ -5,7 +5,6 @@ import {
   Bookmark,
   BrainCircuit,
   LayoutGrid,
-  LogOut,
   Search,
   ShieldCheck,
   Upload,
@@ -31,14 +30,12 @@ const studentNav = [
   { label: 'Saved resources', href: '/saved', icon: Bookmark },
   { label: 'AI Tutor', href: '/ai', icon: BrainCircuit },
   { label: 'Wallet', href: '/wallet', icon: WalletCards },
-  { label: 'Contact support', href: '/support', icon: LifeBuoy },
 ];
 
 const lecturerNav = [
   { label: 'Dashboard', href: '/lecturer', icon: LayoutGrid },
   { label: 'Resource library', href: '/library', icon: BookOpen },
   { label: 'Submit resource', href: '/upload', icon: Upload },
-  { label: 'Contact support', href: '/support', icon: LifeBuoy },
 ];
 
 const moderatorNav = [
@@ -57,7 +54,7 @@ const adminNav = [
 ];
 
 export function AppShell({ children, title }: { children: React.ReactNode; title: string }) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -105,6 +102,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
       {[
         { label: 'Profile', href: '/profile', icon: UserCircle },
         { label: 'Settings', href: '/settings', icon: Settings },
+        ...(user?.role === 'student' || user?.role === 'lecturer' ? [{ label: 'Contact support', href: '/support', icon: LifeBuoy }] : []),
       ].map(({ label, href, icon: Icon }) => (
         <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `sidebar-nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'is-active bg-[#F3F0FF] text-[#6121D0] ring-1 ring-[#6121D0]/20' : 'text-[#1F2937] hover:bg-[#F3F0FF] hover:text-[#6121D0]'}`}>
           <Icon size={17} />
