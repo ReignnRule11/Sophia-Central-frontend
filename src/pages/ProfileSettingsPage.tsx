@@ -99,7 +99,7 @@ export function ProfileSettingsPage() {
     setDeletingAccount(true); setError('');
     try {
       await apiRequest('/users/me', { method: 'DELETE' });
-      await logout();
+      await logout().catch(() => undefined);
       navigate('/', { replace: true });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to delete your account. Please try again.');
