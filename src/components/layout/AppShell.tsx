@@ -5,7 +5,6 @@ import {
   Bookmark,
   BrainCircuit,
   LayoutGrid,
-  Search,
   ShieldCheck,
   Upload,
   Users,
