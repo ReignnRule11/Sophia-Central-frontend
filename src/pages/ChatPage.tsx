@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { chatApi, type ChatContact, type ChatMessage } from '../api/chat';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -28,7 +28,6 @@ export function ChatPage() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const preserveScrollRef = useRef<{ height: number; top: number } | null>(null);
-  const selectedContact = useMemo(() => contacts.find(contact => contact.id === recipient), [contacts, recipient]);
 
   const loadContacts = useCallback(async () => {
     try {
