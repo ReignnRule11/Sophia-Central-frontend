@@ -7,7 +7,7 @@ export type ChatPage = { items: ChatMessage[]; hasMore: boolean; nextBefore: str
 
 export const chatApi = {
   subscribe: (onRefresh: () => void) => {
-    const baseUrl = appConfig.apiBaseUrl.replace(/\\/$/, '');
+    const baseUrl = appConfig.apiBaseUrl.endsWith('/') ? appConfig.apiBaseUrl.slice(0, -1) : appConfig.apiBaseUrl;
     const source = new EventSource(`${baseUrl}/chat/events`, { withCredentials: true });
     source.onmessage = () => onRefresh();
     return () => source.close();
