@@ -13,6 +13,9 @@ export function ChatPage() {
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [recipient, setRecipient] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [nextBefore, setNextBefore] = useState<string | null>(null);
+  const [loadingOlder, setLoadingOlder] = useState(false);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -24,6 +27,7 @@ export function ChatPage() {
   const listRef = useRef<HTMLDivElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const preserveScrollRef = useRef<{ height: number; top: number } | null>(null);
   const selectedContact = useMemo(() => contacts.find(contact => contact.id === recipient), [contacts, recipient]);
 
   const loadContacts = useCallback(async () => {
@@ -40,18 +44,51 @@ export function ChatPage() {
         ? await chatApi.groupHistory()
         : recipient ? await chatApi.directHistory(recipient) : { items: [], hasMore: false, nextBefore: null };
       setMessages(result.items ?? []);
+      setHasMore(result.hasMore ?? false);
+      setNextBefore(result.nextBefore ?? null);
       setError('');
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not load messages.'); }
     finally { setLoading(false); }
   }, [mode, recipient]);
 
+  const loadOlder = async () => {
+    if (!hasMore || !nextBefore || loadingOlder || !listRef.current) return;
+    const container = listRef.current;
+    preserveScrollRef.current = { height: container.scrollHeight, top: container.scrollTop };
+    setLoadingOlder(true);
+    try {
+      const result = mode === 'group'
+        ? await chatApi.groupHistory(40, nextBefore)
+        : await chatApi.directHistory(recipient, 40, nextBefore);
+      setMessages(current => {
+        const known = new Set(current.map(message => message.id));
+        return [...(result.items ?? []).filter(message => !known.has(message.id)), ...current];
+      });
+      setHasMore(result.hasMore ?? false);
+      setNextBefore(result.nextBefore ?? null);
+    } catch (e) {
+      preserveScrollRef.current = null;
+      setError(e instanceof Error ? e.message : 'Could not load older messages.');
+    } finally { setLoadingOlder(false); }
+  };
+
   useEffect(() => { void loadContacts(); }, [loadContacts]);
-  useEffect(() => { void loadMessages(); }, [loadMessages]);
+  useEffect(() => { setMessages([]); setHasMore(false); setNextBefore(null); void loadMessages(); }, [loadMessages]);
   useEffect(() => {
     const timer = window.setInterval(() => { void loadMessages(true); }, 10000);
     return () => window.clearInterval(timer);
   }, [loadMessages]);
-  useEffect(() => { listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' }); }, [messages]);
+  useEffect(() => {
+    const container = listRef.current;
+    if (!container) return;
+    if (preserveScrollRef.current) {
+      const previous = preserveScrollRef.current;
+      container.scrollTop = previous.top + (container.scrollHeight - previous.height);
+      preserveScrollRef.current = null;
+    } else {
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const send = async () => {
     const value = text.trim();
@@ -132,6 +169,7 @@ export function ChatPage() {
     {mode === 'direct' && <div className="border-b border-[#E5E7EB] px-4 py-3"><label className="mb-1 block text-xs font-semibold text-slate-600" htmlFor="chat-contact">Message a student or lecturer</label><select id="chat-contact" value={recipient} onChange={event => setRecipient(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"><option value="">Choose a contact</option>{contacts.map(contact => <option key={contact.id} value={contact.id}>@{contact.academicHandle} · {contact.role}</option>)}</select></div>}
     {error && <div role="alert" className="mx-4 mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>}
     <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto bg-slate-50/60 p-4">
+      {hasMore && !loading && <div className="text-center"><button type="button" onClick={() => void loadOlder()} disabled={loadingOlder} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-violet-700 disabled:opacity-50">{loadingOlder ? 'Loading older messages…' : 'Load older messages'}</button></div>}
       {loading ? <p className="py-10 text-center text-sm text-slate-500">Loading messages…</p>
         : mode === 'direct' && !recipient ? <p className="py-10 text-center text-sm text-slate-500">Choose a contact to start a conversation.</p>
         : messages.length === 0 ? <p className="py-10 text-center text-sm text-slate-500">No messages yet. Start the conversation.</p>
