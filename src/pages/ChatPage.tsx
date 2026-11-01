@@ -29,6 +29,7 @@ export function ChatPage() {
   const streamRef = useRef<MediaStream | null>(null);
   const preserveScrollRef = useRef<{ height: number; top: number } | null>(null);
   const shouldAutoScrollRef = useRef(true);
+  const requestSequenceRef = useRef(0);
 
   const loadContacts = useCallback(async () => {
     try {
@@ -38,11 +39,13 @@ export function ChatPage() {
   }, []);
 
   const loadMessages = useCallback(async (quiet = false) => {
+    const requestSequence = ++requestSequenceRef.current;
     if (!quiet) setLoading(true);
     try {
       const result = mode === 'group'
         ? await chatApi.groupHistory()
         : recipient ? await chatApi.directHistory(recipient) : { items: [], hasMore: false, nextBefore: null };
+      if (requestSequence !== requestSequenceRef.current) return;
       if (quiet) {
         const container = listRef.current;
         shouldAutoScrollRef.current = !!container && container.scrollHeight - container.scrollTop - container.clientHeight < 100;
@@ -57,8 +60,11 @@ export function ChatPage() {
         setNextBefore(result.nextBefore ?? null);
       }
       setError('');
-    } catch (e) { setError(e instanceof Error ? e.message : 'Could not load messages.'); }
-    finally { setLoading(false); }
+    } catch (e) {
+      if (requestSequence === requestSequenceRef.current) setError(e instanceof Error ? e.message : 'Could not load messages.');
+    } finally {
+      if (requestSequence === requestSequenceRef.current) setLoading(false);
+    }
   }, [mode, recipient]);
 
   const loadOlder = async () => {
@@ -83,6 +89,10 @@ export function ChatPage() {
   };
 
   useEffect(() => { void loadContacts(); }, [loadContacts]);
+  useEffect(() => {
+    if (location.pathname === '/chat/group' && user?.role === 'student') setMode('group');
+    else if (location.pathname === '/messages') setMode('direct');
+  }, [location.pathname, user?.role]);
   useEffect(() => { setMessages([]); setHasMore(false); setNextBefore(null); void loadMessages(); }, [loadMessages]);
   useEffect(() => {
     const timer = window.setInterval(() => { void loadMessages(true); }, 10000);
