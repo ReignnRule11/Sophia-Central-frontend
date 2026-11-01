@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { chatApi, type ChatContact, type ChatMessage } from '../api/chat';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 type Mode = 'group' | 'direct';
@@ -7,7 +8,8 @@ const EMOJI = ['😀', '😂', '🥹', '😊', '😍', '👍', '👏', '🙏', '
 
 export function ChatPage() {
   const { user } = useAuth();
-  const [mode, setMode] = useState<Mode>(user?.role === 'student' ? 'group' : 'direct');
+  const location = useLocation();
+  const [mode, setMode] = useState<Mode>(location.pathname === '/chat/group' && user?.role === 'student' ? 'group' : 'direct');
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [recipient, setRecipient] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
