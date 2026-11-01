@@ -30,6 +30,8 @@ export function ChatPage() {
   const preserveScrollRef = useRef<{ height: number; top: number } | null>(null);
   const shouldAutoScrollRef = useRef(true);
   const requestSequenceRef = useRef(0);
+  const activeConversationRef = useRef(`${mode}:${recipient}`);
+  activeConversationRef.current = `${mode}:${recipient}`;
 
   const loadContacts = useCallback(async () => {
     try {
@@ -70,12 +72,18 @@ export function ChatPage() {
   const loadOlder = async () => {
     if (!hasMore || !nextBefore || loadingOlder || !listRef.current) return;
     const container = listRef.current;
+    const requestSequence = requestSequenceRef.current;
+    const conversationKey = `${mode}:${recipient}`;
     preserveScrollRef.current = { height: container.scrollHeight, top: container.scrollTop };
     setLoadingOlder(true);
     try {
       const result = mode === 'group'
         ? await chatApi.groupHistory(40, nextBefore)
         : await chatApi.directHistory(recipient, 40, nextBefore);
+      if (requestSequence !== requestSequenceRef.current || conversationKey !== activeConversationRef.current) {
+        preserveScrollRef.current = null;
+        return;
+      }
       setMessages(current => {
         const known = new Set(current.map(message => message.id));
         return [...(result.items ?? []).filter(message => !known.has(message.id)), ...current];
@@ -83,9 +91,13 @@ export function ChatPage() {
       setHasMore(result.hasMore ?? false);
       setNextBefore(result.nextBefore ?? null);
     } catch (e) {
-      preserveScrollRef.current = null;
-      setError(e instanceof Error ? e.message : 'Could not load older messages.');
-    } finally { setLoadingOlder(false); }
+      if (requestSequence === requestSequenceRef.current && conversationKey === activeConversationRef.current) {
+        preserveScrollRef.current = null;
+        setError(e instanceof Error ? e.message : 'Could not load older messages.');
+      }
+    } finally {
+      if (requestSequence === requestSequenceRef.current && conversationKey === activeConversationRef.current) setLoadingOlder(false);
+    }
   };
 
   useEffect(() => { void loadContacts(); }, [loadContacts]);
