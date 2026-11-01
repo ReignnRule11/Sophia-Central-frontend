@@ -37,6 +37,7 @@ export function SupportRequestsPanel() {
     try {
       await supportApi.conclude(item.id, message);
       setItems(current => current.filter(request => request.id !== item.id));
+      if (item.status === 'pending') setPendingCount(current => Math.max(0, current - 1));
       setResolution(current => { const next = { ...current }; delete next[item.id]; return next; });
       setNotice('Support request concluded. A resolution notification has been sent to the user.');
     } catch (cause) {
