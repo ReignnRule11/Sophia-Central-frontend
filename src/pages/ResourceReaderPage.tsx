@@ -51,17 +51,8 @@ export function ResourceReaderPage() {
     try {
       const result = await resourcesApi.fileUrl(id, download);
       if (download) {
-        const response = await fetch(result.url, { credentials: 'omit' });
-        if (!response.ok) throw new Error('Unable to download this resource.');
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = objectUrl;
-        anchor.download = resource.title || 'academic-resource';
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        URL.revokeObjectURL(objectUrl);
+        // The authenticated app endpoint returns a short-lived attachment URL; the browser handles the download.
+        window.location.assign(result.url);
       } else {
         setViewerUrl(result.url);
       }
