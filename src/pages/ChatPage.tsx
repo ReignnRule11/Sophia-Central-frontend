@@ -43,9 +43,17 @@ export function ChatPage() {
       const result = mode === 'group'
         ? await chatApi.groupHistory()
         : recipient ? await chatApi.directHistory(recipient) : { items: [], hasMore: false, nextBefore: null };
-      setMessages(result.items ?? []);
-      setHasMore(result.hasMore ?? false);
-      setNextBefore(result.nextBefore ?? null);
+      if (quiet) {
+        setMessages(current => {
+          const merged = new Map(current.map(message => [message.id, message]));
+          for (const message of result.items ?? []) merged.set(message.id, message);
+          return [...merged.values()].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        });
+      } else {
+        setMessages(result.items ?? []);
+        setHasMore(result.hasMore ?? false);
+        setNextBefore(result.nextBefore ?? null);
+      }
       setError('');
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not load messages.'); }
     finally { setLoading(false); }
