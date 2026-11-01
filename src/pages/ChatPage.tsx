@@ -28,6 +28,7 @@ export function ChatPage() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const preserveScrollRef = useRef<{ height: number; top: number } | null>(null);
+  const shouldAutoScrollRef = useRef(true);
 
   const loadContacts = useCallback(async () => {
     try {
@@ -43,6 +44,8 @@ export function ChatPage() {
         ? await chatApi.groupHistory()
         : recipient ? await chatApi.directHistory(recipient) : { items: [], hasMore: false, nextBefore: null };
       if (quiet) {
+        const container = listRef.current;
+        shouldAutoScrollRef.current = !!container && container.scrollHeight - container.scrollTop - container.clientHeight < 100;
         setMessages(current => {
           const merged = new Map(current.map(message => [message.id, message]));
           for (const message of result.items ?? []) merged.set(message.id, message);
@@ -92,8 +95,9 @@ export function ChatPage() {
       const previous = preserveScrollRef.current;
       container.scrollTop = previous.top + (container.scrollHeight - previous.height);
       preserveScrollRef.current = null;
-    } else {
+    } else if (shouldAutoScrollRef.current) {
       container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+      shouldAutoScrollRef.current = false;
     }
   }, [messages]);
 
@@ -103,6 +107,7 @@ export function ChatPage() {
     setSending(true); setError('');
     try {
       const message = await chatApi.sendText(mode, value, mode === 'direct' ? recipient : undefined);
+      shouldAutoScrollRef.current = true;
       setMessages(current => [...current, message]); setText(''); setShowEmoji(false);
     } catch (e) { setError(e instanceof Error ? e.message : 'Message could not be sent.'); }
     finally { setSending(false); }
@@ -143,6 +148,7 @@ export function ChatPage() {
           const response = await fetch(upload.uploadUrl, { method: 'PUT', headers: { 'Content-Type': upload.contentType }, body: blob });
           if (!response.ok) throw new Error('Voice upload failed. Please try again.');
           const message = await chatApi.sendVoice(mode, upload.key, mode === 'direct' ? recipient : undefined);
+          shouldAutoScrollRef.current = true;
           setMessages(current => [...current, message]);
         } catch (e) { setError(e instanceof Error ? e.message : 'Voice message could not be sent.'); }
         finally { setSending(false); }
