@@ -41,7 +41,7 @@ export function ChatPage() {
   }, []);
 
   const loadMessages = useCallback(async (quiet = false) => {
-    const requestSequence = ++requestSequenceRef.current;
+    const requestSequence = quiet ? requestSequenceRef.current : ++requestSequenceRef.current;
     if (!quiet) setLoading(true);
     try {
       const result = mode === 'group'
