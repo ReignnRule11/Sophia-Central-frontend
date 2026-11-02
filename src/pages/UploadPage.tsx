@@ -10,7 +10,7 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024;
 const MIME_BY_EXTENSION: Record<string, string> = {
   pdf: 'application/pdf', doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', ppt: 'application/vnd.ms-powerpoint', pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', txt: 'text/plain', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
 };
-const ACCEPTED_TYPES = Object.keys(MIME_BY_EXTENSION).map((extension) => '.' + extension).join(',');
+const ACCEPTED_TYPES = [...Object.keys(MIME_BY_EXTENSION).map((extension) => '.' + extension), ...new Set(Object.values(MIME_BY_EXTENSION))].join(',');
 
 function fileMimeType(file: File): string | null {
   const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
