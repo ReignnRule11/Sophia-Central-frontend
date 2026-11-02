@@ -7,9 +7,9 @@ let csrfRefresh: Promise<string> | null = null;
 export function setCsrfToken(token: string | null) { csrfToken = token; }
 
 function buildUrl(endpoint: string) {
-  const baseUrl = appConfig.apiBaseUrl.replace(/\/$/, '');
-  const normalized = endpoint.startsWith('/') ? endpoint : \`/\${endpoint}\`;
-  return \`\${baseUrl}\${normalized}\`;
+  const baseUrl = appConfig.apiBaseUrl.endsWith('/') ? appConfig.apiBaseUrl.slice(0, -1) : appConfig.apiBaseUrl;
+  const normalized = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+  return baseUrl + normalized;
 }
 
 async function refreshCsrfToken(): Promise<string> {
@@ -77,7 +77,7 @@ export async function apiRequest<T>(endpoint: string, options: ApiRequestOptions
   }
 
   if (!response.ok) {
-    let message = \`Request failed with status \${response.status}\`;
+    let message = 'Request failed with status ' + response.status;
     try {
       const payload = await response.json();
       message = payload?.message ?? payload?.error ?? message;
