@@ -5,7 +5,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resourcesApi } from '../api/resources';
 import { apiRequest } from '../lib/api/client';
 import { useAuth } from '../context/AuthContext';
-import { getSavedResourceIds } from '../lib/savedResources';
+
 import { LoadingState } from '../components/states/LoadingState';
 import { ErrorState } from '../components/states/ErrorState';
 import { EmptyState } from '../components/states/EmptyState';
@@ -73,7 +73,6 @@ export function LibraryPage() {
   const filteredResources = useMemo(() => {
     if (!data) return [];
     const normalized = activeQuery.trim().toLowerCase();
-    const saved = new Set(user ? getSavedResourceIds(user.id) : []);
     return data.filter((resource) => {
       const status = String(resource.moderationStatus || (resource.isVerified ? 'approved' : 'pending')).toLowerCase();
       // Defensive UI guard; the backend also enforces approved-only library access.
@@ -95,7 +94,6 @@ export function LibraryPage() {
         if (researchType && !String(resource.type ?? '').toLowerCase().includes(researchType.trim().toLowerCase())) return false;
         if (researchDate && resource.createdAt && new Date(resource.createdAt).toISOString().slice(0, 10) !== researchDate) return false;
       }
-      void saved;
       return true;
     });
   }, [data, materialFilter, activeQuery, course, topic, researchType, researchDate, institution, faculty, department, user, searchParams]);
