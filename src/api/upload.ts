@@ -2,8 +2,6 @@ import { apiRequest } from './client';
 
 type PresignedUpload = { presignedUrl: string; key: string; uploadId: string; publicUrl: string };
 
-type ProfileImagePresign = { presignedUrl: string; key: string; publicUrl: string };
-
 export const profileImageApi = {
   getUrl: () => apiRequest<{ url: string | null }>('/upload/profile-image/url', { method: 'GET' }),
   async upload(file: File) {
@@ -13,7 +11,7 @@ export const profileImageApi = {
       '/upload/profile-image',
       { method: 'POST', body },
     );
-  }
+  },
 };
 
 export const uploadApi = {
