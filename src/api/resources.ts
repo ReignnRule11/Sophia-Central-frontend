@@ -35,7 +35,7 @@ export const resourcesApi = {
 
   fileUrl: async (id: string, download = false, token?: string | null) => {
     const endpoint = download ? 'download-url' : 'file-url';
-    return apiRequest<{ url: string }>(`/resources/${encodeURIComponent(id)}/${endpoint}`, { method: 'GET' }, token ?? null);
+    return apiRequest<{ url: string; filename: string; contentType?: string }>(`/resources/${encodeURIComponent(id)}/${endpoint}`, { method: 'GET' }, token ?? null);
   },
 
   byId: async (id: string, token?: string | null) => {
