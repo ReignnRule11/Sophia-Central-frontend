@@ -41,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshSession = useCallback(async () => {
     const response = await authApi.me();
     setUser(await hydrateUser(response.user));
+    try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
   }, [hydrateUser]);
 
   useEffect(() => {
