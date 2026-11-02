@@ -13,7 +13,7 @@ export function SavedResourcesPage() {
     queryKey: ['saved-resources', user?.id],
     queryFn: () => resourcesApi.saved(),
     enabled: Boolean(user),
-    staleTime: 60000,
+    staleTime: 0,
   });
 
   if (isLoading) return <LoadingState message="Loading saved resources..." />;
