@@ -12,7 +12,7 @@ const academicHandleError = (value: string) => {
   const handle = normalizeAcademicHandle(value);
   if (handle.length < 3) return 'Username must be at least 3 characters.';
   if (handle.length > 30) return 'Username must be 30 characters or fewer.';
-  if (!/^[a-z0-9._]+$/.test(handle)) return 'Use only lowercase letters, numbers, periods, and underscores.';
+  if (!/^[a-z0-9](?:[a-z0-9._]*[a-z0-9])$/.test(handle)) return 'Start and end with a letter or number; use only lowercase letters, numbers, periods, and underscores.';
   return '';
 };
 
