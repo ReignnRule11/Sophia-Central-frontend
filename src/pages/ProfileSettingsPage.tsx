@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Camera, Save, Trash2, LogOut } from 'lucide-react';
+import { Camera, Save, LogOut } from 'lucide-react';
 import { useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { profileImageApi } from '../api/upload';
@@ -28,8 +28,6 @@ export function ProfileSettingsPage() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [savingField, setSavingField] = useState<keyof typeof form | null>(null);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deletingAccount, setDeletingAccount] = useState(false);
   const [confirmSignOut, setConfirmSignOut] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
@@ -43,7 +41,7 @@ export function ProfileSettingsPage() {
       studyLevel: user.studyLevel ?? '',
       coursesTaught: (user.coursesTaught ?? []).join(', '),
       bio: user.bio ?? '',
-      handle: user.academicHandle ?? '';
+      handle: user.academicHandle ?? '',
     });
   }, [user]);
 
@@ -121,18 +119,6 @@ export function ProfileSettingsPage() {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to save this field.');
     } finally { setSavingField(null); }
-  };
-
-  const deleteAccount = async () => {
-    if (!user) return;
-    setDeletingAccount(true); setError('');
-    try {
-      await apiRequest('/users/me', { method: 'DELETE' });
-      await logout().catch(() => undefined); // Always clear local auth state; the DELETE response clears the browser cookies.
-      navigate('/', { replace: true });
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Unable to delete your account. Please try again.');
-    } finally { setDeletingAccount(false); }
   };
 
   const fieldSaveButton = (key: keyof typeof form) => <button type="button" onClick={() => void saveField(key)} disabled={savingField !== null} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#DCE4EF] bg-white px-3 py-2.5 text-sm font-semibold text-[#6121D0] transition hover:border-[#6121D0] hover:bg-[#F8F5FF] disabled:opacity-50">{savingField === key ? 'Saving…' : <><Save size={14}/> Save</>}</button>;
