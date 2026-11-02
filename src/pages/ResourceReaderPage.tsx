@@ -62,7 +62,7 @@ export function ResourceReaderPage() {
         const result = await resourcesApi.fileUrl(id, false);
         const officeFile = /\.(doc|docx|ppt|pptx)$/i.test(result.filename);
         setViewerUrl(officeFile
-          ? \`https://docs.google.com/gview?embedded=1&url=\${encodeURIComponent(result.url)}\`
+          ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(result.url)}`
           : result.url);
       }
     } catch (cause) {
