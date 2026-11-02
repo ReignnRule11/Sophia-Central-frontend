@@ -60,10 +60,9 @@ export function ResourceReaderPage() {
         setSaved(true);
       } else {
         const result = await resourcesApi.fileUrl(id, false);
-      } else {
-        const officeFile = /\\.(doc|docx|ppt|pptx)$/i.test(result.filename);
+        const officeFile = /\.(doc|docx|ppt|pptx)$/i.test(result.filename);
         setViewerUrl(officeFile
-          ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(result.url)}`
+          ? \`https://docs.google.com/gview?embedded=1&url=\${encodeURIComponent(result.url)}\`
           : result.url);
       }
     } catch (cause) {
