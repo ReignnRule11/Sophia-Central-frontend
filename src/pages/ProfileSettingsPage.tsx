@@ -46,7 +46,7 @@ export function ProfileSettingsPage() {
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setError('Your profile image must be smaller than 5 MB.');
+      setError('Your profile image must be 5 MB or less.');
       return;
     }
     setUploadingPhoto(true);
