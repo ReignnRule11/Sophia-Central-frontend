@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 type Mode = 'group' | 'direct';
 const EMOJI = ['😀', '😂', '🥹', '😊', '😍', '👍', '👏', '🙏', '❤️', '🎉', '🔥', '💯'];
+const STICKERS = [{id:'celebrate',emoji:'🎉',label:'Celebrate'},{id:'thank-you',emoji:'🙏',label:'Thank you'},{id:'well-done',emoji:'👏',label:'Well done'},{id:'studying',emoji:'📚',label:'Studying'},{id:'thinking',emoji:'🤔',label:'Thinking'},{id:'laughing',emoji:'😂',label:'Laughing'},{id:'encouragement',emoji:'💪',label:'You got this'},{id:'hello',emoji:'👋',label:'Hello'}];
 
 export function ChatPage() {
   const { user } = useAuth();
@@ -24,6 +25,7 @@ export function ChatPage() {
   const [editing, setEditing] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
+  const [showStickers, setShowStickers] = useState(false);
   const [recording, setRecording] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -160,6 +162,17 @@ export function ChatPage() {
     finally { setSending(false); }
   };
 
+  const sendSticker = async (stickerId: string) => {
+    if (sending || (mode === 'direct' && !recipient)) return;
+    setSending(true); setError('');
+    try {
+      const message = await chatApi.sendSticker(mode, stickerId, mode === 'direct' ? recipient : undefined);
+      shouldAutoScrollRef.current = true;
+      setMessages(current => [...current, message]); setShowStickers(false);
+    } catch (e) { setError(e instanceof Error ? e.message : 'Sticker could not be sent.'); }
+    finally { setSending(false); }
+  };
+
   const saveEdit = async (id: string) => {
     try {
       const updated = await chatApi.edit(id, editText);
@@ -237,6 +250,7 @@ export function ChatPage() {
           <div className="mb-1 flex items-center gap-2 text-[11px] text-slate-500"><strong className="text-slate-700">@{message.senderHandle}</strong><time>{new Date(message.createdAt).toLocaleString()}</time>{message.editedAt && <span>edited</span>}</div>
           {message.isDeleted ? <p className="text-sm italic text-slate-500">This message was deleted.</p>
             : message.contentType === 'voice' && message.voiceUrl ? <audio controls preload="none" src={message.voiceUrl} className="max-w-full" />
+            : message.contentType === 'sticker' ? <div className="flex min-w-24 flex-col items-center rounded-xl bg-white/80 px-4 py-3"><span className="text-5xl">{STICKERS.find(sticker => sticker.id === message.stickerId)?.emoji ?? '✨'}</span><span className="mt-1 text-xs font-semibold text-slate-600">{STICKERS.find(sticker => sticker.id === message.stickerId)?.label ?? 'Sticker'}</span></div>
             : editing === message.id ? <div className="space-y-2"><textarea value={editText} onChange={event => setEditText(event.target.value)} className="w-full rounded-lg border p-2 text-sm" /><div className="flex gap-2"><button onClick={() => void saveEdit(message.id)} className="text-xs font-semibold text-violet-700">Save</button><button onClick={() => setEditing(null)} className="text-xs text-slate-500">Cancel</button></div></div>
             : <p className="whitespace-pre-wrap break-words text-sm text-slate-800">{message.text}</p>}
           {message.isOwn && !message.isDeleted && <div className="mt-2 flex gap-3 text-xs"><button onClick={() => { setEditing(message.id); setEditText(message.text ?? ''); }} disabled={message.contentType !== 'text' || Date.now() - new Date(message.createdAt).getTime() > 15 * 60 * 1000} className="font-semibold text-violet-700 disabled:opacity-40">Edit</button><button onClick={() => void remove(message.id)} className="font-semibold text-rose-600">Delete</button></div>}
@@ -244,8 +258,9 @@ export function ChatPage() {
     </div>
     <div className="border-t border-[#E5E7EB] bg-white p-3">
       {showEmoji && <div className="mb-2 flex flex-wrap gap-2">{EMOJI.map(emoji => <button key={emoji} onClick={() => setText(value => value + emoji)} className="rounded-lg p-2 text-xl hover:bg-slate-100" aria-label={`Add ${emoji}`}>{emoji}</button>)}</div>}
+      {showStickers && <div className="mb-3 grid grid-cols-4 gap-2">{STICKERS.map(sticker => <button key={sticker.id} type="button" onClick={() => void sendSticker(sticker.id)} disabled={sending || (mode === 'direct' && !recipient)} className="flex flex-col items-center rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 hover:border-violet-300 hover:bg-violet-50 disabled:opacity-50"><span className="text-3xl">{sticker.emoji}</span><span className="mt-1 text-[10px] font-medium text-slate-600">{sticker.label}</span></button>)}</div>}
       <div className="flex items-end gap-2">
-        <button onClick={() => setShowEmoji(value => !value)} className="rounded-xl border border-slate-200 px-3 py-3 text-lg" aria-label="Choose emoji">😊</button>
+        <div className="flex gap-1"><button onClick={() => { setShowEmoji(value => !value); setShowStickers(false); }} className="rounded-xl border border-slate-200 px-3 py-3 text-lg" aria-label="Choose emoji">😊</button><button onClick={() => { setShowStickers(value => !value); setShowEmoji(false); }} className="rounded-xl border border-slate-200 px-3 py-3 text-lg" aria-label="Choose sticker">✨</button></div>
         <textarea value={text} onChange={event => setText(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void send(); } }} placeholder="Write a message…" rows={1} className="max-h-28 min-h-11 flex-1 resize-y rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-violet-400" />
         <button onClick={() => recording ? stopRecording() : void startRecording()} disabled={sending || (mode === 'direct' && !recipient)} className={`rounded-xl border px-3 py-3 text-sm font-semibold ${recording ? 'border-rose-300 bg-rose-50 text-rose-700' : 'border-slate-200 text-slate-700'}`} aria-label={recording ? 'Stop recording' : 'Record voice message'}>{recording ? 'Stop' : '🎙️'}</button>
         <button onClick={() => void send()} disabled={sending || !text.trim() || (mode === 'direct' && !recipient)} className="rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{sending ? '…' : 'Send'}</button>
