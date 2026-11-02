@@ -283,7 +283,7 @@ export function ChatPage() {
         : mode === 'direct' && !recipient ? <p className="py-10 text-center text-sm text-slate-500">Choose a contact to start a conversation.</p>
         : messages.length === 0 ? <p className="py-10 text-center text-sm text-slate-500">No messages yet. Start the conversation.</p>
         : messages.map(message => <article key={message.id} className={`max-w-[85%] rounded-2xl border p-3 shadow-sm ${message.isOwn ? 'ml-auto border-[#DCD6FF] bg-[#F3F0FF]' : 'mr-auto border-slate-200 bg-white'}`}>
-          <div className="mb-1 flex items-center gap-2 text-[11px] text-slate-500"><strong className="text-slate-700">@{message.senderHandle}</strong><time>{new Date(message.createdAt).toLocaleString()}</time>{message.editedAt && <span>edited</span>}</div>
+          <div className="mb-1 flex items-center gap-2 text-[11px] text-slate-500"><strong className="text-slate-700">{message.senderId ? `@${message.senderHandle}` : 'Deleted user'}</strong><time>{new Date(message.createdAt).toLocaleString()}</time>{message.editedAt && <span>edited</span>}</div>
           {message.isDeleted ? <p className="text-sm italic text-slate-500">This message was deleted.</p>
             : message.contentType === 'voice' && message.voiceUrl ? <audio controls preload="none" src={message.voiceUrl} className="max-w-full" />
             : message.contentType === 'sticker' ? <div className="flex min-w-24 flex-col items-center rounded-xl bg-white/80 px-4 py-3"><span className="text-5xl">{STICKERS.find(sticker => sticker.id === message.stickerId)?.emoji ?? '✨'}</span><span className="mt-1 text-xs font-semibold text-slate-600">{STICKERS.find(sticker => sticker.id === message.stickerId)?.label ?? 'Sticker'}</span></div>
