@@ -11,6 +11,7 @@ export function ChatPage() {
   const location = useLocation();
   const [mode, setMode] = useState<Mode>(location.pathname === '/chat/group' && user?.role === 'student' ? 'group' : 'direct');
   const [contacts, setContacts] = useState<ChatContact[]>([]);
+  const [onlineContactIds, setOnlineContactIds] = useState<Set<string>>(() => new Set());
   const [recipient, setRecipient] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [hasMore, setHasMore] = useState(false);
@@ -32,6 +33,15 @@ export function ChatPage() {
   const requestSequenceRef = useRef(0);
   const activeConversationRef = useRef(`${mode}:${recipient}`);
   activeConversationRef.current = `${mode}:${recipient}`;
+
+  const loadPresence = useCallback(async () => {
+    try {
+      const result = await chatApi.presence();
+      setOnlineContactIds(new Set(result.filter(item => item.online).map(item => item.id)));
+    } catch {
+      // Presence is supplementary; chat remains usable if this request fails.
+    }
+  }, []);
 
   const loadContacts = useCallback(async () => {
     try {
@@ -101,6 +111,16 @@ export function ChatPage() {
   };
 
   useEffect(() => { void loadContacts(); }, [loadContacts]);
+  useEffect(() => {
+    let active = true;
+    const sendHeartbeat = async () => {
+      try { await chatApi.heartbeat(); } catch { /* A missed heartbeat simply expires. */ }
+      if (active) void loadPresence();
+    };
+    void sendHeartbeat();
+    const timer = window.setInterval(() => { void sendHeartbeat(); }, 25000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [loadPresence]);
   useEffect(() => {
     if (location.pathname === '/chat/group' && user?.role === 'student') setMode('group');
     else if (location.pathname === '/messages') setMode('direct');
@@ -206,7 +226,7 @@ export function ChatPage() {
         <button onClick={() => setMode('direct')} className={`rounded-lg px-3 py-2 text-sm font-semibold ${mode === 'direct' ? 'bg-[#6121D0] text-white' : 'bg-slate-100 text-slate-700'}`}>Messages</button>
       </div>
     </div>
-    {mode === 'direct' && <div className="border-b border-[#E5E7EB] px-4 py-3"><label className="mb-1 block text-xs font-semibold text-slate-600" htmlFor="chat-contact">Message a student or lecturer</label><select id="chat-contact" value={recipient} onChange={event => setRecipient(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"><option value="">Choose a contact</option>{contacts.map(contact => <option key={contact.id} value={contact.id}>@{contact.academicHandle} · {contact.role}</option>)}</select></div>}
+    {mode === 'direct' && <div className="border-b border-[#E5E7EB] px-4 py-3"><label className="mb-1 block text-xs font-semibold text-slate-600" htmlFor="chat-contact">Message a student or lecturer</label><select id="chat-contact" value={recipient} onChange={event => setRecipient(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"><option value="">Choose a contact</option>{contacts.map(contact => <option key={contact.id} value={contact.id}>@{contact.academicHandle} · {contact.role}{onlineContactIds.has(contact.id) ? ' · Online' : ''}</option>)}</select></div>}
     {error && <div role="alert" className="mx-4 mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>}
     <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto bg-slate-50/60 p-4">
       {hasMore && !loading && <div className="text-center"><button type="button" onClick={() => void loadOlder()} disabled={loadingOlder} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-violet-700 disabled:opacity-50">{loadingOlder ? 'Loading older messages…' : 'Load older messages'}</button></div>}
