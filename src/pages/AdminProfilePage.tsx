@@ -17,7 +17,7 @@ export function AdminProfilePage() {
   const uploadPhoto = async (file?: File) => {
     if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setError('Please choose a supported image file.'); return; }
-    if (file.size > 5 * 1024 * 1024) { setError('Your profile image must be smaller than 5 MB.'); return; }
+    if (file.size > 5 * 1024 * 1024) { setError('Your profile image must be 5 MB or less.'); return; }
     setUploading(true); setError(''); setMessage('');
     try { await profileImageApi.upload(file); await refreshSession(); setMessage('Administrative profile picture updated successfully.'); }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to update your profile picture.'); }
