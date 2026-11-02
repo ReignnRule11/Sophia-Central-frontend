@@ -35,7 +35,9 @@ export function ResourceReaderPage() {
             const [savedResources, downloadedResources] = await Promise.all([resourcesApi.saved(), resourcesApi.downloaded()]);
             if (active) {
               setSaved(savedResources.some((item) => item.id === id));
-              setDownloaded(downloadedResources.some((item) => item.id === id));
+              const hasDownloaded = downloadedResources.some((item) => item.id === id);
+              setDownloaded(hasDownloaded);
+              if (user.role === 'student' && !hasDownloaded && (result as ResourceWithFile).hasFile) setDownloadPromptOpen(true);
             }
           }
         }
