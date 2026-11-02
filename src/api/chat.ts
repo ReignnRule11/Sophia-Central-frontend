@@ -13,6 +13,8 @@ export const chatApi = {
     return () => source.close();
   },
   contacts: () => apiRequest<ChatContact[]>('/chat/contacts'),
+  presence: () => apiRequest<Array<{ id: string; online: boolean }>>('/chat/presence'),
+  heartbeat: () => apiRequest<{ success: boolean }>('/chat/presence/heartbeat'),
   groupHistory: (limit = 40, before?: string) => apiRequest<ChatPage>(`/chat/group/messages?limit=${limit}${before ? `&before=${encodeURIComponent(before)}` : ''}`),
   directHistory: (userId: string, limit = 40, before?: string) => apiRequest<ChatPage>(`/chat/direct/${encodeURIComponent(userId)}/messages?limit=${limit}${before ? `&before=${encodeURIComponent(before)}` : ''}`),
   sendText: (kind: 'group' | 'direct', text: string, recipientId?: string) => apiRequest<ChatMessage>('/chat/messages', { method: 'POST', body: JSON.stringify({ kind, text, ...(recipientId ? { recipientId } : {}) }) }),
