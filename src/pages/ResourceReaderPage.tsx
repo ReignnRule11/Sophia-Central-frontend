@@ -55,10 +55,11 @@ export function ResourceReaderPage() {
     setFileAction(download ? 'download' : 'open');
     setError('');
     try {
-      const result = await resourcesApi.fileUrl(id, download);
       if (download) {
-        // The authenticated app endpoint returns a short-lived attachment URL; the browser handles the download.
+        await resourcesApi.save(id);
         setSaved(true);
+      } else {
+        const result = await resourcesApi.fileUrl(id, false);
       } else {
         const officeFile = /\\.(doc|docx|ppt|pptx)$/i.test(result.filename);
         setViewerUrl(officeFile
