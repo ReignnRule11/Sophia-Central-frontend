@@ -33,10 +33,7 @@ export const resourcesApi = {
 
   unsave: async (id: string, token?: string | null) => apiRequest<{ saved: false; resourceId: string }>(`/resources/${encodeURIComponent(id)}/save`, { method: 'DELETE' }, token ?? null),
 
-  fileUrl: async (id: string, download = false, token?: string | null) => {
-    const endpoint = download ? 'download-url' : 'file-url';
-    return apiRequest<{ url: string; filename: string; contentType?: string }>(`/resources/${encodeURIComponent(id)}/${endpoint}`, { method: 'GET' }, token ?? null);
-  },
+  fileUrl: async (id: string, token?: string | null) => apiRequest<{ url: string; filename: string; contentType?: string }>(`/resources/${encodeURIComponent(id)}/file-url`, { method: 'GET' }, token ?? null),
 
   byId: async (id: string, token?: string | null) => {
     const resource = await apiRequest<ApiResource>(`/resources/${encodeURIComponent(id)}`, { method: 'GET' }, token ?? null);
