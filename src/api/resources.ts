@@ -24,6 +24,15 @@ export const resourcesApi = {
     return resources.map(mapResource);
   },
 
+  saved: async (token?: string | null) => {
+    const resources = await apiRequest<ApiResource[]>('/resources/saved', { method: 'GET' }, token ?? null);
+    return resources.map(mapResource);
+  },
+
+  save: async (id: string, token?: string | null) => apiRequest<{ saved: true; resourceId: string }>(`/resources/${encodeURIComponent(id)}/save`, { method: 'POST' }, token ?? null),
+
+  unsave: async (id: string, token?: string | null) => apiRequest<{ saved: false; resourceId: string }>(`/resources/${encodeURIComponent(id)}/save`, { method: 'DELETE' }, token ?? null),
+
   fileUrl: async (id: string, download = false, token?: string | null) => {
     const endpoint = download ? 'download-url' : 'file-url';
     return apiRequest<{ url: string }>(`/resources/${encodeURIComponent(id)}/${endpoint}`, { method: 'GET' }, token ?? null);
