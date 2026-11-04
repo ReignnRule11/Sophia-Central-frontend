@@ -16,6 +16,8 @@ export interface InstitutionOption {
   name: string;
   country?: string;
   city?: string;
+  state?: string;
+  ownership?: string;
   faculties?: FacultyOption[];
 }
 
