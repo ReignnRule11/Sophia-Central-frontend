@@ -40,8 +40,19 @@ export interface CompleteOnboardingPayload {
   socialHandle?: string;
 }
 
+export interface AcademicCatalogueSubmissionPayload {
+  entryType: 'institution' | 'faculty' | 'department';
+  name: string;
+  parentInstitutionId?: string;
+  parentFacultyId?: string;
+  state?: string;
+  city?: string;
+  ownership?: 'Federal' | 'State' | 'Private';
+}
+
 export const academicApi = {
   institutions: () => apiRequest<InstitutionOption[]>('/institutions'),
+  submitCatalogueEntry: (payload: AcademicCatalogueSubmissionPayload) => apiRequest('/institutions/submissions', { method: 'POST', body: JSON.stringify(payload) }),
   courses: (institutionId: string) =>
     apiRequest<CourseOption[]>(`/courses?institutionId=${encodeURIComponent(institutionId)}`),
   completeOnboarding: (payload: CompleteOnboardingPayload) =>
