@@ -40,6 +40,8 @@ export function PublicResourcePage() {
   const contributor = typeof uploader === 'string' && uploader.trim()
     ? uploader
     : 'Community contributor';
+  const fileUrlValue: unknown = file.data?.url;
+  const fileUrl = typeof fileUrlValue === 'string' && fileUrlValue.trim() ? fileUrlValue : null;
 
   return (
     <main className="mx-auto max-w-4xl space-y-5">
@@ -79,9 +81,9 @@ export function PublicResourcePage() {
                 <p className="mt-2 text-sm text-rose-700">
                   {file.error instanceof Error ? file.error.message : 'Unable to access file.'}
                 </p>
-              ) : file.data?.url ? (
+              ) : fileUrl !== null ? (
                 <a
-                  href={file.data.url}
+                  href={fileUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white"
