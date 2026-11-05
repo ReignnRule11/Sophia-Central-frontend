@@ -72,7 +72,7 @@ export function PublicResourcePage() {
               Public access does not automatically grant permission to redistribute or adapt a work. Follow the displayed licence and applicable copyright law.
             </p>
           </section>
-          {item.hasFile && (
+          {Boolean(item.hasFile) && (
             <section>
               <h2 className="font-semibold text-[#091F5B]">Attached material</h2>
               {file.isLoading ? (
