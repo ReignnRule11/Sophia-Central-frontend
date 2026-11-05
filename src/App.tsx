@@ -10,6 +10,7 @@ import { AppShell } from './components/layout/AppShell';
 import HomePage from './pages/HomePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { LibraryPage } from './pages/LibraryPage';
+import { PublicResourcePage } from './pages/PublicResourcePage';
 import { SavedResourcesPage } from './pages/SavedResourcesPage';
 import { UploadPage } from './pages/UploadPage';
 import { AITutorPage } from './pages/AITutorPage';
