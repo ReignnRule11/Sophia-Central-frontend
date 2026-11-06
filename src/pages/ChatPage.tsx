@@ -68,6 +68,50 @@ function playSophisTone(kind: 'send' | 'receive') {
   }
 }
 
+function VoiceMessagePlayer({ src }: { src: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  const togglePlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      try {
+        await audio.play();
+      } catch {
+        setPlaying(false);
+      }
+    } else {
+      audio.pause();
+      setPlaying(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center">
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="none"
+        className="hidden"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+      />
+      <button
+        type="button"
+        onClick={() => void togglePlayback()}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-violet-800 transition hover:bg-white dark:bg-slate-700 dark:text-violet-200 dark:hover:bg-slate-600"
+        aria-label={playing ? "Pause voice message" : "Play voice message"}
+        title={playing ? "Pause voice message" : "Play voice message"}
+      >
+        {playing ? <Pause size={19} fill="currentColor" /> : <Play size={19} fill="currentColor" />}
+      </button>
+    </div>
+  );
+}
+
 export function ChatPage() {
   const { user } = useAuth();
   const location = useLocation();
@@ -397,7 +441,6 @@ export function ChatPage() {
     void loadBlocks();
     void loadInbox();
   }, [loadBlocks, loadInbox]);
-
   useEffect(() => {
     const timer = window.setTimeout(
       () => {
@@ -797,8 +840,7 @@ export function ChatPage() {
     };
 
     window.addEventListener('pointerup', handlePointerRelease);
-    window.addEventListener('pointercancel', handlePointerRelease);
-    window.addEventListener('mouseup', handlePointerRelease);
+    window.addEventListener('pointercancel', handlePointerRelease);    window.addEventListener('mouseup', handlePointerRelease);
     window.addEventListener('touchend', handlePointerRelease);
     window.addEventListener('touchcancel', handlePointerRelease);
 
@@ -932,7 +974,7 @@ export function ChatPage() {
   }
 
   return (
-    <section className="mx-auto flex h-[calc(100vh-150px)] min-h-[520px] max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+    <section className="mx-auto flex h-[calc(100vh-110px)] min-h-[640px] max-w-6xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
       {/* Chat header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
         <div>
@@ -963,7 +1005,7 @@ export function ChatPage() {
       </div>
 
       {/* Private conversation search */}
-      {mode === 'direct' && (
+      {mode === 'direct' && !recipient && (
         <div className="border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
           <label
             className="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-200"
@@ -1082,7 +1124,7 @@ export function ChatPage() {
         </div>
       )}
 
-      {mode === 'direct' && (
+      {mode === 'direct' && !recipient && (
         <div className="border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
           <div className="mb-2 flex items-center justify-between gap-2">
             <h3 className="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
@@ -1140,13 +1182,43 @@ export function ChatPage() {
         </div>
       )}
 
+      {mode === 'direct' && recipient && (
+        <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
+          <button
+            type="button"
+            onClick={() => {
+              setRecipient('');
+              setMessages([]);
+              setContactSearch('');
+              setShowContactDropdown(false);
+              setError('');
+            }}
+            className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-800 transition hover:bg-violet-50 dark:text-violet-200 dark:hover:bg-slate-800"
+          >
+            ← Recent conversations
+          </button>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+              {selectedContact?.isDeleted
+                ? 'Deleted user'
+                : selectedContact
+                  ? `@${selectedContact.academicHandle}`
+                  : 'Private conversation'}
+            </p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Private conversation
+            </p>
+          </div>
+        </div>
+      )}
+
       {recipientDeleted && (
         <div className="mx-4 mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">
           This account was deleted. Previous messages are preserved, but this conversation is read-only.
         </div>
       )}
 
-      {error && (
+      {(mode === 'group' || recipient) && error && (
         <div
           role="alert"
           className="mx-4 mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 dark:border-rose-800 dark:bg-rose-950 dark:text-rose-200"
@@ -1155,7 +1227,7 @@ export function ChatPage() {
         </div>
       )}
 
-      {/* Message history */}
+      {(mode === 'group' || recipient) && (
       <div
         ref={listRef}
         className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4 dark:bg-slate-950"
@@ -1189,7 +1261,7 @@ export function ChatPage() {
           messages.map(message => (
             <article
               key={message.id}
-              className={`max-w-[85%] rounded-2xl border p-3 shadow-sm ${
+              className={`w-fit max-w-[85%] min-w-0 rounded-2xl border p-3 shadow-sm ${
                 message.isOwn
                   ? 'ml-auto border-violet-300 bg-violet-100 text-violet-950 dark:border-violet-800 dark:bg-[#31234B] dark:text-white'
                   : 'mr-auto border-slate-200 bg-white text-slate-900 dark:border-white dark:bg-slate-800 dark:text-purple-300'
@@ -1197,8 +1269,7 @@ export function ChatPage() {
             >
               <div
                 className={`mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] ${
-                  message.isOwn
-                    ? 'text-violet-800 dark:text-violet-200'
+                  message.isOwn                    ? 'text-violet-800 dark:text-violet-200'
                     : 'text-slate-600 dark:text-purple-300'
                 }`}
               >
@@ -1242,12 +1313,7 @@ export function ChatPage() {
                   This message was deleted.
                 </p>
               ) : message.contentType === 'voice' && message.voiceUrl ? (
-                <audio
-                  controls
-                  preload="none"
-                  src={message.voiceUrl}
-                  className="max-w-full"
-                />
+                <VoiceMessagePlayer src={message.voiceUrl} />
               ) : message.contentType === 'sticker' ? (
                 <div className="flex min-w-24 flex-col items-center rounded-xl bg-white px-4 py-3 dark:bg-slate-700">
                   <span className="text-5xl">
@@ -1323,8 +1389,9 @@ export function ChatPage() {
           ))
         )}
       </div>
+      )}
 
-      {/* Composer */}
+      {(mode === 'group' || recipient) && (
       <div className="border-t border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900">
         {(showEmoji || showStickers) && (
           <div className="mb-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
@@ -1606,6 +1673,7 @@ export function ChatPage() {
               : 'Enter to send · Shift + Enter for a new line · Press and hold the microphone to record'}
         </p>
       </div>
+      )}
     </section>
   );
 }
