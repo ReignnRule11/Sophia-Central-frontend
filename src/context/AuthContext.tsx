@@ -93,10 +93,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         twitter: optionalUrl(socialLinks.twitter),
       } : undefined,
     });
-    setUser(await hydrateUser(response.user));
-    try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
-    void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
-  }, [initializeCsrf, hydrateUser]);
+    // Registration does not create a session. The user must verify their email first.
+    if (!response.user || response.emailSent === undefined) throw new Error('Account creation did not complete. Please try again.');
+  }, [initializeCsrf]);
 
   const completeOnboarding = useCallback(async (payload: OnboardingPayload) => {
     const response = await academicApi.completeOnboarding(payload);
