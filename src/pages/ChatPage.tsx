@@ -840,7 +840,8 @@ export function ChatPage() {
     };
 
     window.addEventListener('pointerup', handlePointerRelease);
-    window.addEventListener('pointercancel', handlePointerRelease);    window.addEventListener('mouseup', handlePointerRelease);
+    window.addEventListener('pointercancel', handlePointerRelease);
+    window.addEventListener('mouseup', handlePointerRelease);
     window.addEventListener('touchend', handlePointerRelease);
     window.addEventListener('touchcancel', handlePointerRelease);
 
