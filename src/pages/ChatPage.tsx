@@ -265,6 +265,10 @@ export function ChatPage() {
             playSophisTone('receive');
           }
 
+          if (mode === 'direct' && recipient && incoming.length) {
+            void chatApi.markRead(recipient).then(loadInbox).catch(() => undefined);
+          }
+
           setMessages(current => {
             const merged = new Map(current.map(message => [message.id, message]));
 
@@ -294,6 +298,10 @@ export function ChatPage() {
 
           setHasMore(result.hasMore ?? false);
           setNextBefore(result.nextBefore ?? null);
+
+          if (mode === 'direct' && recipient) {
+            void chatApi.markRead(recipient).then(loadInbox).catch(() => undefined);
+          }
         }
 
         setError('');
@@ -438,23 +446,6 @@ export function ChatPage() {
     setShowContactDropdown(false);
     setError('');
   }, [location.search]);
-
-  useEffect(() => {
-    if (mode !== 'direct' || !recipient) return;
-
-    let active = true;
-    void chatApi.markRead(recipient)
-      .then(() => {
-        if (active) void loadInbox();
-      })
-      .catch(() => {
-        // Opening a conversation should remain possible if read-state sync fails.
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [mode, recipient, loadInbox]);
 
   useEffect(() => {
     setMessages([]);
@@ -1090,7 +1081,6 @@ export function ChatPage() {
                     setContactSearch('');
                     setShowContactDropdown(false);
                     setError('');
-                    void chatApi.markRead(item.contact.id).then(loadInbox).catch(() => undefined);
                   }}
                   className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
                     recipient === item.contact.id
