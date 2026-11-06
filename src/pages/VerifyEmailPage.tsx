@@ -1,26 +1,28 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
 export function VerifyEmailPage() {
   const [params] = useSearchParams();
+  const location = useLocation();
+  const registrationNotice = location.state as { emailSent?: boolean; message?: string } | null;
   const token = params.get('token') || '';
   const [email, setEmail] = useState(params.get('email') || '');
   const [verificationState, setVerificationState] = useState<'idle' | 'loading' | 'success' | 'error'>(token ? 'loading' : 'idle');
   const [verificationMessage, setVerificationMessage] = useState(
-    token ? 'Confirming your email address…' : 'We sent an activation link if delivery was successful. Check your inbox and spam folder.',
+    token ? 'Confirming your email address…' : registrationNotice?.message || 'Check your inbox and spam folder for your activation link.',
   );
   const [resendMessage, setResendMessage] = useState('');
   const [resendError, setResendError] = useState('');
   const [isResending, setIsResending] = useState(false);
-  const attemptedToken = useRef('');
+  const verificationRequest = useRef<Promise<{ message: string }> | null>(null);
 
   useEffect(() => {
-    if (!token || attemptedToken.current === token) return;
-    attemptedToken.current = token;
+    if (!token) return;
     let active = true;
     setVerificationState('loading');
-    authApi.confirmEmailVerification(token)
+    if (!verificationRequest.current) verificationRequest.current = authApi.confirmEmailVerification(token);
+    verificationRequest.current
       .then((response) => {
         if (!active) return;
         setVerificationState('success');
@@ -61,7 +63,7 @@ export function VerifyEmailPage() {
         {verificationState === 'success' ? (
           <div role="status" className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{verificationMessage}</div>
         ) : (
-          <div role={verificationState === 'error' ? 'alert' : 'status'} className="mt-5 rounded-xl border border-[#DCE4EF] bg-[#F7F8FC] px-4 py-3 text-sm text-[#40516E]">{verificationMessage}</div>
+          <div role={verificationState === 'error' || registrationNotice?.emailSent === false ? 'alert' : 'status'} className="mt-5 rounded-xl border border-[#DCE4EF] bg-[#F7F8FC] px-4 py-3 text-sm text-[#40516E]">{verificationMessage}</div>
         )}
         {verificationState !== 'success' && (
           <>
