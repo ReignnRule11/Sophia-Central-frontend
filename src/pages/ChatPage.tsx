@@ -1509,7 +1509,7 @@ export function ChatPage() {
 
         <div className="flex items-end gap-1.5 rounded-[28px] border border-slate-300 bg-slate-100 px-3 py-1.5 focus-within:border-emerald-500 dark:border-slate-600 dark:bg-slate-800 dark:focus-within:border-emerald-400">
           {/* Text entry and voice recording/preview are mutually exclusive modes. */}
-          {!recording && !voicePreview && (
+          {!recording && !previewBelongsToCurrentChat && (
             <>
               <button
                 type="button"
@@ -1571,7 +1571,7 @@ export function ChatPage() {
                 <button
                   type="button"
                   onPointerDown={event => {
-                    if (recording || voicePreview || sending || (mode === 'direct' && (!recipient || recipientDeleted))) return;
+                    if (recording || previewBelongsToCurrentChat || sending || (mode === 'direct' && (!recipient || recipientDeleted))) return;
                     event.preventDefault();
                     micHeldRef.current = true;
                     try {
@@ -1684,7 +1684,7 @@ export function ChatPage() {
             </div>
           )}
 
-          {!recording && !voicePreview && text.trim() && (
+          {!recording && !previewBelongsToCurrentChat && text.trim() && (
             <button
               type="button"
               onClick={() => void send()}
@@ -1704,7 +1704,7 @@ export function ChatPage() {
         <p className="mt-2 text-[10px] text-slate-600 dark:text-slate-300">
           {recording
             ? 'Keep holding the microphone while recording; release it to preview.'
-            : voicePreview
+            : previewBelongsToCurrentChat
               ? 'Play, discard, or send your voice recording. Text entry returns after you discard or send.'
               : 'Enter to send · Shift + Enter for a new line · Press and hold the microphone to record'}
         </p>
