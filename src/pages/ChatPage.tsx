@@ -1005,6 +1005,64 @@ export function ChatPage() {
         </div>
       </div>
 
+      {mode === 'direct' && !recipient && (
+        <div className="border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+              Recent conversations
+            </h3>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              {inbox.length} conversation{inbox.length === 1 ? '' : 's'}
+            </span>
+          </div>
+
+          {inbox.length ? (
+            <div className="flex max-h-36 flex-col gap-1 overflow-y-auto">
+              {inbox.map(item => (
+                <button
+                  key={item.contact.id}
+                  type="button"
+                  onClick={() => {
+                    setRecipient(item.contact.id);
+                    setContactSearch('');
+                    setShowContactDropdown(false);
+                    setError('');
+                  }}
+                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
+                    recipient === item.contact.id
+                      ? 'bg-violet-100 dark:bg-violet-950/60'
+                      : 'bg-white hover:bg-violet-50 dark:bg-slate-900 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="truncate text-xs font-semibold text-slate-900 dark:text-white">
+                        {item.contact.isDeleted ? 'Deleted user' : `@${item.contact.academicHandle}`}
+                      </span>
+                      {item.unreadCount > 0 && (
+                        <span className="shrink-0 rounded-full bg-violet-700 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                          {item.unreadCount > 99 ? '99+' : item.unreadCount}
+                        </span>
+                      )}
+                    </span>
+                    <span className="mt-0.5 block truncate text-[11px] text-slate-600 dark:text-slate-300">
+                      {item.lastMessage.isOwn ? 'You: ' : ''}{item.lastMessage.preview}
+                    </span>
+                  </span>
+                  <time className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
+                    {new Date(item.lastMessage.createdAt).toLocaleDateString()}
+                  </time>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-lg bg-white px-3 py-3 text-center text-xs text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+              Your private conversations will appear here when you send or receive messages.
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Private conversation search */}
       {mode === 'direct' && !recipient && (
         <div className="border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
@@ -1120,64 +1178,6 @@ export function ChatPage() {
                 @{selectedContact.academicHandle}
               </strong>{' '}
               · Messages are private to this conversation.
-            </p>
-          )}
-        </div>
-      )}
-
-      {mode === 'direct' && !recipient && (
-        <div className="border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <h3 className="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
-              Recent conversations
-            </h3>
-            <span className="text-[10px] text-slate-500 dark:text-slate-400">
-              {inbox.length} conversation{inbox.length === 1 ? '' : 's'}
-            </span>
-          </div>
-
-          {inbox.length ? (
-            <div className="flex max-h-36 flex-col gap-1 overflow-y-auto">
-              {inbox.map(item => (
-                <button
-                  key={item.contact.id}
-                  type="button"
-                  onClick={() => {
-                    setRecipient(item.contact.id);
-                    setContactSearch('');
-                    setShowContactDropdown(false);
-                    setError('');
-                  }}
-                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
-                    recipient === item.contact.id
-                      ? 'bg-violet-100 dark:bg-violet-950/60'
-                      : 'bg-white hover:bg-violet-50 dark:bg-slate-900 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-2">
-                      <span className="truncate text-xs font-semibold text-slate-900 dark:text-white">
-                        {item.contact.isDeleted ? 'Deleted user' : `@${item.contact.academicHandle}`}
-                      </span>
-                      {item.unreadCount > 0 && (
-                        <span className="shrink-0 rounded-full bg-violet-700 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                          {item.unreadCount > 99 ? '99+' : item.unreadCount}
-                        </span>
-                      )}
-                    </span>
-                    <span className="mt-0.5 block truncate text-[11px] text-slate-600 dark:text-slate-300">
-                      {item.lastMessage.isOwn ? 'You: ' : ''}{item.lastMessage.preview}
-                    </span>
-                  </span>
-                  <time className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
-                    {new Date(item.lastMessage.createdAt).toLocaleDateString()}
-                  </time>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-lg bg-white px-3 py-3 text-center text-xs text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-              Your private conversations will appear here when you send or receive messages.
             </p>
           )}
         </div>
