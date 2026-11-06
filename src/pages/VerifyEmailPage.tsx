@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
@@ -21,9 +22,8 @@ export function VerifyEmailPage() {
     if (!token) return;
     let active = true;
     setVerificationState('loading');
-    if (!verificationRequest.current) verificationRequest.current = authApi.confirmEmailVerification(token);
-    verificationRequest.current
-      .then((response) => {
+    const request = verificationRequest.current ?? (verificationRequest.current = authApi.confirmEmailVerification(token));
+    request.then((response) => {
         if (!active) return;
         setVerificationState('success');
         setVerificationMessage(response.message);
