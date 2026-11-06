@@ -417,6 +417,17 @@ export function ChatPage() {
     setShowStickers(false);
   }, [location.pathname, user?.role]);
 
+  // Notification links can open a specific private conversation directly.
+  useEffect(() => {
+    const userId = new URLSearchParams(location.search).get('userId');
+    if (!userId) return;
+
+    setRecipient(userId);
+    setContactSearch('');
+    setShowContactDropdown(false);
+    setError('');
+  }, [location.search]);
+
   useEffect(() => {
     setMessages([]);
     setHasMore(false);
