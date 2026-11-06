@@ -1269,7 +1269,8 @@ export function ChatPage() {
             >
               <div
                 className={`mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] ${
-                  message.isOwn                    ? 'text-violet-800 dark:text-violet-200'
+                  message.isOwn
+                    ? 'text-violet-800 dark:text-violet-200'
                     : 'text-slate-600 dark:text-purple-300'
                 }`}
               >
