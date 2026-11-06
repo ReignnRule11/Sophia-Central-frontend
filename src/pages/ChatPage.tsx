@@ -79,6 +79,7 @@ export function ChatPage() {
 
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [inbox, setInbox] = useState<ChatInboxItem[]>([]);
+  const knownInboxMessageIdsRef = useRef<Set<string> | null>(null);
   const [onlineContactIds, setOnlineContactIds] = useState<Set<string>>(() => new Set());
 
   const [recipient, setRecipient] = useState('');
@@ -219,11 +220,31 @@ export function ChatPage() {
   const loadInbox = useCallback(async () => {
     try {
       const result = await chatApi.inbox();
-      setInbox(Array.isArray(result) ? result : []);
+      const nextInbox = Array.isArray(result) ? result : [];
+      const previousIds = knownInboxMessageIdsRef.current;
+
+      const incoming = previousIds
+        ? nextInbox.filter(item =>
+            !item.lastMessage.isOwn && !previousIds.has(item.lastMessage.id),
+          )
+        : [];
+
+      const hasUnfocusedIncoming = incoming.some(
+        item => mode !== 'direct' || recipient !== item.contact.id,
+      );
+
+      if (hasUnfocusedIncoming && !mutedDirect) {
+        playSophisTone('receive');
+      }
+
+      knownInboxMessageIdsRef.current = new Set(
+        nextInbox.map(item => item.lastMessage.id),
+      );
+      setInbox(nextInbox);
     } catch {
       // Keep the conversation composer usable if inbox summaries are temporarily unavailable.
     }
-  }, []);
+  }, [mode, recipient, mutedDirect]);
 
   const loadMessages = useCallback(
     async (quiet = false) => {
@@ -519,6 +540,7 @@ export function ChatPage() {
       shouldAutoScrollRef.current = true;
 
       setMessages(current => [...current, message]);
+      void loadInbox();
       setText('');
       setShowEmoji(false);
 
@@ -551,6 +573,7 @@ export function ChatPage() {
       shouldAutoScrollRef.current = true;
 
       setMessages(current => [...current, message]);
+      void loadInbox();
       setShowStickers(false);
 
       playSophisTone('send');
