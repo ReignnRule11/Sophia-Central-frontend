@@ -14,7 +14,7 @@ type RegisterPayload = {
   [key: string]: unknown;
 };
 type OnboardingPayload = Parameters<typeof academicApi.completeOnboarding>[0];
-type AuthContextValue = { user: User | null; isAuthenticated: boolean; isLoading: boolean; login: (identifier: string, password: string, _role?: UserRole) => Promise<void>; register: (payload: RegisterPayload) => Promise<void>; completeOnboarding: (payload: OnboardingPayload) => Promise<void>; logout: () => Promise<void>; refreshSession: () => Promise<void> };
+type AuthContextValue = { user: User | null; isAuthenticated: boolean; isLoading: boolean; login: (identifier: string, password: string, _role?: UserRole) => Promise<void>; register: (payload: RegisterPayload) => Promise<{ emailSent: boolean; message: string }>; completeOnboarding: (payload: OnboardingPayload) => Promise<void>; logout: () => Promise<void>; refreshSession: () => Promise<void> };
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 function optionalUrl(value: unknown): string | undefined {
@@ -95,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     // Registration does not create a session. The user must verify their email first.
     if (!response.user || response.emailSent === undefined) throw new Error('Account creation did not complete. Please try again.');
+    return { emailSent: response.emailSent, message: response.message };
   }, [initializeCsrf]);
 
   const completeOnboarding = useCallback(async (payload: OnboardingPayload) => {
