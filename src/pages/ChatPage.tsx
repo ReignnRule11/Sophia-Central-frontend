@@ -1391,7 +1391,7 @@ export function ChatPage() {
               </div>
 
               {message.isDeleted ? (
-                <p className="text-sm italic text-slate-600 dark:text-purple-300">
+                <p className="text-sm italic text-slate-600 dark:text-slate-300">
                   This message was deleted.
                 </p>
               ) : message.contentType === 'voice' && message.voiceUrl ? (
