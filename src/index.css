@@ -383,12 +383,14 @@ html[data-theme='dark'] .app-shell .sidebar-nav-link.is-active {
 .app-shell .chat-page input.chat-search-input::placeholder {
   color: #71809A !important;
 }
-.app-shell .chat-page textarea.chat-message-input {
+.app-shell .chat-page textarea.chat-message-input,
+.app-shell .chat-page textarea.chat-edit-input {
   background-color: transparent !important;
   border-color: transparent !important;
   color: #091F5B !important;
 }
-.app-shell .chat-page textarea.chat-message-input::placeholder {
+.app-shell .chat-page textarea.chat-message-input::placeholder,
+.app-shell .chat-page textarea.chat-edit-input::placeholder {
   color: #71809A !important;
 }
 html[data-theme='dark'] .app-shell .chat-page input.chat-search-input {
@@ -399,11 +401,13 @@ html[data-theme='dark'] .app-shell .chat-page input.chat-search-input {
 html[data-theme='dark'] .app-shell .chat-page input.chat-search-input::placeholder {
   color: #94A3B8 !important;
 }
-html[data-theme='dark'] .app-shell .chat-page textarea.chat-message-input {
+html[data-theme='dark'] .app-shell .chat-page textarea.chat-message-input,
+html[data-theme='dark'] .app-shell .chat-page textarea.chat-edit-input {
   background-color: transparent !important;
   border-color: transparent !important;
   color: #F1F5F9 !important;
 }
-html[data-theme='dark'] .app-shell .chat-page textarea.chat-message-input::placeholder {
+html[data-theme='dark'] .app-shell .chat-page textarea.chat-message-input::placeholder,
+html[data-theme='dark'] .app-shell .chat-page textarea.chat-edit-input::placeholder {
   color: #94A3B8 !important;
 }
