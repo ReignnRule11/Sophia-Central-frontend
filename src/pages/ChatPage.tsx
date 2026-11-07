@@ -125,7 +125,7 @@ function VoiceMessagePlayer({ src }: { src: string }) {
       <button
         type="button"
         onClick={() => void togglePlayback()}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-violet-800 transition hover:bg-white dark:bg-[#26314A] dark:text-violet-200 dark:hover:bg-slate-600"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-violet-800 transition hover:bg-white dark:bg-[#26314A] dark:text-[#D8CCFF] dark:hover:bg-[#334155]"
         aria-label={playing ? "Pause voice message" : "Play voice message"}
         title={playing ? "Pause voice message" : "Play voice message"}
       >
@@ -149,7 +149,7 @@ function VoiceMessagePlayer({ src }: { src: string }) {
             />
           ))}
         </div>
-        <div className="flex justify-between text-[10px] font-medium tabular-nums text-violet-800 dark:text-violet-200">
+        <div className="flex justify-between text-[10px] font-medium tabular-nums text-violet-800 dark:text-[#D8CCFF]">
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>
@@ -1076,7 +1076,7 @@ export function ChatPage() {
                 ? setMutedGroup(value => !value)
                 : setMutedDirect(value => !value)
             }
-            className="mt-2 rounded-lg border border-[#D7DEEA] bg-white px-3 py-1.5 text-xs font-semibold text-[#1F2937] transition-colors hover:bg-[#F8FAFD] focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-[#475569] dark:bg-[#172033] dark:text-[#F1F5F9] dark:hover:bg-[#26314A]"
+            className="mt-2 rounded-lg border border-[#D7DEEA] bg-white px-3 py-1.5 text-xs font-semibold text-[#1F2937] transition-colors hover:bg-[#F8FAFD] focus:outline-none focus:ring-2 focus:ring-[#2C36D9]/20 dark:border-[#475569] dark:bg-[#172033] dark:text-[#F1F5F9] dark:hover:bg-[#26314A]"
           >
             {(mode === 'group' ? mutedGroup : mutedDirect)
               ? 'Unmute notifications'
@@ -1111,7 +1111,7 @@ export function ChatPage() {
                   className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
                     recipient === item.contact.id
                       ? 'bg-violet-100 dark:bg-[#31234B]'
-                      : 'bg-violet-50 hover:bg-violet-100 dark:bg-[#0F172A] dark:hover:bg-[#26314A]'
+                      : 'bg-violet-50 hover:bg-[#F3F0FF] dark:bg-[#0F172A] dark:hover:bg-[#26314A]'
                   }`}
                 >
                   <span className="min-w-0 flex-1">
@@ -1163,7 +1163,7 @@ export function ChatPage() {
               setShowContactDropdown(true);
             }}
             placeholder="Search username (e.g. @username)"
-            className="mb-2 w-full rounded-xl border border-[#D7DEEA] bg-[#F3F6FC] px-3 py-2.5 text-sm text-[#091F5B] outline-none placeholder:text-[#71809A] focus:border-[#2C36D9] focus:ring-2 focus:ring-[#2C36D9]/20 dark:border-[#475569] dark:bg-[#172033] dark:text-white dark:placeholder:text-slate-400 dark:focus:border-[#8B7AE8]"
+            className="chat-search-input mb-2 w-full rounded-xl border border-[#D7DEEA] bg-[#F3F6FC] px-3 py-2.5 text-sm text-[#091F5B] outline-none placeholder:text-[#71809A] focus:border-[#2C36D9] focus:ring-2 focus:ring-[#2C36D9]/20 dark:border-[#475569] dark:bg-[#172033] dark:text-white dark:placeholder:text-[#94A3B8] dark:focus:border-[#8B7AE8]"
           />
 
           {showContactDropdown && (
@@ -1204,7 +1204,7 @@ export function ChatPage() {
                       className={`flex w-full items-center justify-between gap-3 border-b border-[#E5E7EB] px-3 py-2.5 text-left last:border-b-0 dark:border-[#334155] ${
                         selected
                           ? 'bg-violet-100 text-violet-950 dark:bg-[#31234B] dark:text-white'
-                          : 'bg-violet-50 text-[#091F5B] hover:bg-violet-100 dark:bg-[#172033] dark:text-[#F1F5F9] dark:hover:bg-[#26314A]'
+                          : 'bg-violet-50 text-[#091F5B] hover:bg-[#F3F0FF] dark:bg-[#172033] dark:text-[#F1F5F9] dark:hover:bg-[#26314A]'
                       }`}
                     >
                       <span className="min-w-0">
@@ -1254,7 +1254,7 @@ export function ChatPage() {
           {selectedContact && (
             <p className="mt-2 text-xs text-[#4B5563] dark:text-[#CBD5E1]">
               Conversation with{' '}
-              <strong className="inline-block rounded-md bg-violet-100 px-2 py-0.5 font-semibold text-violet-950 dark:bg-[#31234B] dark:text-violet-200">
+              <strong className="inline-block rounded-md bg-violet-100 px-2 py-0.5 font-semibold text-violet-950 dark:bg-[#31234B] dark:text-[#D8CCFF]">
                 @{selectedContact.academicHandle}
               </strong>{' '}
               · Messages are private to this conversation.
@@ -1274,12 +1274,12 @@ export function ChatPage() {
               setShowContactDropdown(false);
               setError('');
             }}
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-800 transition hover:bg-violet-50 dark:text-violet-200 dark:hover:bg-[#26314A]"
+            className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-800 transition hover:bg-[#F3F0FF] dark:text-[#D8CCFF] dark:hover:bg-[#26314A]"
           >
             ← Recent conversations
           </button>
           <div className="min-w-0">
-            <p className="inline-block max-w-full truncate rounded-md bg-violet-100 px-2 py-0.5 text-sm font-semibold text-violet-950 dark:bg-[#31234B] dark:text-violet-200">
+            <p className="inline-block max-w-full truncate rounded-md bg-violet-100 px-2 py-0.5 text-sm font-semibold text-violet-950 dark:bg-[#31234B] dark:text-[#D8CCFF]">
               {selectedContact?.isDeleted
                 ? 'Deleted user'
                 : selectedContact
@@ -1319,7 +1319,7 @@ export function ChatPage() {
               type="button"
               onClick={() => void loadOlder()}
               disabled={loadingOlder}
-              className="rounded-lg border border-[#D7DEEA] bg-white px-3 py-2 text-xs font-semibold text-violet-800 hover:bg-violet-50 disabled:opacity-50 dark:border-[#475569] dark:bg-[#172033] dark:text-violet-200 dark:hover:bg-[#26314A]"
+              className="rounded-lg border border-[#D7DEEA] bg-white px-3 py-2 text-xs font-semibold text-violet-800 hover:bg-[#F3F0FF] disabled:opacity-50 dark:border-[#475569] dark:bg-[#172033] dark:text-[#D8CCFF] dark:hover:bg-[#26314A]"
             >
               {loadingOlder ? 'Loading older messages…' : 'Load older messages'}
             </button>
@@ -1411,13 +1411,13 @@ export function ChatPage() {
                   <textarea
                     value={editText}
                     onChange={event => setEditText(event.target.value)}
-                    className="w-full rounded-lg border border-[#D7DEEA] bg-white p-2 text-sm text-[#091F5B] outline-none focus:border-violet-500 dark:border-[#475569] dark:bg-[#0F172A] dark:text-white"
+                    className="chat-edit-input w-full rounded-lg border border-[#D7DEEA] bg-white p-2 text-sm text-[#091F5B] outline-none focus:border-violet-500 dark:border-[#475569] dark:bg-[#0F172A] dark:text-white"
                   />
 
                   <div className="flex gap-2">
                     <button
                       onClick={() => void saveEdit(message.id)}
-                      className="text-xs font-semibold text-violet-800 hover:underline dark:text-violet-200"
+                      className="text-xs font-semibold text-violet-800 hover:underline dark:text-[#D8CCFF]"
                     >
                       Save
                     </button>
@@ -1454,7 +1454,7 @@ export function ChatPage() {
                       Date.now() - new Date(message.createdAt).getTime() >
                         15 * 60 * 1000
                     }
-                    className="font-semibold text-violet-800 hover:underline disabled:opacity-40 dark:text-violet-200"
+                    className="font-semibold text-violet-800 hover:underline disabled:opacity-40 dark:text-[#D8CCFF]"
                   >
                     Edit
                   </button>
@@ -1539,7 +1539,7 @@ export function ChatPage() {
                       sending ||
                       (mode === 'direct' && (!recipient || recipientDeleted))
                     }
-                    className="flex flex-col items-center rounded-xl border border-[#DCE4EF] bg-[#F3F6FC] px-2 py-3 hover:border-violet-300 hover:bg-violet-50 disabled:opacity-50 dark:border-[#475569] dark:bg-[#26314A] dark:hover:border-violet-500 dark:hover:bg-slate-600"
+                    className="flex flex-col items-center rounded-xl border border-[#DCE4EF] bg-[#F3F6FC] px-2 py-3 hover:border-violet-300 hover:bg-[#F3F0FF] disabled:opacity-50 dark:border-[#475569] dark:bg-[#26314A] dark:hover:border-violet-500 dark:hover:bg-[#334155]"
                   >
                     <span className="text-3xl">{sticker.emoji}</span>
 
@@ -1553,7 +1553,7 @@ export function ChatPage() {
           </div>
         )}
 
-        <div className="flex items-end gap-1.5 rounded-[28px] border border-[#D7DEEA] bg-[#F8FAFD] px-3 py-1.5 focus-within:border-emerald-500 dark:border-[#475569] dark:bg-[#172033] dark:focus-within:border-emerald-400">
+        <div className="flex items-end gap-1.5 rounded-[28px] border border-[#D7DEEA] bg-[#F8FAFD] px-3 py-1.5 focus-within:border-[#2C36D9] dark:border-[#475569] dark:bg-[#172033] dark:focus-within:border-[#8B7AE8]">
           {/* Text entry and voice recording/preview are mutually exclusive modes. */}
           {!recording && !previewBelongsToCurrentChat && (
             <>
@@ -1609,7 +1609,7 @@ export function ChatPage() {
                 }
                 disabled={recipientDeleted}
                 rows={1}
-                className="max-h-28 min-h-10 min-w-0 flex-1 resize-y border-0 bg-transparent px-0.5 py-2.5 text-[15px] text-[#091F5B] caret-slate-900 outline-none placeholder:text-[#71809A] focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60 dark:text-white dark:caret-white dark:placeholder:text-slate-300"
+                className="chat-message-input max-h-28 min-h-10 min-w-0 flex-1 resize-y border-0 bg-transparent px-0.5 py-2.5 text-[15px] text-[#091F5B] caret-[#091F5B] outline-none placeholder:text-[#71809A] focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60 dark:text-white dark:caret-white dark:placeholder:text-[#94A3B8]"
               />
 
               {/* Use text first: the microphone is only available for an empty draft. */}
@@ -1692,7 +1692,7 @@ export function ChatPage() {
               <button
                 type="button"
                 onClick={() => void toggleVoicePreview()}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F8FAFD] text-[#1F2937] hover:bg-[#E8EDF5] dark:bg-slate-600 dark:text-white dark:hover:bg-[#F3F6FC]0"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F8FAFD] text-[#1F2937] hover:bg-[#E8EDF5] dark:bg-[#26314A] dark:text-white dark:hover:bg-[#334155]"
                 aria-label={previewPlaying ? 'Pause voice preview' : 'Play voice preview'}
                 title={previewPlaying ? 'Pause preview' : 'Play preview'}
               >
