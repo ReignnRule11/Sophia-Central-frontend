@@ -1411,7 +1411,7 @@ export function ChatPage() {
                   <textarea
                     value={editText}
                     onChange={event => setEditText(event.target.value)}
-                    className="chat-edit-input w-full rounded-lg border border-[#D7DEEA] bg-white p-2 text-sm text-[#091F5B] outline-none focus:border-violet-500 dark:border-[#475569] dark:bg-[#0F172A] dark:text-white"
+                    className="chat-edit-input w-full rounded-lg border border-[#D7DEEA] bg-white p-2 text-sm text-[#091F5B] outline-none focus:border-[#2C36D9] dark:border-[#475569] dark:bg-[#0B1120] dark:text-white"
                   />
 
                   <div className="flex gap-2">
