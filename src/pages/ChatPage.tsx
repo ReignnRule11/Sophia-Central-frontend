@@ -143,7 +143,7 @@ function VoiceMessagePlayer({ src }: { src: string }) {
               className={`h-auto min-w-0 max-w-[3px] flex-1 rounded-full transition-colors duration-100 ${
                 index / bars.length <= progress
                   ? 'bg-violet-700 dark:bg-violet-300'
-                  : 'bg-violet-300 dark:bg-[#F3F6FC]0'
+                  : 'bg-violet-300 dark:bg-[#94A3B8]'
               }`}
               style={{ height: `${height}px` }}
             />
