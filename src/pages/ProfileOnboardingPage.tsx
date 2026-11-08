@@ -108,48 +108,57 @@ export function ProfileOnboardingPage() {
       const departmentName = (useManualFaculty || department === '__manual__') ? departmentManual.trim() : department.trim();
       const pending: string[] = [];
 
+      let institutionSubmissionId: string | undefined;
       if (useManualInstitution && institutionName) {
-        await academicApi.submitCatalogueEntry({ entryType: 'institution', name: institutionName });
+        const institutionSubmission = await academicApi.submitCatalogueEntry({
+          entryType: 'institution',
+          name: institutionName,
+        }) as { id: string };
+        institutionSubmissionId = institutionSubmission.id;
         pending.push('institution');
-      } else if (selectedInstitution) {
-        // A shared faculty is linked to this institution only after moderation approval.
+      }
+
+      if (facultyName && (selectedInstitution || institutionSubmissionId)) {
         let facultyForInstitution = localSelectedFaculty;
         let facultySubmissionId: string | undefined;
-        if (!facultyForInstitution && facultyName) {
+
+        if (institutionSubmissionId || !facultyForInstitution) {
           const facultySubmission = await academicApi.submitCatalogueEntry({
             entryType: 'faculty',
             name: facultyName,
-            parentInstitutionId: selectedInstitution.id,
+            ...(institutionSubmissionId
+              ? { parentInstitutionSubmissionId: institutionSubmissionId }
+              : { parentInstitutionId: selectedInstitution!.id }),
           }) as { id: string };
           facultySubmissionId = facultySubmission.id;
           pending.push('faculty');
         }
 
-        if (departmentName && facultyName) {
+        if (departmentName) {
           const departmentExistsLocally = facultyForInstitution?.departments?.some(
             (item) => item.name.toLocaleLowerCase() === departmentName.toLocaleLowerCase(),
           );
           const departmentExistsInSharedList = departments.some(
             (item) => item.name.toLocaleLowerCase() === departmentName.toLocaleLowerCase(),
           );
-          if (!departmentExistsLocally) {
-            if (facultySubmissionId) {
-              await academicApi.submitCatalogueEntry({
-                entryType: 'department',
-                name: departmentName,
-                parentInstitutionId: selectedInstitution.id,
-                parentFacultySubmissionId: facultySubmissionId,
-              });
-              pending.push('department');
-            } else if (facultyForInstitution && (department === '__manual__' || departmentExistsInSharedList)) {
-              await academicApi.submitCatalogueEntry({
-                entryType: 'department',
-                name: departmentName,
-                parentInstitutionId: selectedInstitution.id,
-                parentFacultyId: facultyForInstitution.id,
-              });
-              pending.push('department');
-            }
+          if (facultySubmissionId) {
+            await academicApi.submitCatalogueEntry({
+              entryType: 'department',
+              name: departmentName,
+              ...(institutionSubmissionId
+                ? { parentInstitutionSubmissionId: institutionSubmissionId }
+                : { parentInstitutionId: selectedInstitution!.id }),
+              parentFacultySubmissionId: facultySubmissionId,
+            });
+            pending.push('department');
+          } else if (facultyForInstitution && !departmentExistsLocally && (department === '__manual__' || departmentExistsInSharedList)) {
+            await academicApi.submitCatalogueEntry({
+              entryType: 'department',
+              name: departmentName,
+              parentInstitutionId: selectedInstitution!.id,
+              parentFacultyId: facultyForInstitution.id,
+            });
+            pending.push('department');
           }
         }
       }
