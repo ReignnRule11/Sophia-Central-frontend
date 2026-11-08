@@ -125,7 +125,7 @@ function VoiceMessagePlayer({ src }: { src: string }) {
       <button
         type="button"
         onClick={() => void togglePlayback()}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-violet-800 transition hover:bg-white dark:bg-slate-700 dark:text-violet-200 dark:hover:bg-slate-600"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-900 transition hover:bg-violet-200 dark:bg-slate-700 dark:text-violet-200 dark:hover:bg-slate-600"
         aria-label={playing ? "Pause voice message" : "Play voice message"}
         title={playing ? "Pause voice message" : "Play voice message"}
       >
@@ -1057,7 +1057,7 @@ export function ChatPage() {
   return (
     <section className="mx-auto flex h-[calc(100vh-110px)] min-h-[640px] max-w-6xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
       {/* Chat header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-violet-200 bg-violet-100 p-4 dark:border-slate-700 dark:bg-slate-900">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-violet-200 bg-violet-100 p-4 dark:border-violet-900 dark:bg-slate-900">
         <div>
           <h2 className="font-bold text-slate-900 dark:!text-white">
             {mode === 'group' ? 'Group chat room' : 'Private DM'}
@@ -1076,7 +1076,7 @@ export function ChatPage() {
                 ? setMutedGroup(value => !value)
                 : setMutedDirect(value => !value)
             }
-            className="mt-2 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
+            className="mt-2 rounded-lg border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-900 transition-colors hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-slate-600 dark:bg-slate-800 dark:text-violet-200 dark:hover:bg-slate-700"
           >
             {(mode === 'group' ? mutedGroup : mutedDirect)
               ? 'Unmute notifications'
@@ -1086,7 +1086,7 @@ export function ChatPage() {
       </div>
 
       {mode === 'direct' && !recipient && (
-        <div className="border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
+        <div className="border-b border-violet-100 bg-violet-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
           <div className="mb-2 flex items-center justify-between gap-2">
             <h3 className="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
               Recent conversations
@@ -1136,7 +1136,7 @@ export function ChatPage() {
               ))}
             </div>
           ) : (
-            <p className="rounded-lg bg-white px-3 py-3 text-center text-xs text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+            <p className="rounded-lg bg-violet-50 px-3 py-3 text-center text-xs text-slate-600 dark:bg-slate-900 dark:text-slate-400">
               Your private conversations will appear here when you send or receive messages.
             </p>
           )}
@@ -1145,7 +1145,7 @@ export function ChatPage() {
 
       {/* Private conversation search */}
       {mode === 'direct' && !recipient && (
-        <div className="border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
+        <div className="border-b border-violet-100 bg-violet-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
           <label
             className="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-200"
             htmlFor="chat-contact-search"
@@ -1163,7 +1163,7 @@ export function ChatPage() {
               setShowContactDropdown(true);
             }}
             placeholder="Search username (e.g. @username)"
-            className="mb-2 w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-emerald-400"
+            className="mb-2 w-full rounded-xl border border-violet-200 bg-violet-50 px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-violet-400"
           />
 
           {showContactDropdown && (
@@ -1214,7 +1214,7 @@ export function ChatPage() {
                             : `@${contact.academicHandle}`}
                         </span>
 
-                        <span className="block text-[11px] capitalize text-slate-600 dark:text-purple-300">
+                        <span className="block text-[11px] capitalize text-slate-600 dark:text-slate-300">
                           {contact.isDeleted
                             ? 'Previous conversation · read only'
                             : contact.role}
@@ -1274,7 +1274,7 @@ export function ChatPage() {
               setShowContactDropdown(false);
               setError('');
             }}
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-800 transition hover:bg-violet-50 dark:text-violet-200 dark:hover:bg-slate-800"
+            className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-800 transition hover:bg-violet-100 dark:text-violet-200 dark:hover:bg-violet-950/50"
           >
             ← Recent conversations
           </button>
@@ -1319,7 +1319,7 @@ export function ChatPage() {
               type="button"
               onClick={() => void loadOlder()}
               disabled={loadingOlder}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-violet-800 hover:bg-violet-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-violet-200 dark:hover:bg-slate-700"
+              className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-900 hover:bg-violet-100 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-violet-200 dark:hover:bg-violet-700/30"
             >
               {loadingOlder ? 'Loading older messages…' : 'Load older messages'}
             </button>
@@ -1411,7 +1411,7 @@ export function ChatPage() {
                   <textarea
                     value={editText}
                     onChange={event => setEditText(event.target.value)}
-                    className="w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-900 outline-none focus:border-violet-500 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
+                    className="w-full rounded-lg border border-violet-200 bg-violet-50 p-2 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-violet-400"
                   />
 
                   <div className="flex gap-2">
@@ -1486,8 +1486,8 @@ export function ChatPage() {
                 }}
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
                   showEmoji
-                    ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'
+                    ? 'bg-violet-100 text-violet-950 dark:bg-violet-950/60 dark:text-violet-100'
+                    : 'text-slate-600 hover:bg-violet-50 dark:text-slate-300 dark:hover:bg-slate-700'
                 }`}
               >
                 Emoji
@@ -1501,8 +1501,8 @@ export function ChatPage() {
                 }}
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
                   showStickers
-                    ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'
+                    ? 'bg-violet-100 text-violet-950 dark:bg-violet-950/60 dark:text-violet-100'
+                    : 'text-slate-600 hover:bg-violet-50 dark:text-slate-300 dark:hover:bg-slate-700'
                 }`}
               >
                 Stickers
@@ -1519,7 +1519,7 @@ export function ChatPage() {
                       setText(value => value + emoji);
                       messageInputRef.current?.focus();
                     }}
-                    className="rounded-lg p-2 text-xl hover:bg-slate-100 dark:hover:bg-slate-700"
+                    className="rounded-lg p-2 text-xl hover:bg-violet-50 dark:hover:bg-slate-700"
                     aria-label={`Add ${emoji}`}
                   >
                     {emoji}
@@ -1553,7 +1553,7 @@ export function ChatPage() {
           </div>
         )}
 
-        <div className="flex items-end gap-1.5 rounded-[28px] border border-slate-300 bg-slate-100 px-3 py-1.5 focus-within:border-emerald-500 dark:border-slate-600 dark:bg-slate-800 dark:focus-within:border-emerald-400">
+        <div className="flex items-end gap-1.5 rounded-[28px] border border-violet-200 bg-violet-50 px-3 py-1.5 focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-500/15 dark:border-slate-600 dark:bg-slate-800 dark:focus-within:border-violet-400">
           {/* Text entry and voice recording/preview are mutually exclusive modes. */}
           {!recording && !previewBelongsToCurrentChat && (
             <>
@@ -1569,7 +1569,7 @@ export function ChatPage() {
                     setShowStickers(false);
                   }
                 }}
-                className="mb-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-600 hover:bg-slate-200 dark:text-slate-200 dark:hover:bg-slate-700"
+                className="mb-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-violet-800 hover:bg-violet-100 dark:text-violet-200 dark:hover:bg-slate-700"
                 aria-label={
                   showEmoji || showStickers
                     ? 'Close emoji and sticker panel and open keyboard'
@@ -1609,7 +1609,7 @@ export function ChatPage() {
                 }
                 disabled={recipientDeleted}
                 rows={1}
-                className="max-h-28 min-h-10 min-w-0 flex-1 resize-y border-0 bg-transparent px-0.5 py-2.5 text-[15px] text-slate-900 caret-slate-900 outline-none placeholder:text-slate-500 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60 dark:text-white dark:caret-white dark:placeholder:text-slate-300"
+                className="max-h-28 min-h-10 min-w-0 flex-1 resize-y border-0 bg-transparent px-0.5 py-2.5 text-[15px] text-slate-900 caret-violet-700 outline-none placeholder:text-slate-500 outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60 dark:text-slate-100 dark:caret-violet-300 dark:placeholder:text-slate-300"
               />
 
               {/* Use text first: the microphone is only available for an empty draft. */}
@@ -1646,7 +1646,7 @@ export function ChatPage() {
                     sending ||
                     (mode === 'direct' && (!recipient || recipientDeleted))
                   }
-                  className="mb-0.5 flex h-10 w-10 shrink-0 touch-none items-center justify-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
+                  className="mb-0.5 flex h-10 w-10 shrink-0 touch-none items-center justify-center rounded-full bg-violet-700 text-white hover:bg-violet-800 disabled:opacity-50"
                   aria-label="Press and hold to record a voice message"
                   title="Press and hold to record a voice message"
                 >
@@ -1670,7 +1670,7 @@ export function ChatPage() {
                 {waveform.map((height, index) => (
                   <span
                     key={index}
-                    className="w-[3px] rounded-full bg-emerald-600 transition-[height] duration-75 dark:bg-emerald-400"
+                    className="w-[3px] rounded-full bg-violet-600 transition-[height] duration-75 dark:bg-violet-300"
                     style={{ height: `${height}px` }}
                   />
                 ))}
@@ -1692,7 +1692,7 @@ export function ChatPage() {
               <button
                 type="button"
                 onClick={() => void toggleVoicePreview()}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-500"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-900 hover:bg-violet-200 dark:bg-slate-600 dark:text-violet-100 dark:hover:bg-slate-500"
                 aria-label={previewPlaying ? 'Pause voice preview' : 'Play voice preview'}
                 title={previewPlaying ? 'Pause preview' : 'Play preview'}
               >
