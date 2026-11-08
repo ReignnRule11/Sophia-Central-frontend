@@ -97,7 +97,7 @@ export function ProfileOnboardingPage() {
 
   const institutionName = useManualInstitution ? institutionManual.trim() : selectedInstitution?.name ?? '';
   const facultyName = useManualFaculty ? facultyManual.trim() : selectedFaculty?.name ?? '';
-  const canContinue = () => { if (step === 1) return useManualInstitution ? Boolean(institutionManual.trim()) : Boolean(institutionId); if (step === 2) return Boolean((useManualFaculty ? facultyManual.trim() : facultyId) && (department === '__manual__' ? departmentManual.trim() : department.trim())); if (isLecturer) return step === 3 ? coursesTaught.length > 0 : step === 4; return Boolean(programme.trim() && studyLevel); };
+  const canContinue = () => { if (step === 1) return useManualInstitution ? Boolean(institutionManual.trim()) : Boolean(institutionId); if (step === 2) return Boolean((useManualFaculty ? facultyManual.trim() : facultyId) && ((useManualFaculty || department === '__manual__') ? departmentManual.trim() : department.trim())); if (isLecturer) return step === 3 ? coursesTaught.length > 0 : step === 4; return Boolean(programme.trim() && studyLevel); };
   const addCourse = (value: string) => { const clean = value.trim(); if (!clean || coursesTaught.includes(clean)) return; setCoursesTaught((current) => [...current, clean]); setCourseInput(''); };
   const save = async () => {
     if (!canContinue()) return;
@@ -105,7 +105,7 @@ export function ProfileOnboardingPage() {
     setError('');
     setCatalogueNotice('');
     try {
-      const departmentName = department === '__manual__' ? departmentManual.trim() : department.trim();
+      const departmentName = (useManualFaculty || department === '__manual__') ? departmentManual.trim() : department.trim();
       const pending: string[] = [];
 
       if (useManualInstitution && institutionName) {
