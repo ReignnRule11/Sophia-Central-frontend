@@ -539,6 +539,8 @@ export function ChatPage() {
   }, [loadBlocks, loadInbox]);
   useEffect(() => {
     const query = contactSearch.trim();
+    // Invalidate an older in-flight search immediately when the query changes.
+    contactSearchSequenceRef.current += 1;
     if (!query) {
       contactSearchSequenceRef.current += 1;
       setContacts([]);
