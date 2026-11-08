@@ -185,9 +185,8 @@ export function ChatPage() {
   const recipientDeleted = Boolean(selectedContact?.isDeleted);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [hiddenDeletedMessageIds, setHiddenDeletedMessageIds] = useState<Set<string>>(() => new Set());
   const [expandedDeletedMessageId, setExpandedDeletedMessageId] = useState<string | null>(null);
-  const visibleMessages = messages.filter(message => !hiddenDeletedMessageIds.has(message.id));
+  const visibleMessages = messages;
   const [hasMore, setHasMore] = useState(false);
   const [nextBefore, setNextBefore] = useState<string | null>(null);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -762,6 +761,17 @@ export function ChatPage() {
       await loadMessages(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Message could not be deleted.');
+    }
+  };
+
+  const hideDeletedMessage = async (id: string) => {
+    try {
+      await chatApi.hideDeletedMessage(id);
+      setMessages(current => current.filter(message => message.id !== id));
+      setExpandedDeletedMessageId(null);
+      await loadInbox();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Deleted message could not be removed from your chat.');
     }
   };
 
@@ -1507,10 +1517,7 @@ export function ChatPage() {
                   {expandedDeletedMessageId === message.id && (
                     <button
                       type="button"
-                      onClick={() => {
-                        setHiddenDeletedMessageIds(current => new Set([...current, message.id]));
-                        setExpandedDeletedMessageId(null);
-                      }}
+                      onClick={() => void hideDeletedMessage(message.id)}
                       className="rounded-lg border border-[#D7DEEA] bg-white px-3 py-1.5 text-xs font-semibold text-violet-800 transition hover:bg-[#F3F0FF] dark:border-[#475569] dark:bg-[#172033] dark:text-[#D8CCFF] dark:hover:bg-[#26314A]"
                     >
                       Delete
