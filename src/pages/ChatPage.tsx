@@ -700,11 +700,13 @@ export function ChatPage() {
         mode,
         stickerId,
         mode === 'direct' ? recipient : undefined,
+        replyTarget?.id,
       );
 
       shouldAutoScrollRef.current = true;
 
       setMessages(current => [...current, message]);
+      setReplyTarget(null);
       void loadInbox();
       setShowStickers(false);
 
@@ -1024,11 +1026,13 @@ export function ChatPage() {
         mode,
         upload.key,
         mode === 'direct' ? recipient : undefined,
+        replyTarget?.id,
       );
 
       shouldAutoScrollRef.current = true;
 
       setMessages(current => [...current, message]);
+      setReplyTarget(null);
 
       if (previewAudioRef.current) {
         previewAudioRef.current.pause();
