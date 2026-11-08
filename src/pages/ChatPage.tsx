@@ -542,13 +542,16 @@ export function ChatPage() {
     // Invalidate an older in-flight search immediately when the query changes.
     contactSearchSequenceRef.current += 1;
     if (!query) {
-      contactSearchSequenceRef.current += 1;
       setContacts([]);
       setContactSearchLoading(false);
       setContactSearchError('');
       setShowContactDropdown(false);
       return;
     }
+
+    setContacts([]);
+    setContactSearchLoading(true);
+    setContactSearchError('');
 
     const timer = window.setTimeout(() => {
       void loadContacts(query);
