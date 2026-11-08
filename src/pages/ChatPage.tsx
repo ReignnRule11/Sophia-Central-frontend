@@ -1532,7 +1532,7 @@ export function ChatPage() {
               {mode === 'group' && selectedMessage.senderId && selectedMessage.senderId !== user?.id && (
                 <button type="button" onClick={() => { setReplyTarget(selectedMessage); setSelectedMessage(null); navigate(`/messages?userId=${encodeURIComponent(selectedMessage.senderId!)}`); }} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Reply privately</button>
               )}
-              <button type="button" onClick={() => { setForwardDialogOpen(true); setSelectedMessage(null); }} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Forward</button>
+              <button type="button" onClick={() => setForwardDialogOpen(true)} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Forward</button>
               {selectedMessage.contentType === 'text' && selectedMessage.text && (
                 <button type="button" onClick={() => { void navigator.clipboard.writeText(selectedMessage.text ?? '').then(() => setError('Message copied.')).catch(() => setError('Could not copy this message.')); setSelectedMessage(null); }} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Copy</button>
               )}
@@ -1546,11 +1546,11 @@ export function ChatPage() {
       )}
 
       {forwardDialogOpen && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/45 p-3" onClick={() => setForwardDialogOpen(false)}>
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/45 p-3" onClick={() => { setForwardDialogOpen(false); setSelectedMessage(null); }}>
           <div className="w-full max-w-md rounded-2xl bg-white p-4 shadow-2xl dark:bg-[#172033]" onClick={event => event.stopPropagation()}>
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-base font-bold text-[#091F5B] dark:text-white">Forward message</h3>
-              <button type="button" onClick={() => setForwardDialogOpen(false)} className="rounded-lg px-2 py-1 text-sm text-[#64748B] hover:bg-[#F3F6FC] dark:text-[#CBD5E1]">Close</button>
+              <button type="button" onClick={() => { setForwardDialogOpen(false); setSelectedMessage(null); }} className="rounded-lg px-2 py-1 text-sm text-[#64748B] hover:bg-[#F3F6FC] dark:text-[#CBD5E1]">Close</button>
             </div>
             <input value={forwardSearch} onChange={event => setForwardSearch(event.target.value)} placeholder="Find a student or lecturer" className="mb-3 w-full rounded-xl border border-[#D7DEEA] bg-[#F8FAFD] px-3 py-2.5 text-sm text-[#091F5B] outline-none focus:border-violet-500 dark:border-[#475569] dark:bg-[#0B1120] dark:text-white" />
             <div className="max-h-64 space-y-1 overflow-y-auto">
@@ -1561,6 +1561,7 @@ export function ChatPage() {
                   try {
                     await chatApi.forwardMessage(selectedMessage.id, contact.id);
                     setForwardDialogOpen(false);
+                    setSelectedMessage(null);
                     setForwardSearch('');
                     setError('Message forwarded.');
                     void loadInbox();
