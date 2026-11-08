@@ -1092,7 +1092,7 @@ export function ChatPage() {
       {/* Chat header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-violet-200 bg-violet-100 p-4 dark:border-[#334155] dark:bg-[#0F172A] dark:!border-violet-200 dark:!bg-violet-100">
         <div>
-          <h2 className="font-bold text-[#091F5B] dark:!text-white dark:!text-violet-950">
+          <h2 className="font-bold text-[#091F5B] dark:!text-violet-950">
             {mode === 'group' ? 'Group chat room' : 'Private DM'}
           </h2>
 
@@ -1149,7 +1149,7 @@ export function ChatPage() {
                 >
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
-                      <span className="truncate text-xs font-semibold text-[#091F5B] dark:!text-white dark:!text-violet-950">
+                      <span className="truncate text-xs font-semibold text-[#091F5B] dark:!text-violet-950">
                         {item.contact.isDeleted ? 'Deleted user' : `@${item.contact.academicHandle}`}
                       </span>
                       {item.unreadCount > 0 && (
