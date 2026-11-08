@@ -185,6 +185,9 @@ export function ChatPage() {
   const recipientDeleted = Boolean(selectedContact?.isDeleted);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [hiddenDeletedMessageIds, setHiddenDeletedMessageIds] = useState<Set<string>>(() => new Set());
+  const [expandedDeletedMessageId, setExpandedDeletedMessageId] = useState<string | null>(null);
+  const visibleMessages = messages.filter(message => !hiddenDeletedMessageIds.has(message.id));
   const [hasMore, setHasMore] = useState(false);
   const [nextBefore, setNextBefore] = useState<string | null>(null);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -1364,12 +1367,12 @@ export function ChatPage() {
           <p className="py-10 text-center text-sm text-[#4B5563] dark:text-[#CBD5E1]">
             Choose a contact to start a conversation.
           </p>
-        ) : messages.length === 0 ? (
+        ) : visibleMessages.length === 0 ? (
           <p className="py-10 text-center text-sm text-[#4B5563] dark:text-[#CBD5E1]">
             No messages yet. Start the conversation.
           </p>
         ) : (
-          messages.map(message => (
+          visibleMessages.map(message => (
             <article
               key={message.id}
               onPointerDown={event => {
@@ -1464,9 +1467,29 @@ export function ChatPage() {
                 </div>
               )}
               {message.isDeleted ? (
-                <p className="text-sm italic text-[#4B5563] dark:text-[#CBD5E1]">
-                  This message was deleted.
-                </p>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedDeletedMessageId(current => current === message.id ? null : message.id)}
+                    className="block rounded-md px-1 py-0.5 text-left text-sm italic text-[#4B5563] transition hover:bg-[#E8EDF5] hover:text-[#091F5B] focus:outline-none focus:ring-2 focus:ring-[#2C36D9] dark:text-[#CBD5E1] dark:hover:bg-[#26314A] dark:hover:text-white"
+                    aria-expanded={expandedDeletedMessageId === message.id}
+                    aria-label="Show options for deleted message"
+                  >
+                    This message was deleted.
+                  </button>
+                  {expandedDeletedMessageId === message.id && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setHiddenDeletedMessageIds(current => new Set([...current, message.id]));
+                        setExpandedDeletedMessageId(null);
+                      }}
+                      className="rounded-lg border border-[#D7DEEA] bg-white px-3 py-1.5 text-xs font-semibold text-violet-800 transition hover:bg-[#F3F0FF] dark:border-[#475569] dark:bg-[#172033] dark:text-[#D8CCFF] dark:hover:bg-[#26314A]"
+                    >
+                      Remove from my chat
+                    </button>
+                  )}
+                </div>
               ) : message.contentType === 'voice' && message.voiceUrl ? (
                 <VoiceMessagePlayer src={message.voiceUrl} />
               ) : message.contentType === 'sticker' ? (
