@@ -4,7 +4,7 @@ import { appConfig } from '../config/env';
 export type ChatContact = { id: string; academicHandle: string; role: 'student' | 'lecturer'; institution?: string; faculty?: string; department?: string; isDeleted?: boolean };
 export type ChatQuotedMessage = { id: string; senderHandle: string; contentType: 'text' | 'voice' | 'sticker'; text: string | null; stickerId?: string | null; isDeleted: boolean };
 export type ChatMessage = { id: string; kind: 'group' | 'direct'; senderId: string | null; senderHandle: string; contentType: 'text' | 'voice' | 'sticker'; text: string | null; voiceUrl: string | null; stickerId?: string | null; isDeleted: boolean; editedAt: string | null; createdAt: string; isOwn: boolean; replyToMessageId?: string | null; forwardedFromMessageId?: string | null; quotedMessage?: ChatQuotedMessage | null };
-export type ChatPage = { items: ChatMessage[]; hasMore: boolean; nextBefore: string | null };
+export type ChatPage = { items: ChatMessage[]; hasMore: boolean; nextBefore: string | null; hiddenMessageIds?: string[] };
 export type ChatInboxItem = {
   contact: ChatContact;
   lastMessage: {
