@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Keyboard, Mic, Pause, Play, Send, Smile, Trash2 } from 'lucide-react';
 import { chatApi, type ChatContact, type ChatInboxItem, type ChatMessage } from '../api/chat';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 type Mode = 'group' | 'direct';
@@ -161,6 +161,7 @@ function VoiceMessagePlayer({ src }: { src: string }) {
 export function ChatPage() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const mode: Mode =
     location.pathname === '/chat/group' && user?.role === 'student'
@@ -210,6 +211,13 @@ export function ChatPage() {
 
   const [editing, setEditing] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const [selectedMessage, setSelectedMessage] = useState<ChatMessage | null>(null);
+  const [replyTarget, setReplyTarget] = useState<ChatMessage | null>(null);
+  const [forwardDialogOpen, setForwardDialogOpen] = useState(false);
+  const [forwardSearch, setForwardSearch] = useState('');
+  const [forwarding, setForwarding] = useState(false);
+  const longPressTimerRef = useRef<number | null>(null);
+  const longPressStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const [showEmoji, setShowEmoji] = useState(false);
   const [showStickers, setShowStickers] = useState(false);
@@ -280,6 +288,22 @@ export function ChatPage() {
 
   const activeConversationRef = useRef(`${mode}:${recipient}`);
   activeConversationRef.current = `${mode}:${recipient}`;
+
+  useEffect(() => {
+    if (!selectedMessage && !forwardDialogOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedMessage(null);
+        setForwardDialogOpen(false);
+      }
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [selectedMessage, forwardDialogOpen]);
+
+  useEffect(() => () => {
+    if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
+  }, []);
 
   const loadPresence = useCallback(async () => {
     try {
@@ -641,6 +665,7 @@ export function ChatPage() {
         mode,
         value,
         mode === 'direct' ? recipient : undefined,
+        replyTarget?.id,
       );
 
       shouldAutoScrollRef.current = true;
@@ -648,6 +673,7 @@ export function ChatPage() {
       setMessages(current => [...current, message]);
       void loadInbox();
       setText('');
+      setReplyTarget(null);
       setShowEmoji(false);
 
       playSophisTone('send');
@@ -674,11 +700,13 @@ export function ChatPage() {
         mode,
         stickerId,
         mode === 'direct' ? recipient : undefined,
+        replyTarget?.id,
       );
 
       shouldAutoScrollRef.current = true;
 
       setMessages(current => [...current, message]);
+      setReplyTarget(null);
       void loadInbox();
       setShowStickers(false);
 
@@ -998,11 +1026,13 @@ export function ChatPage() {
         mode,
         upload.key,
         mode === 'direct' ? recipient : undefined,
+        replyTarget?.id,
       );
 
       shouldAutoScrollRef.current = true;
 
       setMessages(current => [...current, message]);
+      setReplyTarget(null);
 
       if (previewAudioRef.current) {
         previewAudioRef.current.pause();
@@ -1342,6 +1372,39 @@ export function ChatPage() {
           messages.map(message => (
             <article
               key={message.id}
+              onPointerDown={event => {
+                if (event.pointerType === 'mouse' || message.isDeleted || editing === message.id) return;
+                longPressStartRef.current = { x: event.clientX, y: event.clientY };
+                if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
+                longPressTimerRef.current = window.setTimeout(() => {
+                  setSelectedMessage(message);
+                  longPressTimerRef.current = null;
+                }, 520);
+              }}
+              onPointerMove={event => {
+                const start = longPressStartRef.current;
+                if (!start) return;
+                if (Math.abs(event.clientX - start.x) > 12 || Math.abs(event.clientY - start.y) > 12) {
+                  if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
+                  longPressTimerRef.current = null;
+                  longPressStartRef.current = null;
+                }
+              }}
+              onPointerUp={() => {
+                if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
+                longPressTimerRef.current = null;
+                longPressStartRef.current = null;
+              }}
+              onPointerCancel={() => {
+                if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
+                longPressTimerRef.current = null;
+                longPressStartRef.current = null;
+              }}
+              onContextMenu={event => {
+                if (message.isDeleted || editing === message.id) return;
+                event.preventDefault();
+                setSelectedMessage(message);
+              }}
               className={`w-fit max-w-[85%] min-w-0 rounded-2xl border p-3 shadow-sm ${
                 message.isOwn
                   ? 'ml-auto border-violet-300 bg-violet-100 text-violet-950 dark:border-[#6D5AA8] dark:bg-[#31234B] dark:text-[#F3E8FF]'
@@ -1390,6 +1453,16 @@ export function ChatPage() {
                 )}
               </div>
 
+              {message.quotedMessage && (
+                <div className="mb-2 rounded-lg border-l-4 border-violet-500 bg-white/70 px-2.5 py-2 text-xs dark:bg-[#0B1120]/70">
+                  <p className="font-semibold text-violet-800 dark:text-violet-200">
+                    {message.forwardedFromMessageId ? 'Forwarded from' : 'Replying to'} @{message.quotedMessage.senderHandle}
+                  </p>
+                  <p className="mt-0.5 line-clamp-2 text-[#475569] dark:text-[#CBD5E1]">
+                    {message.quotedMessage.isDeleted ? 'This message was deleted' : message.quotedMessage.contentType === 'voice' ? 'Voice message' : message.quotedMessage.contentType === 'sticker' ? 'Sticker' : message.quotedMessage.text}
+                  </p>
+                </div>
+              )}
               {message.isDeleted ? (
                 <p className="text-sm italic text-[#4B5563] dark:text-[#CBD5E1]">
                   This message was deleted.
@@ -1459,12 +1532,6 @@ export function ChatPage() {
                     Edit
                   </button>
 
-                  <button
-                    onClick={() => void remove(message.id)}
-                    className="font-semibold text-rose-700 hover:underline dark:text-rose-300"
-                  >
-                    Delete
-                  </button>
                 </div>
               )}
             </article>
@@ -1473,8 +1540,79 @@ export function ChatPage() {
       </div>
       )}
 
+      {selectedMessage && (
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-slate-950/35 p-3 sm:items-center" onClick={() => setSelectedMessage(null)}>
+          <div className="w-full max-w-sm rounded-2xl border border-[#DCE4EF] bg-white p-3 shadow-2xl dark:border-[#475569] dark:bg-[#172033]" onClick={event => event.stopPropagation()}>
+            <div className="mb-2 border-b border-[#E5E7EB] pb-2 dark:border-[#334155]">
+              <p className="text-xs font-bold text-[#091F5B] dark:text-white">Message actions</p>
+              <p className="mt-1 truncate text-xs text-[#64748B] dark:text-[#CBD5E1]">{selectedMessage.contentType === 'voice' ? 'Voice message' : selectedMessage.contentType === 'sticker' ? 'Sticker' : selectedMessage.text}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => { setReplyTarget(selectedMessage); setSelectedMessage(null); window.setTimeout(() => messageInputRef.current?.focus(), 0); }} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Reply</button>
+              {mode === 'group' && selectedMessage.senderId && selectedMessage.senderId !== user?.id && (
+                <button type="button" onClick={() => { setReplyTarget(selectedMessage); setSelectedMessage(null); navigate(`/messages?userId=${encodeURIComponent(selectedMessage.senderId!)}`); }} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Reply privately</button>
+              )}
+              <button type="button" onClick={() => setForwardDialogOpen(true)} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Forward</button>
+              {selectedMessage.contentType === 'text' && selectedMessage.text && (
+                <button type="button" onClick={() => { void navigator.clipboard.writeText(selectedMessage.text ?? '').then(() => setError('Message copied.')).catch(() => setError('Could not copy this message.')); setSelectedMessage(null); }} className="rounded-xl bg-violet-50 px-3 py-3 text-sm font-semibold text-violet-900 hover:bg-violet-100 dark:bg-[#31234B] dark:text-violet-100">Copy</button>
+              )}
+              {selectedMessage.isOwn && !selectedMessage.isDeleted && (
+                <button type="button" onClick={() => { const id = selectedMessage.id; setSelectedMessage(null); void remove(id); }} className="rounded-xl bg-rose-50 px-3 py-3 text-sm font-semibold text-rose-700 hover:bg-rose-100 dark:bg-rose-950/50 dark:text-rose-300">Delete</button>
+              )}
+            </div>
+            <button type="button" onClick={() => setSelectedMessage(null)} className="mt-2 w-full rounded-xl px-3 py-2 text-sm font-semibold text-[#64748B] hover:bg-[#F3F6FC] dark:text-[#CBD5E1] dark:hover:bg-[#26314A]">Close</button>
+          </div>
+        </div>
+      )}
+
+      {forwardDialogOpen && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/45 p-3" onClick={() => { setForwardDialogOpen(false); setSelectedMessage(null); }}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-4 shadow-2xl dark:bg-[#172033]" onClick={event => event.stopPropagation()}>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#091F5B] dark:text-white">Forward message</h3>
+              <button type="button" onClick={() => { setForwardDialogOpen(false); setSelectedMessage(null); }} className="rounded-lg px-2 py-1 text-sm text-[#64748B] hover:bg-[#F3F6FC] dark:text-[#CBD5E1]">Close</button>
+            </div>
+            <input value={forwardSearch} onChange={event => setForwardSearch(event.target.value)} placeholder="Find a student or lecturer" className="mb-3 w-full rounded-xl border border-[#D7DEEA] bg-[#F8FAFD] px-3 py-2.5 text-sm text-[#091F5B] outline-none focus:border-violet-500 dark:border-[#475569] dark:bg-[#0B1120] dark:text-white" />
+            <div className="max-h-64 space-y-1 overflow-y-auto">
+              {contacts.filter(contact => !contact.isDeleted && contact.id !== user?.id && contact.academicHandle.toLowerCase().includes(forwardSearch.trim().replace(/^@+/, '').toLowerCase())).map(contact => (
+                <button key={contact.id} type="button" disabled={forwarding} onClick={async () => {
+                  if (!selectedMessage) return;
+                  setForwarding(true);
+                  try {
+                    await chatApi.forwardMessage(selectedMessage.id, contact.id);
+                    setForwardDialogOpen(false);
+                    setSelectedMessage(null);
+                    setForwardSearch('');
+                    setError('Message forwarded.');
+                    void loadInbox();
+                  } catch (e) {
+                    setError(e instanceof Error ? e.message : 'Message could not be forwarded.');
+                  } finally {
+                    setForwarding(false);
+                  }
+                }} className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-[#1F2937] hover:bg-violet-50 disabled:opacity-50 dark:text-white dark:hover:bg-[#31234B]">
+                  <span>@{contact.academicHandle}</span><span className="text-xs font-medium text-[#64748B] dark:text-[#CBD5E1]">{contact.role}</span>
+                </button>
+              ))}
+              {!contacts.some(contact => !contact.isDeleted && contact.id !== user?.id && contact.academicHandle.toLowerCase().includes(forwardSearch.trim().replace(/^@+/, '').toLowerCase())) && <p className="py-5 text-center text-xs text-[#64748B] dark:text-[#CBD5E1]">No matching contacts.</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
       {(mode === 'group' || recipient) && (
       <div className="border-t border-[#DCE4EF] bg-white p-3 dark:border-[#334155] dark:bg-[#0F172A]">
+        {replyTarget && (
+          <div className="mb-3 flex items-start gap-3 rounded-xl border border-violet-200 bg-violet-50 p-3 dark:border-violet-800 dark:bg-[#211A35]">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-violet-800 dark:text-violet-200">Replying to @{replyTarget.senderHandle}</p>
+              <p className="mt-1 truncate text-xs text-[#475569] dark:text-[#CBD5E1]">
+                {replyTarget.isDeleted ? 'This message was deleted' : replyTarget.contentType === 'voice' ? 'Voice message' : replyTarget.contentType === 'sticker' ? 'Sticker' : replyTarget.text}
+              </p>
+            </div>
+            <button type="button" onClick={() => setReplyTarget(null)} className="rounded-lg px-2 py-1 text-xs font-semibold text-[#475569] hover:bg-white dark:text-[#CBD5E1] dark:hover:bg-[#334155]">Cancel</button>
+          </div>
+        )}
         {(showEmoji || showStickers) && (
           <div className="mb-3 rounded-2xl border border-[#DCE4EF] bg-white p-3 shadow-sm dark:border-[#334155] dark:bg-[#172033]">
             <div className="mb-2 flex gap-2 border-b border-[#DCE4EF] pb-2 dark:border-[#334155]">
