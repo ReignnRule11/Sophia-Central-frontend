@@ -289,6 +289,22 @@ export function ChatPage() {
   const activeConversationRef = useRef(`${mode}:${recipient}`);
   activeConversationRef.current = `${mode}:${recipient}`;
 
+  useEffect(() => {
+    if (!selectedMessage && !forwardDialogOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedMessage(null);
+        setForwardDialogOpen(false);
+      }
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [selectedMessage, forwardDialogOpen]);
+
+  useEffect(() => () => {
+    if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
+  }, []);
+
   const loadPresence = useCallback(async () => {
     try {
       const result = await chatApi.presence();
