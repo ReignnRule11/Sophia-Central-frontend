@@ -185,8 +185,9 @@ export function ChatPage() {
   const recipientDeleted = Boolean(selectedContact?.isDeleted);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [hiddenDeletedMessageIds, setHiddenDeletedMessageIds] = useState<Set<string>>(() => new Set());
   const [expandedDeletedMessageId, setExpandedDeletedMessageId] = useState<string | null>(null);
-  const visibleMessages = messages;
+  const visibleMessages = messages.filter(message => !hiddenDeletedMessageIds.has(message.id));
   const [hasMore, setHasMore] = useState(false);
   const [nextBefore, setNextBefore] = useState<string | null>(null);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -402,6 +403,7 @@ export function ChatPage() {
               : { items: [], hasMore: false, nextBefore: null };
 
         if (requestSequence !== requestSequenceRef.current) return;
+        setHiddenDeletedMessageIds(new Set(result.hiddenMessageIds ?? []));
 
         if (quiet) {
           const container = listRef.current;
@@ -767,6 +769,7 @@ export function ChatPage() {
   const hideDeletedMessage = async (id: string) => {
     try {
       await chatApi.hideDeletedMessage(id);
+      setHiddenDeletedMessageIds(current => new Set([...current, id]));
       setMessages(current => current.filter(message => message.id !== id));
       setExpandedDeletedMessageId(null);
       await loadInbox();
