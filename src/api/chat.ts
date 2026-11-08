@@ -42,6 +42,6 @@ export const chatApi = {
   edit: (id: string, text: string) => apiRequest<ChatMessage>(`/chat/messages/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ text }) }),
   remove: (id: string) => apiRequest<{ success: boolean }>(`/chat/messages/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   voiceUpload: (mimetype: string, size: number) => apiRequest<{ uploadUrl: string; key: string; contentType: string }>('/chat/voice-upload', { method: 'POST', body: JSON.stringify({ mimetype, size }) }),
-  sendVoice: (kind: 'group' | 'direct', voiceKey: string, recipientId?: string) => apiRequest<ChatMessage>('/chat/messages', { method: 'POST', body: JSON.stringify({ kind, voiceKey, ...(recipientId ? { recipientId } : {}) }) }),
-  sendSticker: (kind: 'group' | 'direct', stickerId: string, recipientId?: string) => apiRequest<ChatMessage>('/chat/messages', { method: 'POST', body: JSON.stringify({ kind, stickerId, ...(recipientId ? { recipientId } : {}) }) }),
+  sendVoice: (kind: 'group' | 'direct', voiceKey: string, recipientId?: string, replyToMessageId?: string) => apiRequest<ChatMessage>('/chat/messages', { method: 'POST', body: JSON.stringify({ kind, voiceKey, ...(recipientId ? { recipientId } : {}), ...(replyToMessageId ? { replyToMessageId } : {}) }) }),
+  sendSticker: (kind: 'group' | 'direct', stickerId: string, recipientId?: string, replyToMessageId?: string) => apiRequest<ChatMessage>('/chat/messages', { method: 'POST', body: JSON.stringify({ kind, stickerId, ...(recipientId ? { recipientId } : {}), ...(replyToMessageId ? { replyToMessageId } : {}) }) }),
 };
