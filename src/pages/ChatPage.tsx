@@ -1090,13 +1090,13 @@ export function ChatPage() {
   return (
     <section className="chat-page mx-auto flex h-[calc(100vh-110px)] min-h-[640px] max-w-6xl flex-col overflow-hidden rounded-2xl border border-[#DCE4EF] bg-white text-[#091F5B] shadow-sm dark:border-[#334155] dark:bg-[#0F172A] dark:text-[#F1F5F9]">
       {/* Chat header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-violet-200 bg-violet-100 p-4 dark:border-[#334155] dark:bg-[#0F172A] lg:dark:border-violet-200 lg:dark:bg-violet-100">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-violet-200 bg-violet-100 p-4 dark:border-[#334155] dark:bg-[#0F172A] dark:!border-violet-200 dark:!bg-violet-100">
         <div>
-          <h2 className="font-bold text-[#091F5B] dark:!text-white lg:dark:!text-violet-950">
+          <h2 className="font-bold text-[#091F5B] dark:!text-white dark:!text-violet-950">
             {mode === 'group' ? 'Group chat room' : 'Private DM'}
           </h2>
 
-          <p className="text-xs text-[#4B5563] dark:text-[#CBD5E1] lg:dark:text-violet-900">
+          <p className="text-xs text-[#4B5563] dark:text-[#CBD5E1] dark:!text-violet-900">
             {mode === 'group'
               ? 'Your institution, faculty and department community'
               : 'Private conversations with students and lecturers'}
@@ -1119,12 +1119,12 @@ export function ChatPage() {
       </div>
 
       {mode === 'direct' && !recipient && (
-        <div className="border-b border-[#DCE4EF] bg-[#F3F6FC] px-4 py-3 dark:border-[#334155] dark:bg-[#0B1120] lg:dark:border-violet-200 lg:dark:bg-violet-100">
+        <div className="border-b border-[#DCE4EF] bg-[#F3F6FC] px-4 py-3 dark:border-[#334155] dark:bg-[#0B1120] dark:!border-violet-200 dark:!bg-violet-100">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h3 className="text-xs font-bold uppercase tracking-wide text-[#1F2937] dark:text-[#E2E8F0] lg:dark:text-violet-950">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-[#1F2937] dark:text-[#E2E8F0] dark:!text-violet-950">
               Recent conversations
             </h3>
-            <span className="text-[10px] text-[#71809A] dark:text-[#94A3B8] lg:dark:text-violet-800">
+            <span className="text-[10px] text-[#71809A] dark:text-[#94A3B8] dark:!text-violet-800">
               {inbox.length} conversation{inbox.length === 1 ? '' : 's'}
             </span>
           </div>
@@ -1143,13 +1143,13 @@ export function ChatPage() {
                   }}
                   className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
                     recipient === item.contact.id
-                      ? 'bg-violet-100 dark:bg-[#31234B] lg:dark:bg-violet-200'
-                      : 'bg-violet-50 hover:bg-[#F3F0FF] dark:bg-[#0F172A] dark:hover:bg-[#26314A] lg:dark:bg-violet-50 lg:dark:hover:bg-violet-200'
+                      ? 'bg-violet-100 dark:bg-[#31234B] dark:!bg-violet-200'
+                      : 'bg-violet-50 hover:bg-[#F3F0FF] dark:bg-[#0F172A] dark:hover:bg-[#26314A] dark:!bg-violet-50 dark:hover:!bg-violet-200'
                   }`}
                 >
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
-                      <span className="truncate text-xs font-semibold text-[#091F5B] dark:!text-white lg:dark:!text-violet-950">
+                      <span className="truncate text-xs font-semibold text-[#091F5B] dark:!text-white dark:!text-violet-950">
                         {item.contact.isDeleted ? 'Deleted user' : `@${item.contact.academicHandle}`}
                       </span>
                       {item.unreadCount > 0 && (
@@ -1158,11 +1158,11 @@ export function ChatPage() {
                         </span>
                       )}
                     </span>
-                    <span className="mt-0.5 block truncate text-[11px] text-[#4B5563] dark:text-[#CBD5E1] lg:dark:text-violet-900">
+                    <span className="mt-0.5 block truncate text-[11px] text-[#4B5563] dark:text-[#CBD5E1] dark:!text-violet-900">
                       {item.lastMessage.isOwn ? 'You: ' : ''}{item.lastMessage.preview}
                     </span>
                   </span>
-                  <time className="shrink-0 text-[10px] text-[#71809A] dark:text-[#94A3B8] lg:dark:text-violet-800">
+                  <time className="shrink-0 text-[10px] text-[#71809A] dark:text-[#94A3B8] dark:!text-violet-800">
                     {new Date(item.lastMessage.createdAt).toLocaleDateString()}
                   </time>
                 </button>
@@ -1376,11 +1376,15 @@ export function ChatPage() {
             <article
               key={message.id}
               onPointerDown={event => {
-                if (event.pointerType === 'mouse' || message.isDeleted || editing === message.id) return;
+                if (event.pointerType === 'mouse' || editing === message.id) return;
                 longPressStartRef.current = { x: event.clientX, y: event.clientY };
                 if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current);
                 longPressTimerRef.current = window.setTimeout(() => {
-                  setSelectedMessage(message);
+                  if (message.isDeleted) {
+                    setExpandedDeletedMessageId(message.id);
+                  } else {
+                    setSelectedMessage(message);
+                  }
                   longPressTimerRef.current = null;
                 }, 520);
               }}
@@ -1404,28 +1408,32 @@ export function ChatPage() {
                 longPressStartRef.current = null;
               }}
               onContextMenu={event => {
-                if (message.isDeleted || editing === message.id) return;
+                if (editing === message.id) return;
                 event.preventDefault();
-                setSelectedMessage(message);
+                if (message.isDeleted) {
+                  setExpandedDeletedMessageId(message.id);
+                } else {
+                  setSelectedMessage(message);
+                }
               }}
               className={`w-fit max-w-[85%] min-w-0 rounded-2xl border p-3 shadow-sm ${
                 message.isOwn
-                  ? 'ml-auto border-violet-300 bg-violet-100 text-violet-950 dark:border-[#6D5AA8] dark:bg-[#31234B] dark:text-[#F3E8FF] lg:dark:border-violet-300 lg:dark:bg-violet-100 lg:dark:text-violet-950'
-                  : 'mr-auto border-blue-200 bg-blue-50 text-blue-950 dark:border-[#334155] dark:bg-[#172033] dark:text-[#F1F5F9] lg:dark:border-blue-200 lg:dark:bg-blue-100 lg:dark:text-blue-950'
+                  ? 'ml-auto border-violet-300 bg-violet-100 text-violet-950 dark:border-[#6D5AA8] dark:bg-[#31234B] dark:text-[#F3E8FF] dark:!border-violet-300 dark:!bg-violet-100 dark:!text-violet-950'
+                  : 'mr-auto border-blue-200 bg-blue-50 text-blue-950 dark:border-[#334155] dark:bg-[#172033] dark:text-[#F1F5F9] dark:!border-blue-200 dark:!bg-blue-100 dark:!text-blue-950'
               }`}
             >
               <div
                 className={`mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] ${
                   message.isOwn
-                    ? 'text-violet-800 dark:text-[#D8CCFF] lg:dark:text-violet-900'
-                    : 'text-[#4B5563] dark:text-[#CBD5E1] lg:dark:text-violet-900'
+                    ? 'text-violet-800 dark:text-[#D8CCFF] dark:!text-violet-900'
+                    : 'text-[#4B5563] dark:text-[#CBD5E1] dark:!text-violet-900'
                 }`}
               >
                 <strong
                   className={`font-bold ${
                     message.isOwn
-                      ? 'text-violet-950 dark:text-[#F3E8FF] lg:dark:text-violet-950'
-                      : 'text-[#091F5B] dark:text-[#F1F5F9] lg:dark:text-violet-950'
+                      ? 'text-violet-950 dark:text-[#F3E8FF] dark:!text-violet-950'
+                      : 'text-[#091F5B] dark:text-[#F1F5F9] dark:!text-violet-950'
                   }`}
                 >
                   {message.senderId
@@ -1436,8 +1444,8 @@ export function ChatPage() {
                 <time
                   className={
                     message.isOwn
-                      ? 'text-violet-800 dark:text-[#D8CCFF] lg:dark:text-violet-900'
-                      : 'text-[#4B5563] dark:text-[#CBD5E1] lg:dark:text-violet-900'
+                      ? 'text-violet-800 dark:text-[#D8CCFF] dark:!text-violet-900'
+                      : 'text-[#4B5563] dark:text-[#CBD5E1] dark:!text-violet-900'
                   }
                 >
                   {new Date(message.createdAt).toLocaleString()}
@@ -1447,7 +1455,7 @@ export function ChatPage() {
                   <span
                     className={
                       message.isOwn
-                        ? 'text-violet-800 dark:text-[#D8CCFF] lg:dark:text-violet-900'
+                        ? 'text-violet-800 dark:text-[#D8CCFF] dark:!text-violet-900'
                         : 'text-[#4B5563] dark:text-[#CBD5E1]'
                     }
                   >
@@ -1486,7 +1494,7 @@ export function ChatPage() {
                       }}
                       className="rounded-lg border border-[#D7DEEA] bg-white px-3 py-1.5 text-xs font-semibold text-violet-800 transition hover:bg-[#F3F0FF] dark:border-[#475569] dark:bg-[#172033] dark:text-[#D8CCFF] dark:hover:bg-[#26314A]"
                     >
-                      Remove from my chat
+                      Delete
                     </button>
                   )}
                 </div>
