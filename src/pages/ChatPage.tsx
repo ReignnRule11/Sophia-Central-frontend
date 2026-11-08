@@ -1417,14 +1417,14 @@ export function ChatPage() {
               <div
                 className={`mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] ${
                   message.isOwn
-                    ? 'text-violet-800 dark:text-[#D8CCFF]'
+                    ? 'text-violet-800 dark:text-[#D8CCFF] lg:dark:text-violet-900'
                     : 'text-[#4B5563] dark:text-[#CBD5E1] lg:dark:text-violet-900'
                 }`}
               >
                 <strong
                   className={`font-bold ${
                     message.isOwn
-                      ? 'text-violet-950 dark:text-[#F3E8FF]'
+                      ? 'text-violet-950 dark:text-[#F3E8FF] lg:dark:text-violet-950'
                       : 'text-[#091F5B] dark:text-[#F1F5F9] lg:dark:text-violet-950'
                   }`}
                 >
@@ -1436,8 +1436,8 @@ export function ChatPage() {
                 <time
                   className={
                     message.isOwn
-                      ? 'text-violet-800 dark:text-[#D8CCFF]'
-                      : 'text-[#4B5563] dark:text-[#CBD5E1]'
+                      ? 'text-violet-800 dark:text-[#D8CCFF] lg:dark:text-violet-900'
+                      : 'text-[#4B5563] dark:text-[#CBD5E1] lg:dark:text-violet-900'
                   }
                 >
                   {new Date(message.createdAt).toLocaleString()}
@@ -1447,7 +1447,7 @@ export function ChatPage() {
                   <span
                     className={
                       message.isOwn
-                        ? 'text-violet-800 dark:text-[#D8CCFF]'
+                        ? 'text-violet-800 dark:text-[#D8CCFF] lg:dark:text-violet-900'
                         : 'text-[#4B5563] dark:text-[#CBD5E1]'
                     }
                   >
