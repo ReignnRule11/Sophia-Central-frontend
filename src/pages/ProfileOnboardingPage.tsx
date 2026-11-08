@@ -19,6 +19,7 @@ export function ProfileOnboardingPage() {
   const [institutionId, setInstitutionId] = useState('');
   const [institutionManual, setInstitutionManual] = useState('');
   const [institutionDropdownOpen, setInstitutionDropdownOpen] = useState(false);
+  const [institutionSearch, setInstitutionSearch] = useState('');
   const [catalogueNotice, setCatalogueNotice] = useState('');
   const [facultyId, setFacultyId] = useState('');
   const [facultyManual, setFacultyManual] = useState('');
@@ -36,11 +37,60 @@ export function ProfileOnboardingPage() {
   const totalSteps = isLecturer ? 4 : 3;
   const selectedInstitution = useMemo(() => institutions.find((item) => item.id === institutionId), [institutions, institutionId]);
   const sortedInstitutions = useMemo(() => [...institutions].sort((a, b) => a.name.localeCompare(b.name)), [institutions]);
-  const selectedFaculty = selectedInstitution?.faculties?.find((item) => item.id === facultyId);
+  const filteredInstitutions = useMemo(() => {
+    const query = institutionSearch.trim().toLocaleLowerCase();
+    return sortedInstitutions.filter((item) => !query || item.name.toLocaleLowerCase().includes(query) || [item.city, item.state].some((value) => value?.toLocaleLowerCase().includes(query)));
+  }, [sortedInstitutions, institutionSearch]);
+  // Build one shared set from every imported institution. Each choice is still
+  // validated/mapped to the selected institution through the review workflow.
+  const sharedFaculties = useMemo(() => {
+    const map = new Map<string, { name: string; departments: Map<string, DepartmentOption> }>();
+    for (const institution of institutions) {
+      for (const faculty of institution.faculties ?? []) {
+        const key = faculty.name.trim().toLocaleLowerCase();
+        if (!key) continue;
+        if (!map.has(key)) map.set(key, { name: faculty.name.trim(), departments: new Map() });
+        const target = map.get(key)!;
+        for (const department of faculty.departments ?? []) {
+          const departmentKey = department.name.trim().toLocaleLowerCase();
+          if (departmentKey && !target.departments.has(departmentKey)) target.departments.set(departmentKey, { id: departmentKey, name: department.name.trim() });
+        }
+      }
+    }
+    const common: Record<string, string[]> = {
+      'faculty of science': ['Biochemistry', 'Biology', 'Chemistry', 'Computer Science', 'Geology', 'Mathematics', 'Microbiology', 'Physics', 'Statistics'],
+      'faculty of engineering': ['Agricultural Engineering', 'Chemical Engineering', 'Civil Engineering', 'Computer Engineering', 'Electrical/Electronics Engineering', 'Mechanical Engineering', 'Petroleum Engineering'],
+      'faculty of arts': ['English and Literary Studies', 'History and International Studies', 'Linguistics', 'Philosophy', 'Religious Studies', 'Theatre Arts'],
+      'faculty of social sciences': ['Economics', 'Geography', 'Political Science', 'Psychology', 'Sociology', 'Social Work'],
+      'faculty of education': ['Educational Administration', 'Educational Foundations', 'Guidance and Counselling', 'Science Education', 'Technical Education'],
+      'faculty of management sciences': ['Accounting', 'Banking and Finance', 'Business Administration', 'Marketing', 'Public Administration'],
+      'faculty of agriculture': ['Agricultural Economics', 'Agricultural Extension', 'Animal Science', 'Crop Science', 'Food Science and Technology', 'Soil Science'],
+      'faculty of environmental sciences': ['Architecture', 'Building', 'Estate Management', 'Quantity Surveying', 'Urban and Regional Planning'],
+      'faculty of basic medical sciences': ['Anatomy', 'Medical Biochemistry', 'Medical Laboratory Science', 'Medical Physiology', 'Nursing Science'],
+      'faculty of clinical sciences': ['Medicine and Surgery', 'Medical Rehabilitation', 'Radiography'],
+      'faculty of law': ['Law'],
+      'faculty of pharmacy': ['Pharmacy'],
+      'faculty of dentistry': ['Dentistry'],
+      'faculty of communication and media studies': ['Broadcasting', 'Film and Multimedia Studies', 'Journalism and Media Studies', 'Public Relations'],
+      'faculty of veterinary medicine': ['Veterinary Anatomy', 'Veterinary Medicine', 'Veterinary Microbiology'],
+    };
+    for (const [facultyName, names] of Object.entries(common)) {
+      const key = facultyName.toLocaleLowerCase();
+      if (!map.has(key)) map.set(key, { name: facultyName.replace(/^faculty of /, 'Faculty of ').replace(/\b\w/g, (letter) => letter.toUpperCase()), departments: new Map() });
+      const target = map.get(key)!;
+      for (const name of names) {
+        const departmentKey = name.toLocaleLowerCase();
+        if (!target.departments.has(departmentKey)) target.departments.set(departmentKey, { id: departmentKey, name });
+      }
+    }
+    return [...map.values()].map((item) => ({ name: item.name, departments: [...item.departments.values()].sort((a, b) => a.name.localeCompare(b.name)) })).sort((a, b) => a.name.localeCompare(b.name));
+  }, [institutions]);
+  const selectedFaculty = sharedFaculties.find((item) => item.name.toLocaleLowerCase() === facultyId.toLocaleLowerCase());
+  const localSelectedFaculty = selectedInstitution?.faculties?.find((item) => item.name.toLocaleLowerCase() === facultyId.toLocaleLowerCase());
   const departments = selectedFaculty?.departments ?? [];
   const useManualInstitution = institutionId === '__manual__';
-  const useManualFaculty = facultyId === '__manual__' || (Boolean(institutionId) && !useManualInstitution && (selectedInstitution?.faculties?.length ?? 0) === 0);
-  const useManualDepartment = useManualFaculty || (Boolean(facultyId) && departments.length === 0);
+  const useManualFaculty = facultyId === '__manual__';
+  const useManualDepartment = useManualFaculty || department === '__manual__';
 
   useEffect(() => { let active = true; academicApi.institutions().then((data) => { if (active) setInstitutions(Array.isArray(data) ? data : []); }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : 'Unable to load institutions.'); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, []);
   useEffect(() => { if (!institutionId || institutionId === '__manual__' || !isLecturer) { setCourses([]); return; } let active = true; academicApi.courses(institutionId).then((data) => { if (active) setCourses(Array.isArray(data) ? data : []); }).catch(() => { if (active) setCourses([]); }); return () => { active = false; }; }, [institutionId, isLecturer]);
@@ -62,35 +112,45 @@ export function ProfileOnboardingPage() {
         await academicApi.submitCatalogueEntry({ entryType: 'institution', name: institutionName });
         pending.push('institution');
       } else if (selectedInstitution) {
-        if (useManualFaculty && facultyName) {
+        // A shared faculty is linked to this institution only after moderation approval.
+        let facultyForInstitution = localSelectedFaculty;
+        let facultySubmissionId: string | undefined;
+        if (!facultyForInstitution && facultyName) {
           const facultySubmission = await academicApi.submitCatalogueEntry({
             entryType: 'faculty',
             name: facultyName,
             parentInstitutionId: selectedInstitution.id,
           }) as { id: string };
-
+          facultySubmissionId = facultySubmission.id;
           pending.push('faculty');
+        }
 
-          if (departmentName) {
-            await academicApi.submitCatalogueEntry({
-              entryType: 'department',
-              name: departmentName,
-              parentInstitutionId: selectedInstitution.id,
-              parentFacultySubmissionId: facultySubmission.id,
-            });
-            pending.push('department');
+        if (departmentName && facultyName) {
+          const departmentExistsLocally = facultyForInstitution?.departments?.some(
+            (item) => item.name.toLocaleLowerCase() === departmentName.toLocaleLowerCase(),
+          );
+          const departmentExistsInSharedList = departments.some(
+            (item) => item.name.toLocaleLowerCase() === departmentName.toLocaleLowerCase(),
+          );
+          if (!departmentExistsLocally) {
+            if (facultySubmissionId) {
+              await academicApi.submitCatalogueEntry({
+                entryType: 'department',
+                name: departmentName,
+                parentInstitutionId: selectedInstitution.id,
+                parentFacultySubmissionId: facultySubmissionId,
+              });
+              pending.push('department');
+            } else if (facultyForInstitution && (department === '__manual__' || departmentExistsInSharedList)) {
+              await academicApi.submitCatalogueEntry({
+                entryType: 'department',
+                name: departmentName,
+                parentInstitutionId: selectedInstitution.id,
+                parentFacultyId: facultyForInstitution.id,
+              });
+              pending.push('department');
+            }
           }
-        } else if (selectedFaculty && departmentName && (
-          department === '__manual__' ||
-          departments.every((item) => item.name.toLowerCase() !== departmentName.toLowerCase())
-        )) {
-          await academicApi.submitCatalogueEntry({
-            entryType: 'department',
-            name: departmentName,
-            parentInstitutionId: selectedInstitution.id,
-            parentFacultyId: selectedFaculty.id,
-          });
-          pending.push('department');
         }
       }
 
@@ -121,8 +181,8 @@ export function ProfileOnboardingPage() {
     <div className="mb-6 flex gap-2" aria-label="Onboarding progress">{Array.from({ length: totalSteps }, (_, index) => index + 1).map((item) => <div key={item} className={`h-1.5 flex-1 rounded-full ${item <= step ? 'bg-[#6121D0]' : 'bg-[#E8EDF5]'}`} />)}</div>
     <section className="rounded-3xl border border-[#DCE4EF] bg-white p-5 text-[#091F5B] shadow-md sm:p-8">
       {loading ? <p className="text-[#5C6982]">Loading institutions…</p> : error && !institutions.length ? <p className="text-rose-600">{error}</p> : <>
-        {step === 1 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 1</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Institution {isLecturer ? 'select / verify' : 'selection'}</h2><p className="mt-2 text-sm text-[#5C6982]">Choose the institution that anchors your academic identity.</p></div><div className="relative"><label className="mb-2 block text-sm font-semibold text-[#091F5B]" htmlFor="institution-picker">Select institution</label><button id="institution-picker" type="button" aria-haspopup="listbox" aria-expanded={institutionDropdownOpen} onClick={() => setInstitutionDropdownOpen((open) => !open)} className={`${fieldClass} flex items-center justify-between gap-3 text-left`}><span className={institutionId ? 'text-[#091F5B]' : 'text-[#71809A]'}>{useManualInstitution ? 'My institution is not listed' : selectedInstitution?.name ?? 'Select institution'}</span><span aria-hidden="true" className="text-[#71809A]">▾</span></button>{institutionDropdownOpen && <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-[#DCE4EF] bg-white shadow-xl"><div role="listbox" aria-label="Imported institutions" className="max-h-64 overflow-y-auto p-1">{sortedInstitutions.map((item) => <button key={item.id} type="button" role="option" aria-selected={institutionId === item.id} onClick={() => { setInstitutionId(item.id); setFacultyId(''); setDepartment(''); setInstitutionDropdownOpen(false); }} className={`block w-full rounded-lg px-3 py-2.5 text-left text-sm hover:bg-[#F3F1FF] ${institutionId === item.id ? 'bg-[#F3F1FF] font-semibold text-[#6121D0]' : 'text-[#091F5B]'}`}><span className="block">{item.name}</span>{(item.state || item.city) && <span className="mt-0.5 block text-xs text-[#71809A]">{[item.state, item.city].filter(Boolean).join(' · ')}</span>}</button>)}</div><button type="button" role="option" aria-selected={useManualInstitution} onClick={() => { setInstitutionId('__manual__'); setInstitutionManual(''); setFacultyId(''); setDepartment(''); setInstitutionDropdownOpen(false); }} className="w-full border-t border-[#E8EDF5] px-3 py-3 text-left text-sm font-semibold text-[#6121D0] hover:bg-[#F8F6FF]">My institution is not listed</button></div>}</div>{useManualInstitution && <input value={institutionManual} onChange={(event) => setInstitutionManual(event.target.value)} placeholder="Enter institution name" className={fieldClass} aria-label="Institution name" />}{!institutions.length && <p className="text-sm text-[#5C6982]">No institutions were returned by the catalogue. Enter your institution manually to continue.</p>}</div>}
-        {step === 2 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 2</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Faculty & department</h2><p className="mt-2 text-sm text-[#5C6982]">Select your faculty first; the department list follows the selected faculty.</p></div><select value={facultyId} onChange={(event) => { setFacultyId(event.target.value); setFacultyManual(''); setDepartment(''); setDepartmentManual(''); }} className={fieldClass} aria-label="Faculty"><option value="">Select faculty</option>{(selectedInstitution?.faculties ?? []).map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}<option value="__manual__">My faculty is not listed</option></select>{useManualFaculty && <input value={facultyManual} onChange={(event) => setFacultyManual(event.target.value)} placeholder="Enter faculty name" className={fieldClass} aria-label="Faculty name" />}{useManualDepartment ? <input value={department} onChange={(event) => setDepartment(event.target.value)} placeholder="Enter department name" className={fieldClass} aria-label="Department name" /> : <select value={department} onChange={(event) => { setDepartment(event.target.value); setDepartmentManual(''); }} disabled={!facultyId} className={`${fieldClass} disabled:bg-[#F3F6FC] disabled:text-[#9AA6B8]`} aria-label="Department"><option value="">Select department</option>{departments.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}<option value="__manual__">My department is not listed</option></select>}{department === '__manual__' && <input value={departmentManual} onChange={(event) => setDepartmentManual(event.target.value)} placeholder="Enter department name" className={fieldClass} aria-label="Department name" />}</div>}
+        {step === 1 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 1</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Institution {isLecturer ? 'select / verify' : 'selection'}</h2><p className="mt-2 text-sm text-[#5C6982]">Choose the institution that anchors your academic identity.</p></div><div className="relative"><label className="mb-2 block text-sm font-semibold text-[#091F5B]" htmlFor="institution-picker">Select institution</label><button id="institution-picker" type="button" aria-haspopup="listbox" aria-expanded={institutionDropdownOpen} onClick={() => { setInstitutionDropdownOpen((open) => !open); setInstitutionSearch(''); }} className={`${fieldClass} flex items-center justify-between gap-3 text-left`}><span className={institutionId ? 'text-[#091F5B]' : 'text-[#71809A]'}>{useManualInstitution ? 'My institution is not listed' : selectedInstitution?.name ?? 'Select institution'}</span><span aria-hidden="true" className="text-[#71809A]">▾</span></button>{institutionDropdownOpen && <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-[#DCE4EF] bg-white shadow-xl"><div className="border-b border-[#E8EDF5] p-2"><input autoFocus value={institutionSearch} onChange={(event) => setInstitutionSearch(event.target.value)} placeholder="Search universities..." className={fieldClass} aria-label="Search universities" /></div><div role="listbox" aria-label="Imported institutions" className="max-h-64 overflow-y-auto p-1">{filteredInstitutions.length ? filteredInstitutions.map((item) => <button key={item.id} type="button" role="option" aria-selected={institutionId === item.id} onClick={() => { setInstitutionId(item.id); setFacultyId(''); setDepartment(''); setInstitutionDropdownOpen(false); setInstitutionSearch(''); }} className={`block w-full rounded-lg px-3 py-2.5 text-left text-sm hover:bg-[#F3F1FF] ${institutionId === item.id ? 'bg-[#F3F1FF] font-semibold text-[#6121D0]' : 'text-[#091F5B]'}`}><span className="block">{item.name}</span>{(item.state || item.city) && <span className="mt-0.5 block text-xs text-[#71809A]">{[item.state, item.city].filter(Boolean).join(' · ')}</span>}</button>) : <p className="px-3 py-4 text-sm text-[#71809A]">No matching imported institution.</p>}</div><button type="button" role="option" aria-selected={useManualInstitution} onClick={() => { setInstitutionId('__manual__'); setInstitutionManual(institutionSearch); setFacultyId(''); setDepartment(''); setInstitutionDropdownOpen(false); setInstitutionSearch(''); }} className="w-full border-t border-[#E8EDF5] px-3 py-3 text-left text-sm font-semibold text-[#6121D0] hover:bg-[#F8F6FF]">My institution is not listed</button></div>}</div>{useManualInstitution && <div className="space-y-2"><label className="block text-sm font-semibold text-[#091F5B]" htmlFor="manual-institution">Enter institution name</label><input id="manual-institution" value={institutionManual} onChange={(event) => setInstitutionManual(event.target.value)} placeholder="Start typing your university name..." className={fieldClass} autoComplete="off" />{institutionManual.trim().length >= 2 && <div className="rounded-xl border border-[#DCE4EF] bg-white p-2 shadow-sm"><p className="px-2 py-1 text-xs text-[#71809A]">Matching imported institutions</p>{sortedInstitutions.filter((item) => item.name.toLocaleLowerCase().includes(institutionManual.trim().toLocaleLowerCase())).slice(0, 6).map((item) => <button key={item.id} type="button" onClick={() => { setInstitutionId(item.id); setInstitutionManual(''); setFacultyId(''); setDepartment(''); }} className="block w-full rounded-lg px-3 py-2 text-left text-sm text-[#091F5B] hover:bg-[#F3F1FF]">{item.name}</button>)}{!sortedInstitutions.some((item) => item.name.toLocaleLowerCase().includes(institutionManual.trim().toLocaleLowerCase())) && <p className="px-3 py-2 text-sm text-[#71809A]">No imported match yet. You can submit this institution for review.</p>}</div>}</div>}{!institutions.length && <p className="text-sm text-[#5C6982]">No institutions were returned by the catalogue. Enter your institution manually to continue.</p>}</div>}
+        {step === 2 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 2</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Faculty & department</h2><p className="mt-2 text-sm text-[#5C6982]">Choose from the shared academic catalogue. Options are collected across imported universities; selections not yet linked to your institution are submitted for moderator/admin review.</p></div><label className="block text-sm font-semibold text-[#091F5B]">Faculty<select value={facultyId} onChange={(event) => { setFacultyId(event.target.value); setFacultyManual(''); setDepartment(''); setDepartmentManual(''); }} className={fieldClass} aria-label="Faculty"><option value="">Select faculty</option>{sharedFaculties.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}<option value="__manual__">My faculty is not listed</option></select></label>{useManualFaculty && <input value={facultyManual} onChange={(event) => { setFacultyManual(event.target.value); setDepartment(''); }} placeholder="Enter faculty name" className={fieldClass} aria-label="Faculty name" />}<label className="block text-sm font-semibold text-[#091F5B]">Department{useManualFaculty ? <input value={departmentManual} onChange={(event) => setDepartmentManual(event.target.value)} placeholder="Enter department name" className={`${fieldClass} mt-2`} aria-label="Department name" /> : <select value={department} onChange={(event) => { setDepartment(event.target.value); setDepartmentManual(''); }} disabled={!facultyId} className={`${fieldClass} mt-2 disabled:bg-[#F3F6FC] disabled:text-[#9AA6B8]`} aria-label="Department"><option value="">Select department</option>{departments.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}<option value="__manual__">My department is not listed</option></select>}</label>{department === '__manual__' && <input value={departmentManual} onChange={(event) => setDepartmentManual(event.target.value)} placeholder="Enter department name" className={fieldClass} aria-label="Department name" />}</div>}
         {!isLecturer && step === 3 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 3</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Programme & level</h2><p className="mt-2 text-sm text-[#5C6982]">Tell Sophis what you are studying so resource discovery can be scoped correctly.</p></div><input value={programme} onChange={(event) => setProgramme(event.target.value)} placeholder="e.g. Computer Engineering" className={fieldClass} aria-label="Programme" /><select value={studyLevel} onChange={(event) => setStudyLevel(event.target.value)} className={fieldClass} aria-label="Level"><option value="">Select level</option>{levels.map((level) => <option key={level} value={level}>{level}</option>)}</select></div>}
         {isLecturer && step === 3 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 3</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Courses taught</h2><p className="mt-2 text-sm text-[#5C6982]">Select available courses or add a course manually if it is not in the catalogue.</p></div>{courses.length > 0 && <select onChange={(event) => { if (event.target.value) addCourse(event.target.value); }} className={fieldClass} aria-label="Course catalogue"><option value="">Add a course from the catalogue</option>{courses.map((course) => <option key={course.id} value={course.code ? `${course.code} — ${course.title}` : course.title}>{course.code ? `${course.code} — ${course.title}` : course.title}</option>)}</select>}<div className="flex gap-2"><input value={courseInput} onChange={(event) => setCourseInput(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addCourse(courseInput); } }} placeholder="e.g. CSC 301 — Data Structures" className={`${fieldClass} min-w-0 flex-1`} /><button type="button" onClick={() => addCourse(courseInput)} className="rounded-xl bg-[#6121D0] px-4 py-3 font-semibold text-white hover:bg-[#5120B0]">Add</button></div><div className="flex flex-wrap gap-2">{coursesTaught.map((course) => <button key={course} type="button" onClick={() => setCoursesTaught((current) => current.filter((item) => item !== course))} className="rounded-full border border-[#6121D0]/25 bg-[#6121D0]/10 px-3 py-1.5 text-sm font-medium text-[#6121D0]">{course} ×</button>)}</div></div>}
         {isLecturer && step === 4 && <div className="space-y-5"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Step 4</p><h2 className="mt-2 text-2xl font-bold text-[#091F5B]">Verify your academic identity</h2><p className="mt-2 text-sm text-[#5C6982]">Review the institution, faculty, department and courses that will appear on your lecturer profile.</p></div><div className="grid gap-3 sm:grid-cols-2">{[['Institution', institutionName], ['Faculty', facultyName], ['Department', department], ['Courses taught', coursesTaught.join(', ') || 'None']].map(([label, value]) => <div key={label} className="rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD] p-4"><div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#71809A]">{label}</div><div className="mt-2 text-sm font-medium text-[#091F5B]">{value}</div></div>)}</div></div>}
