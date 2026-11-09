@@ -50,7 +50,6 @@ async function prepareProfileImage(file: File): Promise<File> {
 }
 
 export const profileImageApi = {
-  getUrl: () => apiRequest<{ url: string | null }>('/upload/profile-image/url', { method: 'GET' }),
   async upload(file: File) {
     const optimizedFile = await prepareProfileImage(file);
     const body = new FormData();
