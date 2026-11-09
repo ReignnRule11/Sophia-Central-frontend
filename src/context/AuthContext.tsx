@@ -2,7 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { authApi } from '../api/auth';
 import { academicApi } from '../api/academic';
 import { setCsrfToken } from '../lib/api/client';
-import { profileImageApi } from '../api/upload';
 import type { User, UserRole } from '../types';
 
 type RegisterPayload = {
@@ -31,27 +30,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCsrfToken(response.csrfToken);
   }, []);
   const clearSession = useCallback(() => { setUser(null); setCsrfToken(null); }, []);
-  // Resolve signed profile-image URLs in the background so object-storage URL
-  // lookup does not delay session restoration or the first authenticated render.
-  const hydrateUser = useCallback((nextUser: User) => {
-    if (!nextUser.profileImage) return;
-    void profileImageApi.getUrl().then((image) => {
-      if (!image.url) return;
-      setUser((current) =>
-        current?.id === nextUser.id
-          ? { ...current, profileImage: image.url as string }
-          : current,
-      );
-    }).catch(() => {
-      // A temporary image URL failure must not block authentication.
-    });
-  }, []);
+  // /auth/me already returns the stable public R2 profile-image URL.
+  // Keep session restoration independent from any separate image-URL request.
   const refreshSession = useCallback(async () => {
     const response = await authApi.me();
     setUser(response.user);
-    hydrateUser(response.user);
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
-  }, [hydrateUser]);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -78,10 +63,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await initializeCsrf();
     const response = await authApi.login({ identifier, password });
     setUser(response.user);
-    hydrateUser(response.user);
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
     void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
-  }, [initializeCsrf, hydrateUser]);
+  }, [initializeCsrf]);
 
   const register = useCallback(async (payload: RegisterPayload) => {
     await initializeCsrf();
@@ -111,8 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const completeOnboarding = useCallback(async (payload: OnboardingPayload) => {
     const response = await academicApi.completeOnboarding(payload);
     setUser(response.user);
-    hydrateUser(response.user);
-  }, [hydrateUser]);
+  }, []);
   const logout = useCallback(async () => {
     try { await authApi.logout(); } finally { clearSession(); }
   }, [clearSession]);
