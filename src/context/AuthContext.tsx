@@ -31,16 +31,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCsrfToken(response.csrfToken);
   }, []);
   const clearSession = useCallback(() => { setUser(null); setCsrfToken(null); }, []);
-  const hydrateUser = useCallback(async (nextUser: User): Promise<User> => {
-    if (!nextUser.profileImage) return nextUser;
-    try {
-      const image = await profileImageApi.getUrl();
-      return image.url ? { ...nextUser, profileImage: image.url } : nextUser;
-    } catch { return nextUser; }
+  // Resolve signed profile-image URLs in the background so object-storage URL
+  // lookup does not delay session restoration or the first authenticated render.
+  const hydrateUser = useCallback((nextUser: User) => {
+    if (!nextUser.profileImage) return;
+    void profileImageApi.getUrl().then((image) => {
+      if (!image.url) return;
+      setUser((current) =>
+        current?.id === nextUser.id
+          ? { ...current, profileImage: image.url as string }
+          : current,
+      );
+    }).catch(() => {
+      // A temporary image URL failure must not block authentication.
+    });
   }, []);
   const refreshSession = useCallback(async () => {
     const response = await authApi.me();
-    setUser(await hydrateUser(response.user));
+    setUser(response.user);
+    hydrateUser(response.user);
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
   }, [hydrateUser]);
 
