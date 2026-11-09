@@ -77,7 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (identifier: string, password: string, _role?: UserRole) => {
     await initializeCsrf();
     const response = await authApi.login({ identifier, password });
-    setUser(await hydrateUser(response.user));
+    setUser(response.user);
+    hydrateUser(response.user);
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
     void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
   }, [initializeCsrf, hydrateUser]);
@@ -109,7 +110,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const completeOnboarding = useCallback(async (payload: OnboardingPayload) => {
     const response = await academicApi.completeOnboarding(payload);
-    setUser(await hydrateUser(response.user));
+    setUser(response.user);
+    hydrateUser(response.user);
   }, [hydrateUser]);
   const logout = useCallback(async () => {
     try { await authApi.logout(); } finally { clearSession(); }
