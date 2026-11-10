@@ -227,7 +227,6 @@ export function ProfileOnboardingPage() {
     setCourseLevelInput('');
     setError('');
   };
-  const toggleCourseLevel = (courseIndex: number, level: string) => setTeachingAssignments((current) => current.map((course, index) => index !== courseIndex ? course : { ...course, levels: course.levels.includes(level) ? course.levels.filter((item) => item !== level) : [...course.levels, level] }));
   const save = async () => {
     if (!canContinue()) return;
     setSaving(true);
