@@ -86,8 +86,6 @@ export function ProfileOnboardingPage() {
       'faculty of allied health sciences': ['Medical Laboratory Science', 'Medical Rehabilitation', 'Nursing Science', 'Radiography'],
       'faculty of allied medical sciences': ['Medical Laboratory Science', 'Medical Rehabilitation', 'Nursing Science', 'Radiography'],
       'faculty of basic clinical sciences': ['Chemical Pathology', 'Haematology', 'Medical Microbiology', 'Pathology', 'Pharmacology'],
-      'faculty of basic medical sciences': ['Anatomy', 'Biochemistry', 'Medical Biochemistry', 'Medical Physiology', 'Pharmacology'],
-      'faculty of clinical sciences': ['Anaesthesia', 'Community Medicine', 'Medicine', 'Obstetrics and Gynaecology', 'Paediatrics', 'Surgery'],
       'faculty of dental surgery': ['Child Dental Health', 'Oral and Maxillofacial Surgery', 'Oral Pathology', 'Preventive Dentistry'],
       'faculty of pharmaceutical sciences': ['Clinical Pharmacy', 'Pharmaceutical Chemistry', 'Pharmaceutics', 'Pharmacognosy', 'Pharmacology'],
       'faculty of communication': ['Mass Communication', 'Public Relations'],
