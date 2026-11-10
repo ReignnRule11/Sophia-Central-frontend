@@ -20,7 +20,7 @@ const academicHandleError = (value: string) => {
 export function ProfileSettingsPage() {
   const { user, completeOnboarding, refreshSession, logout } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ institution: '', faculty: '', department: '', programme: '', studyLevel: '', coursesTaught: '', bio: '', handle: '' });
+  const [form, setForm] = useState({ institution: '', faculty: '', department: '', studyLevel: '', coursesTaught: '', bio: '', handle: '' });
   const [academicInstitutions, setAcademicInstitutions] = useState<InstitutionOption[]>([]);
   const [catalogueLoading, setCatalogueLoading] = useState(true);
   const [catalogueSubmitting, setCatalogueSubmitting] = useState(false);
@@ -53,7 +53,6 @@ export function ProfileSettingsPage() {
       institution: user.institution ?? '',
       faculty: user.faculty ?? '',
       department: user.department ?? '',
-      programme: user.programme ?? '',
       studyLevel: user.studyLevel ?? '',
       coursesTaught: (user.coursesTaught ?? []).join(', '),
       bio: user.bio ?? '',
@@ -150,7 +149,6 @@ export function ProfileSettingsPage() {
         institution: form.institution.trim(),
         faculty: form.faculty.trim(),
         department: form.department.trim(),
-        programme: user.role === 'student' ? form.programme.trim() : undefined,
         studyLevel: user.role === 'student' ? form.studyLevel.trim() : undefined,
         coursesTaught: user.role === 'lecturer' ? form.coursesTaught.split(',').map((course) => course.trim()).filter(Boolean) : undefined,
         bio: form.bio.trim(),
@@ -258,7 +256,7 @@ export function ProfileSettingsPage() {
           <p className="text-xs leading-5 text-[#5C6982]">Choose a matching imported suggestion when available. New faculty and department entries are submitted together for moderator/admin review, while your saved academic placement and Group Chat access update immediately.</p>
           <div className="flex justify-end"><button type="button" onClick={() => void saveAcademicPlacement()} disabled={savingField !== null || catalogueSubmitting || !form.faculty.trim() || !form.department.trim() || !selectedInstitution} className="rounded-lg bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{savingField === 'faculty' || catalogueSubmitting ? 'Saving…' : 'Save academic placement'}</button></div>
         </div>
-        {user.role === 'student' && <>{textField('programme', 'Programme (optional)', 'e.g. BSc Computer Science')}{textField('studyLevel', 'Study level', 'e.g. 300 level')}</>}
+        {user.role === 'student' && textField('studyLevel', 'Study level', 'e.g. 300 level')}
         {user.role === 'lecturer' && <div className="space-y-3 sm:col-span-2">
           <div className="flex flex-wrap items-center justify-between gap-2"><div><h3 className="text-sm font-semibold text-[#091F5B]">Courses taught</h3><p className="mt-1 text-xs text-[#5C6982]">Edit each course title, code and level, or add another course.</p></div><button type="button" onClick={() => setTeachingAssignments((current) => [...current, { courseName: '', courseCode: '', levels: [] }])} className="rounded-lg border border-[#DCE4EF] px-3 py-2 text-sm font-semibold text-[#6121D0] hover:bg-[#F8F5FF]">+ Add course</button></div>
           {teachingAssignments.map((course, index) => <div key={index} className="grid gap-3 rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-3 sm:grid-cols-3">
