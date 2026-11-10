@@ -6,7 +6,15 @@ import { useAuth } from '../context/AuthContext';
 
 type AcademicStructureCandidate = { institutionName: string; institutionType: string; structures: Array<{ name: string; departments: string[] }> };
 const structureCandidates = academicStructureCandidates as AcademicStructureCandidate[];
-const normalizeInstitutionName = (value: string) => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+const normalizeInstitutionName = (value: string) => {
+  const parts = value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/&/g, ' and ').split(',');
+  const normalizePart = (part: string) => part.replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const head = normalizePart(parts.shift() ?? '');
+  const headTokens = new Set(head.split(' ').filter(Boolean));
+  const stateNames = new Set(['abia', 'adamawa', 'akwa', 'anambra', 'bauchi', 'bayelsa', 'benue', 'borno', 'cross', 'delta', 'ebonyi', 'edo', 'ekiti', 'enugu', 'gombe', 'imo', 'jigawa', 'kaduna', 'kano', 'katsina', 'kebbi', 'kogi', 'kwara', 'lagos', 'nasarawa', 'niger', 'ogun', 'ondo', 'osun', 'oyo', 'plateau', 'rivers', 'sokoto', 'taraba', 'yobe', 'zamfara', 'fct']);
+  const suffix = parts.flatMap((part) => normalizePart(part).split(' ')).filter((token) => token && token !== 'state' && token !== 'nigeria' && !stateNames.has(token) && !headTokens.has(token));
+  return [head, ...suffix].filter(Boolean).join(' ');
+};
 
 const levels = ['100', '200', '300', '400', '500', '600', 'Postgraduate'];
 type Step = 1 | 2 | 3 | 4;
