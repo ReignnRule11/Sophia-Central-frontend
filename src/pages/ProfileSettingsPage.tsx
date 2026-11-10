@@ -285,6 +285,7 @@ export function ProfileSettingsPage() {
           <p className="text-xs leading-5 text-[#5C6982]">Choose a matching imported suggestion when available. New faculty and department entries are submitted together for moderator/admin review, while your saved academic placement and Group Chat access update immediately.</p>
           <div className="flex justify-end"><button type="button" onClick={() => void saveAcademicPlacement()} disabled={savingField !== null || catalogueSubmitting || !form.faculty.trim() || !form.department.trim() || !selectedInstitution} className="rounded-lg bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{savingField === 'faculty' || catalogueSubmitting ? 'Saving…' : 'Save academic placement'}</button></div>
         </div>
+        {user.role === 'student' && textField('programme', 'Programme / Course of Study', 'e.g. B.Sc. Computer Science')}
         {user.role === 'student' && textField('studyLevel', 'Study level', 'e.g. 300 level')}
         {user.role === 'lecturer' && <div className="space-y-3 sm:col-span-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
