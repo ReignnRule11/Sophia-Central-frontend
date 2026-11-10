@@ -197,7 +197,9 @@ export function ProfileOnboardingPage() {
   const localSelectedFaculty = selectedInstitution?.faculties?.find((item) => normalizeAcademicLabel(item.name) === normalizeAcademicLabel(facultyLookupName));
   const candidateSelectedFaculty = institutionStructureCandidates.find((item) => normalizeAcademicLabel(item.name) === normalizeAcademicLabel(facultyLookupName));
   // Department choices must belong to the selected institution. Do not borrow another institution's or a generic faculty list: that can assign students to an incorrect Group Chat room.
-  const departments = localSelectedFaculty?.departments?.length ? localSelectedFaculty.departments : candidateSelectedFaculty?.departments?.map((item) => ({ id: normalizeAcademicLabel(item), name: item })) ?? [];
+  // Prefer this institution's imported departments, then its institution-specific structure, then shared faculty suggestions to help students find a likely match.
+  // Shared suggestions are not treated as institution-verified; save-time catalogue submission still checks the selected institution's own list.
+  const departments = localSelectedFaculty?.departments?.length ? localSelectedFaculty.departments : candidateSelectedFaculty?.departments?.map((item) => ({ id: normalizeAcademicLabel(item), name: item })) ?? selectedFaculty?.departments ?? [];
   const normalizedDepartmentQuery = normalizeAcademicLabel(departmentSearch);
   const filteredDepartments = departments.filter((item) => matchesAcademicLabel(item.name, departmentSearch));
   const typedDepartmentMatch = departmentSearch.trim() ? departments.find((item) => normalizeAcademicLabel(item.name) === normalizedDepartmentQuery) : undefined;
