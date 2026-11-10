@@ -281,7 +281,7 @@ export function ProfileOnboardingPage() {
               parentFacultySubmissionId: facultySubmissionId,
             });
             pending.push('department');
-          } else if (facultyForInstitution && !departmentExistsLocally && (department === '__manual__' || departmentExistsInSharedList || Boolean(departmentSearch.trim()))) {
+          } else if (facultyForInstitution && !departmentExistsLocally) {
             await academicApi.submitCatalogueEntry({
               entryType: 'department',
               name: departmentName,
