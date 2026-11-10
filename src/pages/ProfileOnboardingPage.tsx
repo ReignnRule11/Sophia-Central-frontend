@@ -24,6 +24,7 @@ const getAcademicLevels = (type: 'university' | 'polytechnic' | 'college_of_educ
 type TeachingAssignment = { courseName: string; courseCode?: string; levels: string[] };
 type Step = 1 | 2 | 3 | 4;
 const normalizeAcademicLabel = (value: string) => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+const matchesAcademicLabel = (label: string, query: string) => { const normalizedLabel = normalizeAcademicLabel(label); const normalizedQuery = normalizeAcademicLabel(query); return !normalizedQuery || normalizedLabel.includes(normalizedQuery) || (normalizedQuery.length >= 4 && normalizedQuery.includes(normalizedLabel)); };
 const fieldClass = 'w-full rounded-xl border border-[#DCE4EF] bg-white px-4 py-3 text-[#091F5B] outline-none transition focus:border-[#6121D0] focus:ring-2 focus:ring-[#6121D0]/15';
 
 export function ProfileOnboardingPage() {
@@ -187,7 +188,7 @@ export function ProfileOnboardingPage() {
     return [...map.values()].map((item) => ({ name: item.name, departments: [...item.departments.values()].sort((a, b) => a.name.localeCompare(b.name)) })).sort((a, b) => a.name.localeCompare(b.name));
   }, [institutions, institutionStructureCandidates]);
   const normalizedFacultyQuery = normalizeAcademicLabel(facultySearch);
-  const filteredSharedFaculties = useMemo(() => sharedFaculties.filter((item) => !normalizedFacultyQuery || normalizeAcademicLabel(item.name).includes(normalizedFacultyQuery)), [sharedFaculties, normalizedFacultyQuery]);
+  const filteredSharedFaculties = useMemo(() => sharedFaculties.filter((item) => matchesAcademicLabel(item.name, facultySearch)), [sharedFaculties, normalizedFacultyQuery]);
   const typedFacultyMatch = facultySearch.trim() ? sharedFaculties.find((item) => normalizeAcademicLabel(item.name) === normalizedFacultyQuery) : undefined;
   const selectedFaculty = sharedFaculties.find((item) => normalizeAcademicLabel(item.name) === normalizeAcademicLabel(facultyId)) ?? typedFacultyMatch;
   const facultyLookupName = selectedFaculty?.name ?? (facultyId || facultySearch.trim());
@@ -195,7 +196,7 @@ export function ProfileOnboardingPage() {
   const candidateSelectedFaculty = institutionStructureCandidates.find((item) => normalizeAcademicLabel(item.name) === normalizeAcademicLabel(facultyLookupName));
   const departments = localSelectedFaculty?.departments?.length ? localSelectedFaculty.departments : candidateSelectedFaculty?.departments?.map((item) => ({ id: normalizeAcademicLabel(item), name: item })) ?? selectedFaculty?.departments ?? [];
   const normalizedDepartmentQuery = normalizeAcademicLabel(departmentSearch);
-  const filteredDepartments = departments.filter((item) => !normalizedDepartmentQuery || normalizeAcademicLabel(item.name).includes(normalizedDepartmentQuery));
+  const filteredDepartments = departments.filter((item) => matchesAcademicLabel(item.name, departmentSearch));
   const typedDepartmentMatch = departmentSearch.trim() ? departments.find((item) => normalizeAcademicLabel(item.name) === normalizedDepartmentQuery) : undefined;
   const useManualInstitution = institutionId === '__manual__';
   const useManualFaculty = facultyId === '__manual__';
