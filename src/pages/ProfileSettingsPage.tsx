@@ -255,7 +255,7 @@ export function ProfileSettingsPage() {
           <div>
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <label htmlFor="profile-institution" className="block text-sm font-semibold text-[#091F5B]">Institution</label>
-              <button type="button" onClick={() => { setEditingInstitution((current) => !current); if (!editingInstitution) setForm((current) => ({ ...current, institution: user.institution ?? '', faculty: user.faculty ?? '', department: user.department ?? '' })); }} className="inline-flex items-center gap-1.5 rounded-lg border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-semibold text-[#6121D0] transition hover:border-[#6121D0] hover:bg-[#F8F5FF]">
+              <button type="button" onClick={() => { if (editingInstitution) { setForm((current) => ({ ...current, institution: user.institution ?? '', faculty: user.faculty ?? '', department: user.department ?? '' })); setEditingInstitution(false); } else { setForm((current) => ({ ...current, institution: user.institution ?? '', faculty: user.faculty ?? '', department: user.department ?? '' })); setEditingInstitution(true); } }} className="inline-flex items-center gap-1.5 rounded-lg border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-semibold text-[#6121D0] transition hover:border-[#6121D0] hover:bg-[#F8F5FF]">
                 <Pencil size={14}/>{editingInstitution ? 'Close edit' : 'Edit institution'}
               </button>
             </div>
@@ -282,7 +282,7 @@ export function ProfileSettingsPage() {
               {form.department.trim() && !departmentOptions.some((item) => item.name.toLocaleLowerCase() === form.department.trim().toLocaleLowerCase()) && <p className="mt-1 text-xs leading-5 text-amber-700">This department is not in the selected faculty's imported catalogue. It will be submitted under the faculty for moderator/admin review when you save.</p>}
             </div>
           </div>
-          <p className="text-xs leading-5 text-[#5C6982]">Choose a matching imported suggestion when available. New faculty and department entries are submitted together for moderator/admin review, while your saved academic placement and Group Chat access update immediately.</p>
+          <p className="text-xs leading-5 text-[#5C6982]">Choose a matching imported suggestion when available. New faculty and department entries are submitted together for moderator/admin review. Group Chat membership uses institution, faculty/school/college and department only; programme is stored separately.</p>
           <div className="flex justify-end"><button type="button" onClick={() => void saveAcademicPlacement()} disabled={savingField !== null || catalogueSubmitting || !form.faculty.trim() || !form.department.trim() || !selectedInstitution} className="rounded-lg bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{savingField === 'faculty' || catalogueSubmitting ? 'Saving…' : 'Save academic placement'}</button></div>
         </div>
         {user.role === 'student' && textField('programme', 'Programme / Course of Study', 'e.g. B.Sc. Computer Science')}
