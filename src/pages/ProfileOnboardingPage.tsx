@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { academicApi, type CourseOption, type DepartmentOption, type InstitutionOption } from '../api/academic';
+import academicStructureCandidates from '../data/nigerian-academic-structures-candidates.json';
 import { useAuth } from '../context/AuthContext';
+
+type AcademicStructureCandidate = { institutionName: string; institutionType: string; structures: Array<{ name: string; departments: string[] }> };
+const structureCandidates = academicStructureCandidates as AcademicStructureCandidate[];
+const normalizeInstitutionName = (value: string) => value.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').replace(/\\s+/g, ' ').trim();
 
 const levels = ['100', '200', '300', '400', '500', '600', 'Postgraduate'];
 type Step = 1 | 2 | 3 | 4;
@@ -48,6 +53,14 @@ export function ProfileOnboardingPage() {
     const query = institutionSearch.trim().toLocaleLowerCase();
     return categoryInstitutions.filter((item) => !query || item.name.toLocaleLowerCase().includes(query) || [item.city, item.state].some((value) => value?.toLocaleLowerCase().includes(query)));
   }, [categoryInstitutions, institutionSearch]);
+  const institutionStructureCandidates = useMemo(() => {
+    if (!selectedInstitution) return [];
+    const selectedType = selectedInstitution.institutionType ?? institutionType;
+    const selectedName = normalizeInstitutionName(selectedInstitution.name);
+    const match = structureCandidates.find((item) => item.institutionType === selectedType && normalizeInstitutionName(item.institutionName) === selectedName);
+    return match?.structures ?? [];
+  }, [selectedInstitution, institutionType]);
+
   // Build one shared set from every imported institution. Each choice is still
   // validated/mapped to the selected institution through the review workflow.
   const sharedFaculties = useMemo(() => {
@@ -146,12 +159,23 @@ export function ProfileOnboardingPage() {
         if (!target.departments.has(departmentKey)) target.departments.set(departmentKey, { id: departmentKey, name });
       }
     }
+    for (const candidate of institutionStructureCandidates) {
+      const key = candidate.name.trim().toLocaleLowerCase();
+      if (!key) continue;
+      if (!map.has(key)) map.set(key, { name: candidate.name.trim(), departments: new Map() });
+      const target = map.get(key)!;
+      for (const department of candidate.departments) {
+        const departmentKey = department.trim().toLocaleLowerCase();
+        if (departmentKey && !target.departments.has(departmentKey)) target.departments.set(departmentKey, { id: departmentKey, name: department.trim() });
+      }
+    }
     return [...map.values()].map((item) => ({ name: item.name, departments: [...item.departments.values()].sort((a, b) => a.name.localeCompare(b.name)) })).sort((a, b) => a.name.localeCompare(b.name));
-  }, [institutions]);
+  }, [institutions, institutionStructureCandidates]);
   const filteredSharedFaculties = useMemo(() => { const query = facultySearch.trim().toLocaleLowerCase(); return sharedFaculties.filter((item) => !query || item.name.toLocaleLowerCase().includes(query)); }, [sharedFaculties, facultySearch]);
   const selectedFaculty = sharedFaculties.find((item) => item.name.toLocaleLowerCase() === facultyId.toLocaleLowerCase());
   const localSelectedFaculty = selectedInstitution?.faculties?.find((item) => item.name.toLocaleLowerCase() === facultyId.toLocaleLowerCase());
-  const departments = selectedFaculty?.departments ?? [];
+  const candidateSelectedFaculty = institutionStructureCandidates.find((item) => item.name.toLocaleLowerCase() === facultyId.toLocaleLowerCase());
+  const departments = localSelectedFaculty?.departments?.length ? localSelectedFaculty.departments : candidateSelectedFaculty?.departments?.map((item) => ({ id: item.toLocaleLowerCase(), name: item })) ?? selectedFaculty?.departments ?? [];
   const useManualInstitution = institutionId === '__manual__';
   const useManualFaculty = facultyId === '__manual__';
 
