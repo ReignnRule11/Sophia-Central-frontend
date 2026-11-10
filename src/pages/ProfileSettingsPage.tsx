@@ -18,7 +18,7 @@ const academicHandleError = (value: string) => {
 };
 
 export function ProfileSettingsPage() {
-  const { user, completeOnboarding, refreshSession, logout } = useAuth();
+  const { user, refreshSession, logout } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ institution: '', faculty: '', department: '', studyLevel: '', coursesTaught: '', bio: '', handle: '' });
   const [academicInstitutions, setAcademicInstitutions] = useState<InstitutionOption[]>([]);
@@ -73,7 +73,7 @@ export function ProfileSettingsPage() {
     const departmentName = form.department.trim();
     if (!selectedInstitution || !facultyName || !departmentName) {
       setError('Enter both your faculty and department. Your institution remains fixed.');
-      return;
+      return false;
     }
     const selectedDepartment = departmentOptions.find((item) => item.name.trim().toLocaleLowerCase() === departmentName.toLocaleLowerCase());
     setSavingField('faculty');
@@ -109,8 +109,10 @@ export function ProfileSettingsPage() {
       setMessage(hasPending
         ? 'Your academic placement is saved and active now. Any missing faculty or department was sent to moderators/admins for catalogue review. Your Group Chat and academic sections use the new placement immediately; review does not block access.'
         : 'Academic placement updated successfully. Your Group Chat and academic sections now use the selected institution, faculty and department.');
+      return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to update academic placement.');
+      return false;
     } finally { setSavingField(null); setCatalogueSubmitting(false); }
   };
   const uploadPhoto = async (file?: File) => {
@@ -145,16 +147,26 @@ export function ProfileSettingsPage() {
         setSaving(false);
         return;
       }
-      await completeOnboarding({
-        institution: form.institution.trim(),
-        faculty: form.faculty.trim(),
-        department: form.department.trim(),
-        studyLevel: user.role === 'student' ? form.studyLevel.trim() : undefined,
-        coursesTaught: user.role === 'lecturer' ? form.coursesTaught.split(',').map((course) => course.trim()).filter(Boolean) : undefined,
-        bio: form.bio.trim(),
-        academicHandle: normalizeAcademicHandle(form.handle),
+      const academicSaved = await saveAcademicPlacement();
+      if (!academicSaved) return;
+      if (user.role === 'lecturer' && teachingAssignments.some((item) => !item.courseName.trim() || !item.courseCode?.trim() || item.levels.length === 0)) {
+        setError('Complete the course title, course code and level for every teaching assignment before saving all changes.');
+        return;
+      }
+      const coursesTaught = teachingAssignments.map((item) => item.courseCode ? `${item.courseCode} — ${item.courseName}` : item.courseName);
+      await apiRequest(`/users/${encodeURIComponent(user.id)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          ...(user.role === 'student' ? { studyLevel: form.studyLevel.trim() } : { teachingAssignments, coursesTaught }),
+          bio: form.bio.trim(),
+          academicHandle: normalizeAcademicHandle(form.handle),
+        }),
       });
-      setMessage('Profile updated successfully.');
+      await refreshSession();
+      const pendingPlacement = !selectedFaculty || !departmentOptions.some((item) => item.name.trim().toLocaleLowerCase() === form.department.trim().toLocaleLowerCase());
+      setMessage(pendingPlacement
+        ? 'Profile updated. Your new academic placement is active while the missing catalogue entries await moderator/admin review.'
+        : 'Profile updated successfully.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to update profile.');
     } finally { setSaving(false); }
