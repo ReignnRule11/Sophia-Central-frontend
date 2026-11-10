@@ -268,9 +268,6 @@ export function ProfileOnboardingPage() {
           const departmentExistsLocally = facultyForInstitution?.departments?.some(
             (item) => normalizeAcademicLabel(item.name) === normalizeAcademicLabel(departmentName),
           );
-          const departmentExistsInSharedList = departments.some(
-            (item) => normalizeAcademicLabel(item.name) === normalizeAcademicLabel(departmentName),
-          );
           if (facultySubmissionId) {
             await academicApi.submitCatalogueEntry({
               entryType: 'department',
