@@ -10,6 +10,7 @@ export interface DepartmentOption {
 export interface FacultyOption {
   id: string;
   name: string;
+  unitType?: 'faculty' | 'school' | 'college';
   departments: DepartmentOption[];
 }
 
