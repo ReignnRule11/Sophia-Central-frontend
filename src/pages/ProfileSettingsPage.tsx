@@ -234,18 +234,14 @@ export function ProfileSettingsPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="profile-faculty" className="mb-2 block text-sm font-semibold text-[#091F5B]">Faculty / School / College</label>
-              <select id="profile-faculty" value={form.faculty} disabled={catalogueLoading || !selectedInstitution} onChange={(event) => setForm((current) => ({ ...current, faculty: event.target.value, department: '' }))} className="brand-input">
-                <option value="">Select an approved faculty</option>
-                {facultyOptions.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
-              </select>
+              <input id="profile-faculty" list="profile-faculty-options" value={form.faculty} disabled={catalogueLoading || !selectedInstitution} onChange={(event) => setForm((current) => ({ ...current, faculty: event.target.value, department: '' }))} placeholder="Select or enter faculty" className="brand-input" autoComplete="off" />
+              <datalist id="profile-faculty-options">{facultyOptions.map((item) => <option key={item.id} value={item.name} />)}</datalist>
               {!catalogueLoading && !facultyOptions.some((item) => item.name.toLocaleLowerCase() === form.faculty.trim().toLocaleLowerCase()) && <button type="button" disabled={catalogueSubmitting || !form.faculty.trim()} onClick={() => void submitAcademicEntry('faculty')} className="mt-2 text-left text-xs font-semibold text-[#6121D0] disabled:opacity-50">{catalogueSubmitting ? 'Submitting…' : 'Submit current faculty for review'}</button>}
             </div>
             <div>
               <label htmlFor="profile-department" className="mb-2 block text-sm font-semibold text-[#091F5B]">Department</label>
-              <select id="profile-department" value={form.department} disabled={!selectedFaculty} onChange={(event) => update('department', event.target.value)} className="brand-input">
-                <option value="">Select a department under this faculty</option>
-                {departmentOptions.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
-              </select>
+              <input id="profile-department" list="profile-department-options" value={form.department} disabled={!selectedFaculty} onChange={(event) => update('department', event.target.value)} placeholder={selectedFaculty ? 'Select or enter department' : 'Choose an approved faculty first'} className="brand-input" autoComplete="off" />
+              <datalist id="profile-department-options">{departmentOptions.map((item) => <option key={item.id} value={item.name} />)}</datalist>
               {selectedFaculty && !departmentOptions.some((item) => item.name.toLocaleLowerCase() === form.department.trim().toLocaleLowerCase()) && <button type="button" disabled={catalogueSubmitting || !form.department.trim()} onClick={() => void submitAcademicEntry('department')} className="mt-2 text-left text-xs font-semibold text-[#6121D0] disabled:opacity-50">{catalogueSubmitting ? 'Submitting…' : 'Submit current department for review'}</button>}
             </div>
           </div>
