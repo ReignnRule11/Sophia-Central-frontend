@@ -107,8 +107,8 @@ export function ProfileSettingsPage() {
       await refreshSession();
       const hasPending = !selectedFaculty || !selectedDepartment;
       setMessage(hasPending
-        ? 'Your academic placement is saved and active now. Any missing faculty or department was sent to moderators/admins for catalogue review. Your Group Chat and academic sections use the new placement immediately; review does not block access.'
-        : 'Academic placement updated successfully. Your Group Chat and academic sections now use the selected institution, faculty and department.');
+        ? `Your academic placement is saved and active now. Any missing faculty or department was sent to moderators/admins for catalogue review. ${user.role === 'student' ? 'Your Group Chat and academic sections' : 'Your academic sections'} use the new placement immediately; review does not block access.`
+        : `Academic placement updated successfully. ${user.role === 'student' ? 'Your Group Chat and academic sections' : 'Your academic sections'} now use the selected institution, faculty and department.`);
       return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to update academic placement.');
