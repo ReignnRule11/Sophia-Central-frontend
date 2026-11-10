@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { academicApi, type CourseOption, type DepartmentOption, type InstitutionOption } from '../api/academic';
+import { academicApi, type CourseOption, type InstitutionOption } from '../api/academic';
 import { useAuth } from '../context/AuthContext';
 
 const getAcademicLevels = (type: 'university' | 'polytechnic' | 'college_of_education') => {
