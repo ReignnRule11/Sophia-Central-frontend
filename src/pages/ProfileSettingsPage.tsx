@@ -58,7 +58,7 @@ export function ProfileSettingsPage() {
       bio: user.bio ?? '',
       handle: user.academicHandle ?? '',
     });
-    setTeachingAssignments(user.teachingAssignments?.length ? user.teachingAssignments.map((item) => ({ courseName: item.courseName, courseCode: item.courseCode ?? '', levels: [...item.levels] })) : (user.coursesTaught ?? []).map((course) => ({ courseName: course, courseCode: '', levels: ['100 level'] })));
+    setTeachingAssignments(user.teachingAssignments?.length ? user.teachingAssignments.map((item) => ({ courseName: item.courseName, courseCode: item.courseCode ?? '', levels: [...item.levels] })) : (user.coursesTaught ?? []).map((course) => { const separator = course.indexOf(' — '); return separator > 0 ? { courseName: course.slice(separator + 3).trim(), courseCode: course.slice(0, separator).trim(), levels: [] } : { courseName: course, courseCode: '', levels: [] }; }));
   }, [user]);
 
   if (!user) return null;
