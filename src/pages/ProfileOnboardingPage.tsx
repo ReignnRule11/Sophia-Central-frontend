@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 type AcademicStructureCandidate = { institutionName: string; institutionType: string; structures: Array<{ name: string; departments: string[] }> };
 const structureCandidates = academicStructureCandidates as AcademicStructureCandidate[];
-const normalizeInstitutionName = (value: string) => value.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').replace(/\\s+/g, ' ').trim();
+const normalizeInstitutionName = (value: string) => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
 
 const levels = ['100', '200', '300', '400', '500', '600', 'Postgraduate'];
 type Step = 1 | 2 | 3 | 4;
