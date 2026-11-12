@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
 import { ArrowLeft, RefreshCw, Search, WalletCards } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiRequest } from '../lib/api/client';
