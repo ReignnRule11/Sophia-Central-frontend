@@ -60,6 +60,7 @@ const reviewerNav = [
   { label: 'Assigned review queue', href: '/moderation', icon: ShieldCheck },
   { label: 'Resource library', href: '/library', icon: BookOpen },
   { label: 'My saved resources', href: '/my-resources', icon: Bookmark },
+  { label: 'Notifications', href: '/notifications', icon: Bell },
 ];
 
 const adminNav = [
@@ -70,6 +71,7 @@ const adminNav = [
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
   { label: 'Analytics', href: '/analytics', icon: LayoutGrid },
   { label: 'Support requests', href: '/moderation/support', icon: LifeBuoy },
+  { label: 'Notifications', href: '/notifications', icon: Bell },
 ];
 
 export function AppShell({ children, title }: { children: React.ReactNode; title: string }) {
