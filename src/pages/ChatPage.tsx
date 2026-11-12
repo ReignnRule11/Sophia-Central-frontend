@@ -403,7 +403,7 @@ export function ChatPage() {
             ? await chatApi.groupHistory()
             : recipient
               ? await chatApi.directHistory(recipient)
-              : { items: [], hasMore: false, nextBefore: null };
+              : { items: [], hasMore: false, nextBefore: null, retentionPeriod: '90_days' as const };
 
         if (requestSequence !== requestSequenceRef.current) return;
         if (mode === 'direct') setRetentionPeriod(result.retentionPeriod ?? '90_days');
