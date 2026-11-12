@@ -64,5 +64,6 @@ export interface ModerationItem {
   tags?: string[];
   createdAt?: string;
   isVerified?: boolean;
+  assignedReviewerId?: string | null;
   [key: string]: unknown;
 }
