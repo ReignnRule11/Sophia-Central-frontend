@@ -1399,7 +1399,7 @@ export function ChatPage() {
           <span aria-hidden="true">⏳</span>
           <p>
             {retentionPeriod === 'off'
-              ? 'Disappearing messages are off. Messages in this private conversation will be retained until deleted.'
+              ? 'Automatic clearing is off for new messages. Messages sent under an earlier timer keep their original expiration. Changes apply to future messages only.'
               : `New messages in this private conversation automatically disappear after ${retentionPeriod === '90_days' ? '90 days' : retentionPeriod === '7_days' ? '7 days' : '24 hours'}. Either participant can change this setting. The timer applies to messages sent after the setting is selected.`}
           </p>
         </div>
