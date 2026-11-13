@@ -9,6 +9,7 @@ type PolicySection = {
   bullets?: string[];
   subSections?: { title: string; paragraphs?: string[]; bullets?: string[] }[];
   revenueTable?: boolean;
+  closingParagraphs?: string[];
 };
 
 const privacySections: PolicySection[] = [
@@ -46,7 +47,7 @@ const privacySections: PolicySection[] = [
     { title: 'Legal obligations', paragraphs: ['where disclosure is required by applicable law, regulation, court order, or valid legal process.'] },
     { title: 'Security and protection', paragraphs: ['where reasonably necessary to investigate fraud, protect users, enforce platform rules, or safeguard the service.'] },
     { title: 'User direction', paragraphs: ['when you explicitly request or authorize a particular disclosure.'] },
-  ], paragraphs: ['We aim to limit sharing to information reasonably necessary for the relevant purpose. Recipients may process information under their own legal obligations and privacy notices.']},
+  ], closingParagraphs: ['We aim to limit sharing to information reasonably necessary for the relevant purpose. Recipients may process information under their own legal obligations and privacy notices.']},
   { title: '7. Cookies and Similar Technologies', paragraphs: ['Sophis Central may use cookies or similar technologies to maintain sessions, support account authentication, remember preferences, understand platform performance, and improve security. Where required, we will provide notice and obtain consent before using non-essential cookies. You may manage cookies through your browser settings, although disabling certain cookies may affect platform functionality.']},
   { title: '8. Data Storage and Security', paragraphs: ['We take reasonable technical and organizational measures to protect personal information against unauthorized access, loss, alteration, disclosure, or misuse. Depending on implementation, these measures may include access controls, secure authentication, encryption, monitoring, backups, and restricted administrative permissions. No internet-based service can guarantee complete security. Users should protect their login credentials and report suspected unauthorized access promptly.']},
   { title: '9. Data Retention', paragraphs: ['We retain personal information for as long as reasonably necessary to provide the service, maintain account, academic and financial records, address disputes, prevent fraud, and meet legal or regulatory obligations. Financial and transaction records may need to be retained after an account is closed where required for accounting, audit, dispute-resolution, or legal purposes. When information is no longer required, we will take appropriate steps to delete, anonymize, or securely dispose of it, subject to lawful retention requirements.']},
@@ -106,7 +107,7 @@ const financialSections: PolicySection[] = [
     'Resource or service not delivered: a refund or other remedy may be considered where payment is confirmed and the purchased access or service was not provided as agreed.',
     'Completed access or purchase: a change of mind or failure to use a successfully delivered resource does not automatically qualify for a refund, subject to applicable consumer rights and the circumstances of the transaction.',
     'Wisdom Points errors: incorrect deductions or credits will be investigated and, where verified, corrected through an appropriate points adjustment or other remedy.',
-  ], paragraphs: ['Refund requests are assessed individually. Where a refund is approved, it will ordinarily be processed through the original payment channel where practicable, or another suitable method communicated by Sophis Central. Processing times may depend on banks and payment providers. Nothing in this policy limits mandatory rights available under applicable law.']},
+  ], closingParagraphs: ['Refund requests are assessed individually. Where a refund is approved, it will ordinarily be processed through the original payment channel where practicable, or another suitable method communicated by Sophis Central. Processing times may depend on banks and payment providers. Nothing in this policy limits mandatory rights available under applicable law.']},
   { title: '8. Transaction Records and Verification', paragraphs: ['Sophis Central may maintain records of payments, Wisdom Points purchases and deductions, resource purchases, lecturer sales, revenue allocations, project-related payments, refunds, reversals, and other financial activity. These records support account reconciliation, user support, fraud prevention, financial reporting, and legal or regulatory compliance.', 'Users may be asked to provide their unique Sophis Central ID and transaction reference when requesting payment verification or account-specific financial support. Users should never provide their password, PIN, or one-time passcode as proof of payment.']},
   { title: '9. Unique User ID and Financial Security', paragraphs: ['Each registered user is assigned a unique Sophis Central ID. The ID helps associate purchases, points transactions, downloads, and financial records with the correct account. Users must enter their own ID where the platform requests it for account or transaction verification and must not use another person\'s ID.', 'The unique ID is an account identifier and should not be treated as a secret password. Sophis Central should use secure authentication controls for downloads and purchases. Users must keep passwords and authentication codes private, avoid sharing accounts, and report suspected misuse or unauthorized transactions promptly.']},
   { title: '10. Prohibited Financial Conduct', bullets: [
@@ -135,6 +136,7 @@ function PolicySections({ sections, generalEmail, financialEmail }: { sections: 
         {sub.paragraphs?.map((paragraph, index) => <p key={index} className="text-sm leading-7 text-[#374151]">{paragraph}</p>)}
         {sub.bullets && <ul className="list-disc space-y-2 pl-6 text-sm leading-7 text-[#374151]">{sub.bullets.map(item => <li key={item}>{item}</li>)}</ul>}
       </div>)}
+      {section.closingParagraphs?.map((paragraph, index) => <p key={index} className="text-sm leading-7 text-[#374151]">{paragraph.split('{{GENERAL_EMAIL}}').join(generalEmail).split('{{FINANCIAL_EMAIL}}').join(financialEmail)}</p>)}
     </section>)}
   </div>;
 }
