@@ -128,9 +128,9 @@ function PolicySections({ sections, generalEmail, financialEmail }: { sections: 
   return <div className="mt-8 space-y-8">
     {sections.map(section => <section key={section.title} className="space-y-3">
       <h2 className="text-lg font-bold text-[#091F5B]">{section.title}</h2>
-      {section.paragraphs?.map((paragraph, index) => <p key={index} className="text-sm leading-7 text-[#374151]">{paragraph.split('{{GENERAL_EMAIL}}').join(generalEmail).split('{{FINANCIAL_EMAIL}}').join(financialEmail)}</p>)}
+      {section.paragraphs?.map((paragraph, index) => <p key={index} className="break-words text-sm leading-7 text-[#374151]">{paragraph.split('{{GENERAL_EMAIL}}').join(generalEmail).split('{{FINANCIAL_EMAIL}}').join(financialEmail)}</p>)}
       {section.bullets && <ul className="list-disc space-y-2 pl-6 text-sm leading-7 text-[#374151]">{section.bullets.map(item => <li key={item}>{item}</li>)}</ul>}
-      {section.revenueTable && <div className="overflow-x-auto"><table className="w-full border-collapse text-left text-sm"><thead><tr className="bg-[#F3F6FC] text-[#091F5B]"><th className="border border-[#DCE4EF] p-3">Allocation</th><th className="border border-[#DCE4EF] p-3">Share</th><th className="border border-[#DCE4EF] p-3">Illustration on ₦2,000</th></tr></thead><tbody><tr><td className="border border-[#DCE4EF] p-3">Lecturer</td><td className="border border-[#DCE4EF] p-3">70%</td><td className="border border-[#DCE4EF] p-3">₦1,400</td></tr><tr><td className="border border-[#DCE4EF] p-3">Sophis Central</td><td className="border border-[#DCE4EF] p-3">30%</td><td className="border border-[#DCE4EF] p-3">₦600</td></tr></tbody></table><p className="mt-2 text-xs leading-6 text-[#5C6982]">The example assumes a completed sale at the original listed price of ₦2,000 and excludes any transaction charges or separately agreed adjustments.</p></div>}
+      {section.revenueTable && <div className="overflow-x-auto"><table className="w-full min-w-[520px] border-collapse text-left text-sm"><thead><tr className="bg-[#F3F6FC] text-[#091F5B]"><th className="border border-[#DCE4EF] p-3">Allocation</th><th className="border border-[#DCE4EF] p-3">Share</th><th className="border border-[#DCE4EF] p-3">Illustration on ₦2,000</th></tr></thead><tbody><tr><td className="border border-[#DCE4EF] p-3">Lecturer</td><td className="border border-[#DCE4EF] p-3">70%</td><td className="border border-[#DCE4EF] p-3">₦1,400</td></tr><tr><td className="border border-[#DCE4EF] p-3">Sophis Central</td><td className="border border-[#DCE4EF] p-3">30%</td><td className="border border-[#DCE4EF] p-3">₦600</td></tr></tbody></table><p className="mt-2 text-xs leading-6 text-[#5C6982]">The example assumes a completed sale at the original listed price of ₦2,000 and excludes any transaction charges or separately agreed adjustments.</p></div>}
       {section.subSections?.map(sub => <div key={sub.title} className="space-y-2 border-l-2 border-[#E5E7EB] pl-4">
         <h3 className="font-semibold text-[#091F5B]">{sub.title}</h3>
         {sub.paragraphs?.map((paragraph, index) => <p key={index} className="text-sm leading-7 text-[#374151]">{paragraph}</p>)}
@@ -157,7 +157,7 @@ export function LegalPage() {
           <BrandLogo variant="full" tone="dark" />
           <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#2C36D9] hover:text-[#6121D0]"><ArrowLeft size={16} /> Back to home</Link>
         </header>
-        <article className="rounded-3xl border border-[#DCE4EF] bg-white p-6 shadow-sm sm:p-10">
+        <article className="rounded-3xl border border-[#DCE4EF] bg-white p-4 shadow-sm sm:p-8 lg:p-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6121D0]">Sophis Central</p>
           <h1 className="mt-3 text-3xl font-bold text-[#091F5B] sm:text-4xl">{title}</h1>
           <p className="mt-3 text-sm text-[#5C6982]">Last Updated: 13 November 2026</p>
