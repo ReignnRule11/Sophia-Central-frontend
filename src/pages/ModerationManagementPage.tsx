@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Search, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Search, RefreshCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api/client';
 import { SectionTitle } from '../components/layout/AppShell';
