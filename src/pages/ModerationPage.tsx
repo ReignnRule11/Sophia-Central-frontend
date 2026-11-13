@@ -166,7 +166,7 @@ export function ModerationPage() {
           return <article key={item.id} className="rounded-2xl border border-[#DCE4EF] bg-white p-4"><div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div className="min-w-0"><h3 className="font-semibold text-[#091F5B]">{item.resource?.title || 'Resource no longer available'}</h3><p className="mt-1 text-sm text-[#4B5563]">{item.resource?.course || 'Course not specified'} · {item.resource?.institution || 'Institution not specified'}</p><p className="mt-2 text-xs text-[#5C6982]">Reviewed by {historyName(item)}</p>{item.note && <p className="mt-2 text-sm text-[#4B5563]">Feedback: {item.note}</p>}</div><div className="flex shrink-0 flex-col items-start gap-1"><span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${status === 'approved' ? 'bg-emerald-50 text-emerald-900' : status === 'rejected' ? 'bg-rose-50 text-rose-900' : status === 'revision_requested' ? 'bg-amber-50 text-amber-900' : 'bg-slate-100 text-slate-800'}`}>{status.replace(/_/g, ' ')}</span><span className="text-xs text-[#5C6982]">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Date unavailable'}</span></div></div></article>;
         })}
       </div>
-    </OverviewCard>}
+    </OverviewCard> : null}
     {(isReviewer || isAdmin) && <div className="flex items-center gap-2 text-xs text-[#5C6982]"><Clock3 size={14} /> Review decisions are recorded with reviewer identity and feedback.</div>}
   </div>;
 }
