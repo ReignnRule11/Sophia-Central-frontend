@@ -10,7 +10,7 @@ export function OnboardingPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { register: registerUser } = useAuth();
-  const role = params.get('role') === 'lecturer' ? 'lecturer' : 'student';
+  const role: 'student' | 'lecturer' = params.get('role') === 'lecturer' ? 'lecturer' : 'student';
   const [submitError, setSubmitError] = useState('');
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema), defaultValues: { firstName: '', lastName: '', email: '', referralCode: role === 'student' ? params.get('ref') || '' : '', handle: '' } });
   const onSubmit = async (values: RegisterValues) => {
