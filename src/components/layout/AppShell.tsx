@@ -55,7 +55,7 @@ const moderatorNav = [
   { label: 'Support requests', href: '/moderation/support', icon: LifeBuoy },
   { label: 'Notifications', href: '/notifications', icon: Bell },
   { label: 'Analytics', href: '/moderation/analytics', icon: ChartNoAxesCombined },
-  { label: 'Student & lecturer accounts', href: '/moderation/management', icon: BriefcaseBusiness },
+  { label: 'Accounts & Wisdom Points', href: '/moderation/management', icon: BriefcaseBusiness },
 ];
 
 
