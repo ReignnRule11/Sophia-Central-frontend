@@ -13,7 +13,6 @@ export const registerSchema = z.object({
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
-  institutionId: z.string().uuid('Select an institution from the Sophis Central catalogue'),
   institution: z.string().trim().max(160, 'Institution name is too long').optional(),
   faculty: z.string().trim().max(160, 'Faculty name is too long').optional(),
   department: z.string().trim().max(160, 'Department name is too long').optional(),
