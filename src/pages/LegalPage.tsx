@@ -127,7 +127,7 @@ function PolicySections({ sections, generalEmail, financialEmail }: { sections: 
   return <div className="mt-8 space-y-8">
     {sections.map(section => <section key={section.title} className="space-y-3">
       <h2 className="text-lg font-bold text-[#091F5B]">{section.title}</h2>
-      {section.paragraphs?.map((paragraph, index) => <p key={index} className="text-sm leading-7 text-[#374151]">{paragraph.replace(/\\{\\{GENERAL_EMAIL\\}\\}/g, generalEmail).replace(/\\{\\{FINANCIAL_EMAIL\\}\\}/g, financialEmail)}</p>)}
+      {section.paragraphs?.map((paragraph, index) => <p key={index} className="text-sm leading-7 text-[#374151]">{paragraph.split('{{GENERAL_EMAIL}}').join(generalEmail).split('{{FINANCIAL_EMAIL}}').join(financialEmail)}</p>)}
       {section.bullets && <ul className="list-disc space-y-2 pl-6 text-sm leading-7 text-[#374151]">{section.bullets.map(item => <li key={item}>{item}</li>)}</ul>}
       {section.revenueTable && <div className="overflow-x-auto"><table className="w-full border-collapse text-left text-sm"><thead><tr className="bg-[#F3F6FC] text-[#091F5B]"><th className="border border-[#DCE4EF] p-3">Allocation</th><th className="border border-[#DCE4EF] p-3">Share</th><th className="border border-[#DCE4EF] p-3">Illustration on ₦2,000</th></tr></thead><tbody><tr><td className="border border-[#DCE4EF] p-3">Lecturer</td><td className="border border-[#DCE4EF] p-3">70%</td><td className="border border-[#DCE4EF] p-3">₦1,400</td></tr><tr><td className="border border-[#DCE4EF] p-3">Sophis Central</td><td className="border border-[#DCE4EF] p-3">30%</td><td className="border border-[#DCE4EF] p-3">₦600</td></tr></tbody></table><p className="mt-2 text-xs leading-6 text-[#5C6982]">The example assumes a completed sale at the original listed price of ₦2,000 and excludes any transaction charges or separately agreed adjustments.</p></div>}
       {section.subSections?.map(sub => <div key={sub.title} className="space-y-2 border-l-2 border-[#E5E7EB] pl-4">
@@ -162,10 +162,10 @@ export function LegalPage() {
           {isFinancial && <p className="mt-6 text-sm leading-7 text-[#374151]">This Financial Policy explains how Sophis Central manages payments, Wisdom Points, lecturer-owned material purchases, revenue sharing, project payments, refunds, and other financial activities. It is intended to promote transparency, fairness, and accountability among students, lecturers, researchers, professionals, and other platform users.</p>}
           {isFinancial && <p className="mt-3 text-sm leading-7 text-[#374151]">This policy should be read together with the Terms of Use and Privacy Policy. By using a paid service or financial feature, you agree to the applicable provisions of this policy, subject to rights that cannot be waived under applicable law.</p>}
           <PolicySections sections={sections} generalEmail={publicContactEmails.general} financialEmail={publicContactEmails.financial} />
-          {<div className="mt-8 rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4">
+          <div className="mt-8 rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4">
             <p className="text-sm font-semibold text-[#091F5B]">{isPrivacy ? 'Privacy and data protection contact' : isFinancial ? 'Financial enquiries' : 'Contact Us'}</p>
             {emailReady ? <a href={`mailto:${email}`} className="mt-2 inline-block text-sm font-semibold text-[#6121D0] hover:underline">{email}</a> : <p className="mt-2 text-sm text-[#5C6982]">Contact email is being configured.</p>}
-          </div>}
+          </div>
           <div className="mt-8 flex flex-wrap gap-4 border-t border-[#DCE4EF] pt-6 text-sm">
             <Link to="/terms" className="font-semibold text-[#6121D0] hover:underline">Terms of Use</Link>
             <Link to="/privacy" className="font-semibold text-[#6121D0] hover:underline">Privacy Policy</Link>
