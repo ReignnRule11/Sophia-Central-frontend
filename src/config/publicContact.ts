@@ -1,33 +1,33 @@
 /**
  * PUBLIC CONTACT EMAIL CONFIGURATION
  *
- * EDIT THE VALUES BELOW when the Sophis Central email aliases/mailboxes are ready.
- * Keep the addresses lowercase. Leave an address as an empty string until it is active;
- * the corresponding email action will then be shown as not yet configured.
+ * EDIT THE VALUES BELOW when Sophis Central's dedicated email aliases are ready.
+ * The Gmail address is the temporary contact destination supplied for this project.
+ * Replace it with the corresponding active alias when configured.
  *
- * Suggested aliases:
+ * Suggested aliases (domain to be confirmed):
  * support@YOUR-DOMAIN  – platform support
  * careers@YOUR-DOMAIN  – recruitment and career enquiries
  * info@YOUR-DOMAIN     – general enquiries
  *
- * These are display/configuration values only. They do not create mailboxes or aliases.
+ * These values only configure the website's displayed links. They do not create
+ * mailboxes, aliases, forwarding rules, or email-provider settings.
  */
-
 export const publicContactEmails = {
-  // EDIT: replace with the public company contact address when finalized.
+  // EDIT HERE: public company contact address.
   general: 'sophiscentral@gmail.com',
 
-  // EDIT: enter the active support alias when it has been configured.
-  support: '',
+  // EDIT HERE: currently routes to the supplied contact mailbox; replace with support alias.
+  support: 'sophiscentral@gmail.com',
 
-  // EDIT: enter the active careers alias when it has been configured.
-  careers: '',
+  // EDIT HERE: currently routes to the supplied contact mailbox with a Careers subject;
+  // replace with the dedicated careers alias when it has been configured.
+  careers: 'sophiscentral@gmail.com',
 
-  // EDIT: enter a dedicated financial enquiries alias if one is created.
-  // Until then, the general contact email from the supplied policy is used.
+  // EDIT HERE: financial enquiries address; replace with a dedicated alias if created.
   financial: 'sophiscentral@gmail.com',
 } as const;
 
 export function isConfiguredEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
 }
