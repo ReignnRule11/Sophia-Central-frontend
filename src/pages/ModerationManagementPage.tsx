@@ -22,7 +22,7 @@ export function ModerationManagementPage() {
     setLoading(true); setError('');
     try {
       const data = await apiRequest<ManagedUser[]>('/users/management');
-      setUsers(Array.isArray(data) ? data.filter((account) => user?.role === 'admin' ? ['student', 'lecturer', 'reviewer'].includes(account.role) : ['student', 'lecturer'].includes(account.role)) : []);
+      setUsers(Array.isArray(data) ? data.filter((account) => account.emailVerified === true && (user?.role === 'admin' ? ['student', 'lecturer', 'reviewer'].includes(account.role) : ['student', 'lecturer'].includes(account.role))) : []);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to load accounts.');
     } finally { setLoading(false); }
