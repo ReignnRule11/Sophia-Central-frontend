@@ -95,9 +95,9 @@ export function VerifyEmailPage() {
             </form>
           </>
         )}
-        {!token && (
+        {(!token || verificationState === 'error') && (
           <>
-            <p className="mt-5 text-sm leading-6 text-[#5C6982]">Before you can sign in, confirm that you own the email address used to register. The activation link expires after 24 hours.</p>
+            <p className="mt-5 text-sm leading-6 text-[#5C6982]">Before you can sign in, confirm that you own the email address used to register. The verification link expires after 24 hours.</p>
             <form onSubmit={resend} className="mt-6 space-y-3">
               <label htmlFor="verification-email" className="block text-sm font-medium text-[#091F5B]">Account email</label>
               <input id="verification-email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="brand-input" />
