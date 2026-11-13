@@ -117,21 +117,21 @@ export default function HomePage() {
       </main>
 
       <footer className="bg-[#091F5B] text-white">
-        <div className="mx-auto grid max-w-7xl gap-9 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.5fr_repeat(4,minmax(0,1fr))] lg:gap-7 lg:px-8">
-          <div>
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-9 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:gap-7 lg:px-8 xl:grid-cols-[1.5fr_repeat(4,minmax(0,1fr))]">
+          <div className="min-w-0 sm:col-span-2 lg:col-span-3 xl:col-span-1">
             <BrandLogo variant="full" tone="light" linked={false} className="brightness-0 invert" />
             <p className="mt-5 max-w-xl text-sm leading-7 text-blue-100">Sophis Central is an academic learning and knowledge-sharing platform that connects students and lecturers with educational resources, supports academic discovery, and helps learners study more effectively with intelligent AI assistance.</p>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="font-semibold text-white">Company</h3>
-            <div className="mt-4 space-y-3 text-sm text-blue-100">
+            <div className="mt-4 space-y-3 break-words text-sm text-blue-100">
               <a href="#about" className="block hover:text-white">About Us</a>
               <Link to="/careers" className="block hover:text-white">Careers</Link>
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="font-semibold text-white">Support</h3>
             <div className="mt-4 space-y-3 text-sm text-blue-100">
               <Link to="/contact" className="block hover:text-white">Contact Us</Link>
@@ -139,7 +139,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="font-semibold text-white">Policies</h3>
             <div className="mt-4 space-y-3 text-sm text-blue-100">
               <Link to="/terms" className="block hover:text-white">Terms of Use</Link>
@@ -148,7 +148,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="font-semibold text-white">Explore</h3>
             <div className="mt-4 space-y-3 text-sm text-blue-100">
               <a href="#features" className="block hover:text-white">Features</a>
