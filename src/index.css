@@ -633,3 +633,46 @@ html[data-theme='dark'] .app-shell .chat-page textarea.chat-edit-input {
   opacity: 1 !important;
   -webkit-text-fill-color: #FFFFFF !important;
 }
+
+
+/* High-specificity heading selectors outrank legacy navy text utility classes. */
+html .app-shell .brand-gradient h1,
+html .app-shell .brand-gradient h2,
+html .app-shell .brand-gradient h3,
+html .app-shell .brand-gradient h4,
+html .app-shell .brand-gradient h5,
+html .app-shell .brand-gradient h6,
+html .app-shell .brand-purple-section h1,
+html .app-shell .brand-purple-section h2,
+html .app-shell .brand-purple-section h3,
+html .app-shell .brand-purple-section h4,
+html .app-shell .brand-purple-section h5,
+html .app-shell .brand-purple-section h6,
+html .app-shell [class*="bg-[#2C36D9]"] h1,
+html .app-shell [class*="bg-[#2C36D9]"] h2,
+html .app-shell [class*="bg-[#2C36D9]"] h3,
+html .app-shell [class*="bg-[#2C36D9]"] h4,
+html .app-shell [class*="bg-[#2C36D9]"] h5,
+html .app-shell [class*="bg-[#2C36D9]"] h6,
+html .app-shell [class*="bg-[#004BEC]"] h1,
+html .app-shell [class*="bg-[#004BEC]"] h2,
+html .app-shell [class*="bg-[#004BEC]"] h3,
+html .app-shell [class*="bg-[#004BEC]"] h4,
+html .app-shell [class*="bg-[#004BEC]"] h5,
+html .app-shell [class*="bg-[#004BEC]"] h6,
+html .app-shell [class*="bg-indigo-"] h1,
+html .app-shell [class*="bg-indigo-"] h2,
+html .app-shell [class*="bg-indigo-"] h3,
+html .app-shell [class*="bg-indigo-"] h4,
+html .app-shell [class*="bg-indigo-"] h5,
+html .app-shell [class*="bg-indigo-"] h6,
+html .app-shell [class*="bg-violet-"] h1,
+html .app-shell [class*="bg-violet-"] h2,
+html .app-shell [class*="bg-violet-"] h3,
+html .app-shell [class*="bg-violet-"] h4,
+html .app-shell [class*="bg-violet-"] h5,
+html .app-shell [class*="bg-violet-"] h6 {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
