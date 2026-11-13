@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { academicApi, type CourseOption, type InstitutionOption } from '../api/academic';
+import { academicApi, type CourseOption, type InstitutionOption, type InstitutionType } from '../api/academic';
 import { useAuth } from '../context/AuthContext';
 
-const getAcademicLevels = (type: 'university' | 'polytechnic' | 'college_of_education') => {
-  if (type === 'polytechnic') return ['ND I', 'ND II', 'HND I', 'HND II'];
-  if (type === 'college_of_education') return ['NCE I', 'NCE II', 'NCE III', 'Degree 100', 'Degree 200', 'Degree 300', 'Degree 400', 'Degree 500', 'Degree 600', 'Postgraduate'];
+const getAcademicLevels = (type: InstitutionType) => {
+  if (type === 'polytechnic' || type === 'monotechnic') return ['ND I', 'ND II', 'HND I', 'HND II'];
+  if (['college_of_education', 'college_of_health_technology', 'college_of_agriculture', 'other_college'].includes(type)) return ['100', '200', '300', '400', '500', '600', 'NCE I', 'NCE II', 'NCE III', 'ND I', 'ND II', 'HND I', 'HND II', 'Postgraduate'];
   return ['100', '200', '300', '400', '500', '600', 'Postgraduate'];
 };
 type TeachingAssignment = { courseName: string; courseCode: string; levels: string[] };
