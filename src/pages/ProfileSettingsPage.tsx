@@ -214,7 +214,7 @@ export function ProfileSettingsPage() {
   </div>;
 
   return <div className="mx-auto max-w-4xl space-y-6">
-    <div><h2 className="mt-2 text-3xl font-bold text-[#091F5B]">Your profile</h2><p className="mt-2 text-[#4B5563]">Edit each field and save it individually, or save all changes together.</p></div>
+    <div><h2 className="text-3xl font-semibold tracking-tight text-[#091F5B]">Your profile</h2><p className="mt-2 text-[#4B5563]">Edit each field and save it individually, or save all changes together.</p></div>
     <section className="glass-panel p-5 sm:p-7">
       <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD] p-4 sm:flex-row sm:items-center">
         <div className="relative h-20 w-20 shrink-0">
