@@ -607,3 +607,29 @@ html[data-theme='dark'] .app-shell .chat-page textarea.chat-edit-input {
 .app-shell .chat-page button:has(+ textarea.chat-message-input):focus-visible {
   color: #B8860B !important;
 }
+
+
+/* Final hero-heading contrast enforcement.
+   Keep the large middle heading solid white on every branded blue/purple hero,
+   regardless of role, page, responsive breakpoint, or light/dark theme.
+   This intentionally comes after legacy app-shell text compatibility rules. */
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) h1,
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) h2,
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) h3,
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) h4,
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) h5,
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) h6,
+.app-shell :where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) [class*="text-"] {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+/* The hero container itself and any explicitly white descendants must also
+   remain white after the broad legacy .app-shell text reset. */
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"])[class~="text-white"],
+:where(.brand-gradient, .brand-purple-section, [class*="bg-[#2C36D9]"], [class*="bg-[#004BEC]"], [class*="bg-indigo-"], [class*="bg-violet-"]) [class~="text-white"] {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
