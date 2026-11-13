@@ -109,7 +109,7 @@ export function ModerationPage() {
     item.reviewer?.email || 'Sophis reviewer';
 
   return <div className="space-y-6">
-    <SectionTitle eyebrow="Academic quality & trust" title="Material review workspace" />
+    <SectionTitle eyebrow={isReviewer ? "Academic quality & trust" : isAdmin ? "Platform governance" : "Moderator workspace"} title={isReviewer ? "Assigned academic reviews" : isAdmin ? "Reviewer assignment" : "User & content reports"} />
     {error && <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{error}</div>}
     {notice && <div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">{notice}</div>}
     <div className="flex flex-wrap gap-2" role="tablist" aria-label="Moderation sections">
@@ -167,6 +167,6 @@ export function ModerationPage() {
         })}
       </div>
     </OverviewCard>}
-    <div className="flex items-center gap-2 text-xs text-[#5C6982]"><Clock3 size={14} /> Review decisions are recorded with reviewer identity and feedback.</div>
+    {(isReviewer || isAdmin) && <div className="flex items-center gap-2 text-xs text-[#5C6982]"><Clock3 size={14} /> Review decisions are recorded with reviewer identity and feedback.</div>}
   </div>;
 }
