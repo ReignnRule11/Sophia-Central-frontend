@@ -78,7 +78,7 @@ export function ModeratorDashboardPage() {
 
   return <div className="space-y-6">
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div><SectionTitle eyebrow="Moderator workspace" title={`Welcome back, ${user?.firstName?.trim() || user?.name?.trim().split(/\s+/)[0] || 'Moderator'}`} /><p className="-mt-3 text-sm text-[#5C6982]">Your overview of moderation operations, platform resources and account activity.</p></div>
+      <div><SectionTitle eyebrow="Moderator workspace" title="Welcome back Sophis" /><p className="-mt-3 text-sm text-[#5C6982]">Your overview of moderation operations, platform resources and account activity.</p></div>
       <button type="button" onClick={() => void loadOverview(true)} disabled={loading || refreshing} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#DCE4EF] bg-white px-4 py-2.5 text-sm font-semibold text-[#091F5B] hover:border-[#6121D0] disabled:opacity-50"><RefreshCw size={15} className={refreshing ? 'animate-spin' : ''} /> Refresh overview</button>
     </div>
     {error && <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">{error}<button type="button" onClick={() => void loadOverview()} className="ml-2 font-semibold underline">Try again</button></div>}
@@ -87,7 +87,7 @@ export function ModeratorDashboardPage() {
       <div className="mb-4 flex items-center justify-between gap-3"><div><h3 className="text-lg font-bold text-[#091F5B]">Moderator workspace</h3><p className="mt-1 text-sm text-[#5C6982]">Open a tool to continue your work.</p></div><span className="inline-flex items-center gap-1 rounded-full bg-[#F3F0FF] px-3 py-1 text-xs font-semibold text-[#6121D0]"><ShieldCheck size={13} /> Moderator access</span></div>
       <div className="grid gap-4 md:grid-cols-2">
         {shortcuts.map(({ title, description, href, icon: Icon }) => <Link key={href} to={href} className="group rounded-2xl border border-[#DCE4EF] bg-white p-5 transition hover:-translate-y-0.5 hover:border-[#B8A0ED] hover:shadow-md">
-          <div className="flex items-start justify-between gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3F0FF] text-[#6121D0]"><Icon size={19} /></div><ArrowUpRight size={17} className="text-[#8A94A6] transition group-hover:text-[#6121D0]" /></div>
+          <div className="flex items-start justify-between gap-3"><div className="flex flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3F0FF] text-[#6121D0]"><Icon size={19} /></div><ArrowUpRight size={17} className="text-[#8A94A6] transition group-hover:text-[#6121D0]" /></div>
           <h4 className="mt-4 font-semibold text-[#091F5B]">{title}</h4><p className="mt-1 text-sm leading-6 text-[#5C6982]">{description}</p>
         </Link>)}
       </div>
