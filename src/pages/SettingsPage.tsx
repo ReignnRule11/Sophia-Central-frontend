@@ -72,7 +72,7 @@ export function SettingsPage() {
     try {
       await apiRequest('/users/me/deactivate', { method: 'POST', body: JSON.stringify({ password: deactivatePassword }) });
       await logout().catch(() => undefined);
-      navigate('/', { replace: true });
+      navigate('/login?account=deactivated', { replace: true });
     } catch (cause) {
       setActionError(cause instanceof Error ? cause.message : 'Unable to deactivate your account.');
     } finally { setDeactivating(false); }
@@ -86,7 +86,7 @@ export function SettingsPage() {
         body: JSON.stringify({ password: deletePassword, securityAnswer: deleteAnswer }),
       });
       await logout().catch(() => undefined);
-      navigate('/', { replace: true });
+      navigate('/login?account=deletion-scheduled', { replace: true });
     } catch (cause) {
       setActionError(cause instanceof Error ? cause.message : 'Unable to schedule account deletion.');
     } finally { setDeleting(false); }
