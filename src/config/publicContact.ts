@@ -29,5 +29,5 @@ export const publicContactEmails = {
 } as const;
 
 export function isConfiguredEmail(email: string): boolean {
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
