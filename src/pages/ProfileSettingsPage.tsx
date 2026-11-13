@@ -78,7 +78,7 @@ export function ProfileSettingsPage() {
       setError('Clipboard access is unavailable. Select your Sophis Central ID and copy it manually.');
     }
   };
-  const selectedInstitution = academicInstitutions.find((item) => item.name.trim().toLocaleLowerCase() === form.institution.trim().toLocaleLowerCase());
+  const selectedInstitution = academicInstitutions.find((item) => item.id === user.institutionId) ?? academicInstitutions.find((item) => item.name.trim().toLocaleLowerCase() === form.institution.trim().toLocaleLowerCase());
   const facultyOptions = selectedInstitution?.faculties ?? [];
   const selectedFaculty = facultyOptions.find((item) => item.name.trim().toLocaleLowerCase() === form.faculty.trim().toLocaleLowerCase());
   const departmentOptions = selectedFaculty?.departments ?? [];
