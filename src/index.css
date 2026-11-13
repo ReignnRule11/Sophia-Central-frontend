@@ -609,20 +609,9 @@ html[data-theme='dark'] .app-shell .chat-page textarea.chat-edit-input {
 }
 
 
-/* Only correct the large blue middle heading in branded hero sections.
-   Do not recolor other text or alter any hero backgrounds. */
-html .app-shell .brand-gradient h1[class*="text-"],
-html .app-shell .brand-gradient h2[class*="text-"],
-html .app-shell .brand-purple-section h1[class*="text-"],
-html .app-shell .brand-purple-section h2[class*="text-"],
-html .app-shell [class*="bg-[#2C36D9]"] h1[class*="text-"],
-html .app-shell [class*="bg-[#2C36D9]"] h2[class*="text-"],
-html .app-shell [class*="bg-[#004BEC]"] h1[class*="text-"],
-html .app-shell [class*="bg-[#004BEC]"] h2[class*="text-"],
-html .app-shell [class*="bg-indigo-"] h1[class*="text-"],
-html .app-shell [class*="bg-indigo-"] h2[class*="text-"],
-html .app-shell [class*="bg-violet-"] h1[class*="text-"],
-html .app-shell [class*="bg-violet-"] h2[class*="text-"] {
+/* Apply the white correction only to explicitly marked middle hero headings.
+   Supporting text, other headings, controls, and hero backgrounds are untouched. */
+.app-shell [data-hero-middle-heading] {
   color: #FFFFFF !important;
   opacity: 1 !important;
   -webkit-text-fill-color: #FFFFFF !important;
