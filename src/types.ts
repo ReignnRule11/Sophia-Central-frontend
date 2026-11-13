@@ -3,6 +3,7 @@ export type UserRole = 'student' | 'lecturer' | 'reviewer' | 'moderator' | 'admi
 export interface User {
   id: string;
   uniqueId?: string;
+  institutionId?: string | null;
   name: string;
   email: string;
   role: UserRole;
