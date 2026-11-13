@@ -28,7 +28,7 @@ import { notificationsApi } from '../../api/notifications';
 import { ProfileImage } from '../ProfileImage';
 
 const studentNav = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { label: 'Dashboard', href: '/student/dashboard', icon: LayoutGrid },
   { label: 'Academic & research materials', href: '/library', icon: BookOpen },
   { label: 'Contribute resource', href: '/upload', icon: Upload },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
@@ -40,7 +40,7 @@ const studentNav = [
 ];
 
 const lecturerNav = [
-  { label: 'Dashboard', href: '/lecturer', icon: LayoutGrid },
+  { label: 'Dashboard', href: '/lecturer/dashboard', icon: LayoutGrid },
   { label: 'Resource library', href: '/library', icon: BookOpen },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
   { label: 'Upload Resource', href: '/lecturer/upload', icon: Upload },
