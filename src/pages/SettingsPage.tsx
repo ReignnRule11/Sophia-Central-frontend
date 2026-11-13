@@ -25,6 +25,7 @@ export function SettingsPage() {
   const [securityStatus, setSecurityStatus] = useState<SecurityQuestionStatus>({ configured: false, questionId: null });
   const [questionId, setQuestionId] = useState(SECURITY_QUESTIONS[0].id);
   const [securityAnswer, setSecurityAnswer] = useState('');
+  const [currentSecurityAnswer, setCurrentSecurityAnswer] = useState('');
   const [securityPassword, setSecurityPassword] = useState('');
   const [savingSecurity, setSavingSecurity] = useState(false);
   const [securityMessage, setSecurityMessage] = useState('');
@@ -57,10 +58,10 @@ export function SettingsPage() {
     try {
       await apiRequest('/users/me/security-question', {
         method: 'PATCH',
-        body: JSON.stringify({ password: securityPassword, questionId, answer: securityAnswer }),
+        body: JSON.stringify({ password: securityPassword, questionId, answer: securityAnswer, ...(securityStatus.configured ? { currentAnswer: currentSecurityAnswer } : {}) }),
       });
       setSecurityStatus({ configured: true, questionId });
-      setSecurityAnswer(''); setSecurityPassword('');
+      setSecurityAnswer(''); setCurrentSecurityAnswer(''); setSecurityPassword('');
       setSecurityMessage('Your account security question has been saved securely.');
     } catch (cause) {
       setSecurityError(cause instanceof Error ? cause.message : 'Unable to save your security question.');
@@ -110,12 +111,12 @@ export function SettingsPage() {
         {securityStatus.configured && <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">Configured: {selectedQuestion?.label ?? 'A security question is saved'}</p>}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="text-sm font-medium text-[#334155]">Security question<select value={questionId} onChange={(event) => setQuestionId(event.target.value)} className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2.5 text-sm">{SECURITY_QUESTIONS.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
-          <label className="text-sm font-medium text-[#334155]">Your answer<input value={securityAnswer} onChange={(event) => setSecurityAnswer(event.target.value)} type="text" autoComplete="off" placeholder="Enter a memorable answer" className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2.5 text-sm"/></label>
+          {securityStatus.configured && <label className="text-sm font-medium text-[#334155]">Current security answer<input value={currentSecurityAnswer} onChange={(event) => setCurrentSecurityAnswer(event.target.value)} type="text" autoComplete="off" placeholder="Verify your existing answer" className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2.5 text-sm"/></label>}<label className="text-sm font-medium text-[#334155]">New security answer<input value={securityAnswer} onChange={(event) => setSecurityAnswer(event.target.value)} type="text" autoComplete="off" placeholder="Enter a memorable answer" className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2.5 text-sm"/></label>
           <label className="text-sm font-medium text-[#334155] sm:col-span-2">Current password<input value={securityPassword} onChange={(event) => setSecurityPassword(event.target.value)} type="password" autoComplete="current-password" placeholder="Confirm your current password" className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2.5 text-sm"/></label>
         </div>
         {securityError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{securityError}</p>}
         {securityMessage && <p role="status" className="mt-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">{securityMessage}</p>}
-        <button type="button" onClick={() => void saveSecurityQuestion()} disabled={savingSecurity || !securityAnswer.trim() || !securityPassword} className="mt-4 rounded-xl bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{savingSecurity ? 'Saving…' : securityStatus.configured ? 'Update security question' : 'Save security question'}</button>
+        <button type="button" onClick={() => void saveSecurityQuestion()} disabled={savingSecurity || !securityAnswer.trim() || !securityPassword || (securityStatus.configured && !currentSecurityAnswer.trim())} className="mt-4 rounded-xl bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{savingSecurity ? 'Saving…' : securityStatus.configured ? 'Update security question' : 'Save security question'}</button>
       </div></div>
     </section>
 
