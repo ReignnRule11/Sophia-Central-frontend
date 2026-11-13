@@ -48,6 +48,7 @@ export interface Resource {
   moderationStatus?: 'pending' | 'approved' | 'rejected' | 'flagged' | string;
   isVerified?: boolean;
   uploadedBy?: string;
+  uploaderId?: string | null;
   createdAt?: string;
   [key: string]: unknown;
 }
