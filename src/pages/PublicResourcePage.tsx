@@ -17,7 +17,7 @@ export function PublicResourcePage() {
   const file = useQuery({
     queryKey: ['public-resource-file', id],
     queryFn: () => resourcesApi.publicFileUrl(id),
-    enabled: Boolean(id) && Boolean(resource.data?.hasFile) && Boolean(user) && (!['student', 'lecturer', 'reviewer'].includes(user.role) || Boolean(user.institutionId)),
+    enabled: Boolean(id) && Boolean(resource.data?.hasFile) && Boolean(user && (!['student', 'lecturer', 'reviewer'].includes(user.role) || user.institutionId)),
     retry: false,
   });
 
