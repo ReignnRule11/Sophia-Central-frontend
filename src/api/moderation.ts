@@ -14,7 +14,7 @@ type ApiModerationResource = {
   tags?: string[];
   moderationStatus?: 'pending' | 'revision_requested' | 'approved' | 'rejected' | 'flagged' | 'draft';
   isVerified?: boolean;
-  uploaderId?: string;
+  uploaderId?: string | null;
   assignedReviewerId?: string | null;
   assignedReviewer?: { id?: string; firstName?: string; lastName?: string; email?: string; reviewerExpertise?: string[] };
   uploader?: { id?: string; name?: string; firstName?: string; lastName?: string; email?: string; faculty?: string; department?: string };
