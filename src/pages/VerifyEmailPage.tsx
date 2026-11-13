@@ -15,7 +15,7 @@ export function VerifyEmailPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [verificationState, setVerificationState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [verificationMessage, setVerificationMessage] = useState(
-    token ? 'Your email link is ready. Set your password below to complete registration.' : registrationNotice?.message || 'Check your inbox and spam folder for your activation link.',
+    token ? 'Your email link is ready. Set your password below to verify your email.' : registrationNotice?.message || 'Check your inbox and spam folder for your activation link.',
   );
   const [resendMessage, setResendMessage] = useState('');
   const [resendError, setResendError] = useState('');
