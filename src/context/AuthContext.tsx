@@ -81,12 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(response.user);
   }, []);
   const completePreAccountOnboarding = useCallback(async (token: string, payload: OnboardingPayload) => {
+    await initializeCsrf();
     const response = await authApi.completePreAccountOnboarding(token, payload);
     setUser(response.user);
     clearPreAccountSession();
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
     void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
-  }, []);
+  }, [initializeCsrf]);
   const logout = useCallback(async () => {
     try { await authApi.logout(); } finally { clearSession(); }
   }, [clearSession]);
