@@ -1,5 +1,5 @@
 import { NotificationsPage } from './pages/NotificationsPage';
-import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
