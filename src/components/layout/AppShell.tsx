@@ -49,6 +49,7 @@ const lecturerNav = [
 ];
 
 const moderatorNav = [
+  { label: 'Dashboard', href: '/moderator/dashboard', icon: LayoutGrid },
   { label: 'Reports & moderation', href: '/moderation', icon: ShieldCheck },
   { label: 'Platform resource library', href: '/library', icon: BookOpen },
   { label: 'Saved resources', href: '/my-resources', icon: Bookmark },
@@ -119,7 +120,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const goBack = () => {
     const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (historyIndex > 0) navigate(-1);
-    else navigate(user?.role === 'lecturer' ? '/lecturer' : user?.role === 'reviewer' || user?.role === 'moderator' || user?.role === 'admin' ? '/moderation' : '/dashboard');
+    else navigate(user?.role === 'moderator' ? '/moderator/dashboard' : user?.role === 'lecturer' ? '/lecturer/dashboard' : user?.role === 'reviewer' || user?.role === 'admin' ? '/moderation' : '/student/dashboard');
   };
 
   const nav = (
