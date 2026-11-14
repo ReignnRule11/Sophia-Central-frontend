@@ -46,6 +46,10 @@ export function OnboardingPage() {
 
   const onSubmit = async (values: RegisterValues) => {
     setSubmitError('');
+    if (handleAvailability === 'taken') {
+      setSubmitError('Academic handle taken. Please choose another handle.');
+      return;
+    }
     try {
       const draft = {
         email: values.email.trim().toLowerCase(),
