@@ -47,7 +47,7 @@ export function PWAInstallPrompt() {
     await installEvent.prompt();
     const choice = await installEvent.userChoice;
     setInstallEvent(null);
-    if (choice.outcome === 'accepted') setVisible(false);
+    setVisible(false);
   };
 
   if (!visible) return null;
