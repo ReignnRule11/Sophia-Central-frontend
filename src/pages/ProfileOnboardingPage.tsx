@@ -64,7 +64,13 @@ export function ProfileOnboardingPage() {
   useEffect(() => {
     if (!preAccount?.onboardingToken || onboardingCompleted) return;
     const timeout = window.setTimeout(() => {
-      void authApi.savePreAccountProgress(preAccount.onboardingToken, onboardingProgress).catch(() => undefined);
+      const progress = {
+        step, institutionId, institutionType, institutionManual, institutionSearch,
+        facultyId, facultySearch, facultyManual, department, departmentSearch,
+        departmentManual, programme, studyLevel, teachingAssignments,
+        courseTitleInput, courseCodeInput, courseLevelInput,
+      };
+      void authApi.savePreAccountProgress(preAccount.onboardingToken, progress).catch(() => undefined);
     }, 500);
     return () => window.clearTimeout(timeout);
   }, [
