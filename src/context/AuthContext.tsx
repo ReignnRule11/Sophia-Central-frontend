@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (identifier: string, password: string, _role?: UserRole) => {
     await initializeCsrf();
     const response = await authApi.login({ identifier, password });
-    if ('preAccountRequired' in response && response.preAccountRequired) {
+    if (!('user' in response)) {
       savePreAccountSession({ ...response.preAccount, onboardingToken: response.onboardingToken });
       setUser(null);
       return { requiresOnboarding: true };
