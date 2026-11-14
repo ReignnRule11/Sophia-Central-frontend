@@ -106,7 +106,7 @@ export function ProfileSettingsPage() {
       });
       await refreshSession();
       setEditingInstitution(false);
-      setMessage(`Academic placement updated successfully. ${user.role === 'student' ? 'Your Student Group Chat now uses institution, faculty and department; programme remains a separate profile field.' : 'Your academic sections use the selected institution, faculty and department.'} Missing catalogue entries are saved to your profile and are not sent for moderation review.`);
+      setMessage(`Academic placement updated successfully. ${user.role === 'student' ? 'Your Student Group Chat now uses institution, faculty and department; program remains a separate profile field.' : 'Your academic sections use the selected institution, faculty and department.'} Missing catalogue entries are saved to your profile and are not sent for moderation review.`);
       return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to update academic placement.');
