@@ -8,7 +8,7 @@ Set `VITE_SITE_URL` in the Vercel **Production** environment to the canonical pu
 VITE_SITE_URL=https://your-current-production-domain.example
 ```
 
-The value is intentionally not embedded in application source. Route metadata uses this value when configured and otherwise uses the browser's current origin. The pre-build script uses `VITE_SITE_URL`, then `SITE_URL`, then Vercel's `VERCEL_PROJECT_PRODUCTION_URL`, with the existing production hostname only as a final fallback.
+The value is intentionally not embedded in application source. Route metadata uses this value when configured and otherwise uses the browser's current origin. The pre-build script uses `VITE_SITE_URL`, then `SITE_URL`, then Vercel's `VERCEL_PROJECT_PRODUCTION_URL`. A Vercel production build fails clearly if none is configured; local builds fall back to `http://localhost:5173`.
 
 When the domain changes:
 1. Add and verify the new domain in Vercel.
