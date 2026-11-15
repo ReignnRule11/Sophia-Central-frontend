@@ -20,7 +20,7 @@ function inlineMarkdown(value: string, keyPrefix: string): ReactNode[] {
       } else {
         nodes.push(link?.[1] ?? token);
       }
-    } else if (token.startsWith('``')) {
+    } else if (token.startsWith('`')) {
       nodes.push(<code key={key} className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[0.9em] dark:bg-slate-800">{token.slice(1, -1)}</code>);
     } else if (token.startsWith('**') || token.startsWith('__')) {
       nodes.push(<strong key={key} className="font-semibold">{token.slice(2, -2)}</strong>);
