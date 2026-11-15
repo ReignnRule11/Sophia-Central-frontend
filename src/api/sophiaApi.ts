@@ -53,7 +53,7 @@ export const aiService = {
 
   async editMessage(payload: { sessionId: string; messageId: string; question: string }) {
     const response = await apiRequest<AiChatResponse>(
-      `/ai/sessions/${encodeURIComponent(payload.sessionId)}/messages/${encodeURIComponent(payload.messageId)}/edit`,
+      `/ai/sessions/${encodeURIComponent(payload.sessionId)}/messages/${encodeURIComponent(payload.messageId)}`,
       {
         method: 'PATCH',
         body: JSON.stringify({ question: payload.question }),
