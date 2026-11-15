@@ -97,7 +97,7 @@ function RouteSeo() {
           description: 'Explore an academic learning resource shared with the Sophis Central community.',
         }
       : null);
-    const indexable = Boolean(page);
+    const indexable = Boolean(page) && !isPublicResource;
     const title = page?.title || 'Your Academic Workspace | Sophis Central';
     const description = page?.description || 'Sign in to access your Sophis Central academic account and learning tools.';
     const configuredOrigin = import.meta.env.VITE_SITE_URL?.trim();
