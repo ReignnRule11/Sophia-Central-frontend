@@ -101,7 +101,7 @@ export function LibraryPage() {
       page: 1,
       limit: 10,
     }),
-    enabled: !isPlatformOversightRole && !departmentOnly && hasDepartmentProfile,
+    enabled: !isModerationRole && !departmentOnly && hasDepartmentProfile,
     staleTime: 60_000,
   });
   const platformItems = useMemo(() => (platformQuery.data ?? []).filter((item) => {
@@ -133,7 +133,7 @@ export function LibraryPage() {
     <section className="grid gap-3 rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD] p-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Search and filter resources">
       <form className="flex min-w-0 gap-2 sm:col-span-2" role="search" onSubmit={event=>{event.preventDefault();setQ(searchInput.trim());setPage(1);}}>
         <label className="relative min-w-0 flex-1"><span className="sr-only">Search resources</span><Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6121D0]"/><input className={input+' pl-10'} value={searchInput} onChange={e=>setSearchInput(e.target.value)} placeholder="Search titles, topics, courses…"/></label>
-        <button type="submit" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#4F1DB0] focus:outline-none focus:ring-2 focus:ring-[#6121D0]/30"><Search size={16}/><span className="hidden xs:inline">Search</span><span className="xs:hidden">Go</span></button>
+        <button type="submit" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#4F1DB0] focus:outline-none focus:ring-2 focus:ring-[#6121D0]/30"><Search size={16}/><span>Search</span></button>
       </form>
       <input className={input} value={course} onChange={e=>{setCourse(e.target.value);setPage(1)}} placeholder="Course / subject"/>
       <input className={input} value={topic} onChange={e=>{setTopic(e.target.value);setPage(1)}} placeholder="Topic"/>
@@ -141,9 +141,9 @@ export function LibraryPage() {
       {isPlatformOversightRole && <select aria-label="Filter by moderation status" className={input+' sm:col-span-2 lg:col-span-1'} value={moderationStatus} onChange={e=>{setModerationStatus(e.target.value);setPage(1)}}><option value="">All moderation statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="revision_requested">Revision requested</option></select>}
       <div className="flex items-center justify-end text-xs text-[#5C6982] sm:col-span-2 lg:col-span-3">{total} {isPlatformOversightRole ? `platform resources${moderationStatus ? ` · ${moderationStatus.replace(/_/g, ' ')}` : ' · all moderation statuses'}` : 'approved resources'}</div>
     </section>
-    {!departmentOnly && !isPlatformOversightRole && hasDepartmentProfile && <section className="space-y-4" aria-labelledby="department-highlights-heading">
+    {!departmentOnly && !isModerationRole && hasDepartmentProfile && <section className="space-y-4" aria-labelledby="department-highlights-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <div><p className="text-xs font-semibold uppercase tracking-[.16em] text-[#6121D0]">Selected for your department</p><h3 id="department-highlights-heading" className="mt-1 text-xl font-bold text-[#091F5B]">Top 10 department materials</h3><p className="mt-1 text-sm text-[#5C6982]">Approved materials matched to your institution, faculty and department.</p></div>
+        <div><p className="text-xs font-semibold uppercase tracking-[.16em] text-[#6121D0]">Selected for your department</p><h3 id="department-highlights-heading" className="mt-1 text-xl font-bold text-[#091F5B]">Top 10 department-related materials</h3><p className="mt-1 text-sm text-[#5C6982]">Approved materials matched to your institution, faculty and department.</p></div>
         <Link to="/library?departmentOnly=1" className="text-sm font-semibold text-[#6121D0] underline">View department library</Link>
       </div>
       {departmentHighlightsQuery.isLoading ? <p className="rounded-xl border border-[#DCE4EF] bg-white p-4 text-sm text-[#5C6982]">Loading department materials…</p>
