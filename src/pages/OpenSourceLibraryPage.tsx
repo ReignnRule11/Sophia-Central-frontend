@@ -27,7 +27,7 @@ export function OpenSourceLibraryPage() {
   });
   const department = useQuery({
     queryKey: ['open-source-library-department', user?.department],
-    queryFn: () => resourcesApi.openSourceList({ department: user?.department, page: 1, limit: 10 }),
+    queryFn: () => resourcesApi.openSourceList({ q: user?.department, page: 1, limit: 10 }),
     enabled: hasDepartment,
     staleTime: 60_000,
   });
