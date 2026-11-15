@@ -14,8 +14,13 @@ const configuredSiteUrl =
   process.env.SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'https://sophiscentral.vercel.app');
-const siteOrigin = normalizeOrigin(configuredSiteUrl);
+    : '');
+
+if (!configuredSiteUrl && process.env.VERCEL) {
+  throw new Error('Set VITE_SITE_URL in Vercel Production before building the SEO sitemap.');
+}
+
+const siteOrigin = normalizeOrigin(configuredSiteUrl || 'http://localhost:5173');
 const publicRoutes = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/library', priority: '0.9', changefreq: 'daily' },
