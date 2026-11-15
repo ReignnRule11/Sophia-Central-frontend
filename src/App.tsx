@@ -89,7 +89,7 @@ function RouteSeo() {
   const location = useLocation();
 
   useEffect(() => {
-    const pathname = location.pathname.replace(/\\/+$/, '') || '/';
+    const pathname = location.pathname.replace(/\/+$/, '') || '/';
     const isPublicResource = pathname.startsWith('/open-resource/');
     const page = PUBLIC_PAGE_SEO[pathname] || (isPublicResource
       ? {
@@ -101,7 +101,7 @@ function RouteSeo() {
     const title = page?.title || 'Your Academic Workspace | Sophis Central';
     const description = page?.description || 'Sign in to access your Sophis Central academic account and learning tools.';
     const configuredOrigin = import.meta.env.VITE_SITE_URL?.trim();
-    const origin = (configuredOrigin || window.location.origin).replace(/\\/+$/, '');
+    const origin = (configuredOrigin || window.location.origin).replace(/\/+$/, '');
     const canonicalUrl = new URL(pathname, `${origin}/`).toString();
     const imageUrl = new URL('/sophia-central-logo.png', `${origin}/`).toString();
 
