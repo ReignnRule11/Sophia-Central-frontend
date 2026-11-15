@@ -944,3 +944,121 @@ html[data-theme='dark'] .app-shell .ai-tutor-page .ai-tutor-user-message p,
 html[data-theme='dark'] .app-shell .ai-tutor-page .ai-tutor-user-message button {
   color: #F8FAFC !important;
 }
+
+
+/* Sophis AI responsive layout: prevent grid children and rich responses from
+   forcing horizontal overflow, from narrow phones through wide desktop screens. */
+.app-shell .ai-tutor-page,
+.app-shell .ai-tutor-page * {
+  box-sizing: border-box;
+}
+.app-shell .ai-tutor-page,
+.app-shell .ai-tutor-layout,
+.app-shell .ai-tutor-layout > *,
+.app-shell .ai-tutor-panel,
+.app-shell .ai-tutor-thread,
+.app-shell .ai-tutor-message,
+.app-shell .ai-tutor-assistant-content {
+  min-width: 0;
+  max-width: 100%;
+}
+.app-shell .ai-tutor-page {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+.app-shell .ai-tutor-thread {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+.app-shell .ai-tutor-message {
+  width: fit-content;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.app-shell .ai-tutor-assistant-content p,
+.app-shell .ai-tutor-assistant-content li,
+.app-shell .ai-tutor-assistant-content h1,
+.app-shell .ai-tutor-assistant-content h2,
+.app-shell .ai-tutor-assistant-content h3,
+.app-shell .ai-tutor-assistant-content a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.app-shell .ai-tutor-assistant-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+.app-shell .ai-tutor-assistant-content table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  -webkit-overflow-scrolling: touch;
+}
+.app-shell .ai-tutor-question-input,
+.app-shell .ai-tutor-resource-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+.app-shell .ai-tutor-conversation-header > * {
+  min-width: 0;
+}
+.app-shell .ai-tutor-resource-box label {
+  flex-wrap: wrap;
+}
+@media (max-width: 639px) {
+  .app-shell .ai-tutor-page {
+    gap: 1rem;
+  }
+  .app-shell .ai-tutor-panel {
+    padding: 0.75rem;
+  }
+  .app-shell .ai-tutor-thread {
+    max-height: min(55vh, 440px);
+    padding: 0.625rem;
+  }
+  .app-shell .ai-tutor-message {
+    max-width: 96%;
+    padding: 0.7rem;
+  }
+  .app-shell .ai-tutor-conversation-header {
+    align-items: flex-start;
+  }
+  .app-shell .ai-tutor-conversation-header button {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+  .app-shell .ai-tutor-page button {
+    white-space: normal;
+  }
+  .app-shell .ai-tutor-page textarea {
+    resize: vertical;
+  }
+}
+@media (max-width: 380px) {
+  .app-shell .ai-tutor-panel {
+    padding: 0.625rem;
+  }
+  .app-shell .ai-tutor-thread {
+    padding: 0.5rem;
+  }
+  .app-shell .ai-tutor-message {
+    max-width: 98%;
+    padding: 0.625rem;
+  }
+}
+@media (min-width: 640px) and (max-width: 1279px) {
+  .app-shell .ai-tutor-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (min-width: 1280px) {
+  .app-shell .ai-tutor-layout {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+}
