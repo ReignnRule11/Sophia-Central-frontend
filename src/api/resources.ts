@@ -74,7 +74,7 @@ export const resourcesApi = {
   },
   openSourceById: async (id: string) => mapResource(await apiRequest<ApiResource>(`/resources/open-source-library/${encodeURIComponent(id)}`, { method: 'GET' })),
   openSourceFileUrl: (id: string) => apiRequest<{ url: string; filename: string; contentType?: string; license: string; attribution: string }>(`/resources/open-source-library/${encodeURIComponent(id)}/file-url`, { method: 'GET' }),
-  publicList: async (filters: PublicResourceFilters = {}) {
+  publicList: async (filters: PublicResourceFilters = {}) => {
     const page = await apiRequest<PublicResourcePage>(`/resources/public${queryString(filters)}`, { method: 'GET' });
     return { ...page, items: page.items.map(mapResource) };
   },
