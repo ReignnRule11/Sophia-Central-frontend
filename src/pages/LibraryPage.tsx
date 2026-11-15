@@ -23,6 +23,7 @@ export function LibraryPage() {
   const departmentOnly = searchParams.get('departmentOnly') === '1';
   const hasDepartmentProfile = Boolean(user?.institution && user?.faculty && user?.department);
   const [q, setQ] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [researchQuery, setResearchQuery] = useState('');
   const [researchResults, setResearchResults] = useState<OpenSourceResearchResult[]>([]);
   const [researchLoading, setResearchLoading] = useState(false);
@@ -90,6 +91,19 @@ export function LibraryPage() {
     enabled: isPlatformOversightRole,
     staleTime: 30_000,
   });
+  const departmentHighlightsQuery = useQuery({
+    queryKey: ['library-department-highlights', user?.institution, user?.faculty, user?.department],
+    queryFn: () => resourcesApi.publicList({
+      departmentOnly: true,
+      institution: user?.institution,
+      faculty: user?.faculty,
+      department: user?.department,
+      page: 1,
+      limit: 10,
+    }),
+    enabled: !isPlatformOversightRole && !departmentOnly && hasDepartmentProfile,
+    staleTime: 60_000,
+  });
   const platformItems = useMemo(() => (platformQuery.data ?? []).filter((item) => {
     const value = item as LibraryResource;
     const search = [value.title, value.description, value.course, value.topic, value.institution, value.faculty, value.department].filter(Boolean).join(' ').toLowerCase();
@@ -117,13 +131,32 @@ export function LibraryPage() {
       {!isModerationRole && <div className="mt-5 flex flex-wrap gap-3"><Link to="/onboarding" className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#2C36D9]">Join the community</Link></div>}
     </section>
     <section className="grid gap-3 rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD] p-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Search and filter resources">
-      <label className="relative sm:col-span-2"><span className="sr-only">Search resources</span><Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6121D0]"/><input className={input+' pl-10'} value={q} onChange={e=>{setQ(e.target.value);setPage(1)}} placeholder="Search titles, topics, courses…"/></label>
+      <form className="flex min-w-0 gap-2 sm:col-span-2" role="search" onSubmit={event=>{event.preventDefault();setQ(searchInput.trim());setPage(1);}}>
+        <label className="relative min-w-0 flex-1"><span className="sr-only">Search resources</span><Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6121D0]"/><input className={input+' pl-10'} value={searchInput} onChange={e=>setSearchInput(e.target.value)} placeholder="Search titles, topics, courses…"/></label>
+        <button type="submit" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#4F1DB0] focus:outline-none focus:ring-2 focus:ring-[#6121D0]/30"><Search size={16}/><span className="hidden xs:inline">Search</span><span className="xs:hidden">Go</span></button>
+      </form>
       <input className={input} value={course} onChange={e=>{setCourse(e.target.value);setPage(1)}} placeholder="Course / subject"/>
       <input className={input} value={topic} onChange={e=>{setTopic(e.target.value);setPage(1)}} placeholder="Topic"/>
       <select className={input+' sm:col-span-2 lg:col-span-1'} value={license} onChange={e=>{setLicense(e.target.value);setPage(1)}}><option value="">All licences</option><option value="CC-BY-4.0">Creative Commons BY 4.0</option><option value="CC-BY-SA-4.0">Creative Commons BY-SA 4.0</option><option value="CC0-1.0">CC0 1.0</option><option value="ALL-RIGHTS-RESERVED">All rights reserved</option></select>
       {isPlatformOversightRole && <select aria-label="Filter by moderation status" className={input+' sm:col-span-2 lg:col-span-1'} value={moderationStatus} onChange={e=>{setModerationStatus(e.target.value);setPage(1)}}><option value="">All moderation statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="revision_requested">Revision requested</option></select>}
       <div className="flex items-center justify-end text-xs text-[#5C6982] sm:col-span-2 lg:col-span-3">{total} {isPlatformOversightRole ? `platform resources${moderationStatus ? ` · ${moderationStatus.replace(/_/g, ' ')}` : ' · all moderation statuses'}` : 'approved resources'}</div>
     </section>
+    {!departmentOnly && !isPlatformOversightRole && hasDepartmentProfile && <section className="space-y-4" aria-labelledby="department-highlights-heading">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div><p className="text-xs font-semibold uppercase tracking-[.16em] text-[#6121D0]">Selected for your department</p><h3 id="department-highlights-heading" className="mt-1 text-xl font-bold text-[#091F5B]">Top 10 department materials</h3><p className="mt-1 text-sm text-[#5C6982]">Approved materials matched to your institution, faculty and department.</p></div>
+        <Link to="/library?departmentOnly=1" className="text-sm font-semibold text-[#6121D0] underline">View department library</Link>
+      </div>
+      {departmentHighlightsQuery.isLoading ? <p className="rounded-xl border border-[#DCE4EF] bg-white p-4 text-sm text-[#5C6982]">Loading department materials…</p>
+      : departmentHighlightsQuery.isError ? <div className="rounded-xl border border-[#DCE4EF] bg-white p-4 text-sm text-[#5C6982]"><p>Department materials could not be loaded.</p><button type="button" onClick={()=>void departmentHighlightsQuery.refetch()} className="mt-2 font-semibold text-[#6121D0] underline">Try again</button></div>
+      : departmentHighlightsQuery.data?.items.length ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{departmentHighlightsQuery.data.items.slice(0,10).map(item=><article key={item.id} className="flex min-w-0 flex-col rounded-2xl border border-[#DCE4EF] bg-white p-4 transition hover:border-[#6121D0]">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-[#6121D0]"><FileText size={14}/>{String(item.type).replace(/_/g,' ')}<span className="rounded-full bg-[#F3F0FF] px-2 py-1">{item.origin === 'open_source' ? 'Open source' : 'Community'}</span></div>
+        <h4 className="mt-2 line-clamp-2 font-bold leading-6 text-[#091F5B]">{item.title}</h4>
+        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-5 text-[#5C6982]">{item.description || 'Open this material to view its details.'}</p>
+        <p className="mt-3 line-clamp-2 text-xs text-[#5C6982]">{[item.course,item.topic,item.department].filter(Boolean).join(' · ')}</p>
+        <Link to={`/open-resource/${encodeURIComponent(item.id)}`} className="mt-4 inline-flex items-center gap-2 border-t border-[#DCE4EF] pt-3 text-sm font-semibold text-[#6121D0]"><BookOpen size={15}/> View material</Link>
+      </article>)}</div>
+      : <div className="rounded-2xl border border-dashed border-[#DCE4EF] bg-white p-6 text-center"><BookOpen className="mx-auto text-[#6121D0]" size={25}/><h4 className="mt-2 font-semibold text-[#091F5B]">No department materials yet</h4><p className="mt-1 text-sm text-[#5C6982]">New approved materials for your department will appear here. Use the search above to explore the full library.</p></div>}
+    </section>}
     {canImportOpenSource && !departmentOnly && <section className="space-y-4 rounded-2xl border border-[#DCE4EF] bg-white p-5" aria-label="Import open-access research into the General Library">
       <div><p className="text-xs font-semibold uppercase tracking-[.16em] text-[#6121D0]">Open-source research importer</p><h3 className="mt-1 text-lg font-bold text-[#091F5B]">Find research materials online</h3><p className="mt-1 text-sm leading-6 text-[#5C6982]">Search OpenAlex for open-access research by title, topic, author or DOI. Imported records become available to everyone in the General Library. Full text is copied only when an explicit redistribution licence permits it; otherwise, only bibliographic details and the original source link are added.</p></div>
       <form className="flex flex-col gap-2 sm:flex-row" onSubmit={event => { event.preventDefault(); void searchOpenSource(); }}>
