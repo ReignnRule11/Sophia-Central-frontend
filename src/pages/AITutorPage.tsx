@@ -153,7 +153,7 @@ export function AITutorPage() {
     setQuestion('');
   };
 
-  return <div className="space-y-6">
+  return <div className="ai-tutor-page space-y-6">
     <SectionTitle eyebrow="AI tutor" title="Ask Sophis" />
     <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
       <OverviewCard title="Study support" action="Live AI tutor">
@@ -173,7 +173,7 @@ export function AITutorPage() {
         </div>
       </OverviewCard>
 
-      <div className="rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm">
+      <div className="ai-tutor-panel rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
             <h2 className="font-semibold text-[#091F5B]">Your conversation</h2>
@@ -182,10 +182,10 @@ export function AITutorPage() {
           <button type="button" onClick={startNewChat} disabled={isLoading || conversation.length === 0} className="inline-flex items-center gap-2 rounded-lg border border-[#DCE4EF] px-3 py-2 text-xs font-semibold text-[#4B5563] hover:bg-[#F8FAFD] disabled:opacity-40"><RotateCcw size={14}/>New chat</button>
         </div>
 
-        <div className="mb-4 max-h-[440px] min-h-24 space-y-3 overflow-y-auto rounded-xl bg-[#F8FAFD] p-3" aria-live="polite">
+        <div className="ai-tutor-thread mb-4 max-h-[440px] min-h-24 space-y-3 overflow-y-auto rounded-xl bg-[#F8FAFD] p-3" aria-live="polite">
           {conversation.length === 0 && <p className="py-6 text-center text-sm text-[#71809A]">Your answers will appear here. Start by asking Sophis a question.</p>}
           {conversation.map((message, index) => (
-            <div key={message.id ?? index} className={message.role === 'user' ? 'ml-6 min-w-0 rounded-xl bg-[#6121D0] p-3 text-sm leading-6 text-white' : 'mr-6 min-w-0 rounded-xl border border-[#DCE4EF] bg-white p-3 text-sm leading-7 text-[#1F2937]'}>
+            <div key={message.id ?? index} className={message.role === 'user' ? 'ai-tutor-user-message ml-6 min-w-0 rounded-xl bg-[#6121D0] p-3 text-sm leading-6 text-white' : 'ai-tutor-assistant-message mr-6 min-w-0 rounded-xl border border-[#DCE4EF] bg-white p-3 text-sm leading-7 text-[#1F2937]'}>
               <div className="mb-1 flex items-center justify-between gap-3">
                 <p className={message.role === 'user' ? 'text-xs font-semibold text-white/75' : 'text-xs font-semibold text-[#6121D0]'}>{message.role === 'user' ? 'You' : 'Sophis'}</p>
                 {message.role === 'user' && message.id && sessionId && (
@@ -216,13 +216,13 @@ export function AITutorPage() {
                   <p className="text-[11px] leading-4 text-white/75">Regenerating an answer uses 2 Wisdom Points. Messages after this question will be replaced.</p>
                 </div>
               ) : message.role === 'assistant' ? (
-                <MarkdownContent content={message.content} />
+                <div className="ai-tutor-assistant-content"><MarkdownContent content={message.content} /></div>
               ) : (
                 <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{message.content}</p>
               )}
             </div>
           ))}
-          {isLoading && <div className="mr-6 rounded-xl border border-[#DCE4EF] bg-white p-3 text-sm text-[#6121D0]">Sophis is thinking…</div>}
+          {isLoading && <div className="ai-tutor-thinking mr-6 rounded-xl border border-[#DCE4EF] bg-white p-3 text-sm text-[#6121D0]">Sophis is thinking…</div>}
         </div>
 
         {error && <div role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
