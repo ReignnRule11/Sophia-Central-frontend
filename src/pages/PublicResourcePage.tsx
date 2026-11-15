@@ -27,7 +27,7 @@ export function PublicResourcePage() {
       ? item.title.trim()
       : 'Academic Learning Resource';
     const resourceDescription = typeof item.description === 'string' && item.description.trim()
-      ? item.description.replace(/\\s+/g, ' ').trim().slice(0, 160)
+      ? item.description.replace(/\s+/g, ' ').trim().slice(0, 160)
       : 'Explore this academic learning resource shared with the Sophis Central community.';
     const configuredOrigin = import.meta.env.VITE_SITE_URL?.trim();
     const origin = new URL(configuredOrigin || window.location.origin).origin;
@@ -35,28 +35,27 @@ export function PublicResourcePage() {
     const imageUrl = new URL('/sophia-central-logo.png', `${origin}/`).toString();
 
     document.title = `${resourceTitle} | Academic Resource | Sophis Central`;
-    const setMeta = (selector: string, attribute: string, value: string) => {
-      let element = document.head.querySelector<HTMLMetaElement>(selector);
+    const setMeta = (kind: 'name' | 'property', key: string, value: string) => {
+      let element = document.head.querySelector<HTMLMetaElement>('meta[' + kind + '="' + key + '"]');
       if (!element) {
         element = document.createElement('meta');
-        const [key, content] = selector.match(/\\[(name|property)="([^"]+)"\\]/)?.slice(1) || [];
-        if (key && content) element.setAttribute(key, content);
+        element.setAttribute(kind, key);
         document.head.appendChild(element);
       }
-      element.setAttribute(attribute, value);
+      element.content = value;
     };
-    setMeta('meta[name="description"]', 'content', resourceDescription);
-    setMeta('meta[name="robots"]', 'content', 'index,follow,max-image-preview:large');
-    setMeta('meta[name="googlebot"]', 'content', 'index,follow');
-    setMeta('meta[property="og:type"]', 'content', 'article');
-    setMeta('meta[property="og:title"]', 'content', `${resourceTitle} | Sophis Central`);
-    setMeta('meta[property="og:description"]', 'content', resourceDescription);
-    setMeta('meta[property="og:url"]', 'content', canonicalUrl);
-    setMeta('meta[property="og:image"]', 'content', imageUrl);
-    setMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
-    setMeta('meta[name="twitter:title"]', 'content', `${resourceTitle} | Sophis Central`);
-    setMeta('meta[name="twitter:description"]', 'content', resourceDescription);
-    setMeta('meta[name="twitter:image"]', 'content', imageUrl);
+    setMeta('name', 'description', resourceDescription);
+    setMeta('name', 'robots', 'index,follow,max-image-preview:large');
+    setMeta('name', 'googlebot', 'index,follow');
+    setMeta('property', 'og:type', 'article');
+    setMeta('property', 'og:title', `${resourceTitle} | Sophis Central`);
+    setMeta('property', 'og:description', resourceDescription);
+    setMeta('property', 'og:url', canonicalUrl);
+    setMeta('property', 'og:image', imageUrl);
+    setMeta('name', 'twitter:card', 'summary_large_image');
+    setMeta('name', 'twitter:title', `${resourceTitle} | Sophis Central`);
+    setMeta('name', 'twitter:description', resourceDescription);
+    setMeta('name', 'twitter:image', imageUrl);
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {
