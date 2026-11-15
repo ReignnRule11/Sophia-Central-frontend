@@ -9,6 +9,7 @@ type ApiResource = Resource & {
   department?: string;
   origin?: 'community_upload' | 'open_source';
   hasFile?: boolean;
+  sourceUrl?: string;
   uploader?: { id?: string; displayName?: string };
 };
 
