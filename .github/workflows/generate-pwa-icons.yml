@@ -38,6 +38,9 @@ jobs:
       - name: Generate PNG and ICO variants
         run: python scripts/generate-pwa-icons.py
 
+      - name: Verify iOS and Android icon assets
+        run: python scripts/verify-pwa-icons.py
+
       - name: Commit generated icon assets
         run: |
           git config user.name "github-actions[bot]"
