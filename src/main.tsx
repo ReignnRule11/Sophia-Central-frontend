@@ -11,10 +11,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <AuthProvider>
       <PrivateDmInboxProvider>
-      <AppProviders>
+        <AppProviders>
         <App />
         <PWAInstallPrompt />
-      </AppProviders>
+        </AppProviders>
       </PrivateDmInboxProvider>
     </AuthProvider>
   </BrowserRouter>
