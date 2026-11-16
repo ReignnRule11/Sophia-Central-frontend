@@ -365,31 +365,30 @@ export function ChatPage() {
 
   const loadInbox = useCallback(async () => {
     try {
-      const nextInbox = await refreshInbox();
-      const previousIds = knownInboxMessageIdsRef.current;
-
-      const incoming = previousIds
-        ? nextInbox.filter(item =>
-            !item.lastMessage.isOwn && !previousIds.has(item.lastMessage.id),
-          )
-        : [];
-
-      const hasUnfocusedIncoming = incoming.some(
-        item => mode !== 'direct' || recipient !== item.contact.id,
-      );
-
-      if (hasUnfocusedIncoming && !mutedDirect) playSophisTone('receive');
-
-      knownInboxMessageIdsRef.current = new Set(
-        nextInbox.map(item => item.lastMessage.id),
-      );
+      await refreshInbox();
       setInboxRefreshError('');
     } catch (cause) {
       setInboxRefreshError(cause instanceof Error
         ? cause.message
         : 'Private conversations could not be refreshed. Reconnecting…');
     }
-  }, [mode, recipient, mutedDirect, refreshInbox]);
+  }, [refreshInbox]);
+
+  useEffect(() => {
+    const previousIds = knownInboxMessageIdsRef.current;
+    if (previousIds) {
+      const incoming = inbox.filter(item =>
+        !item.lastMessage.isOwn && !previousIds.has(item.lastMessage.id),
+      );
+      const hasUnfocusedIncoming = incoming.some(
+        item => mode !== 'direct' || recipient !== item.contact.id,
+      );
+      if (hasUnfocusedIncoming && !mutedDirect) playSophisTone('receive');
+    }
+    knownInboxMessageIdsRef.current = new Set(
+      inbox.map(item => item.lastMessage.id),
+    );
+  }, [inbox, mode, recipient, mutedDirect]);
 
   const markConversationRead = useCallback(async (userId: string) => {
     try {
