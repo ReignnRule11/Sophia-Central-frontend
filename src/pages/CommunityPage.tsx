@@ -1,10 +1,16 @@
-import { ArrowLeft, ArrowUpRight, Globe2, Mail, MessageCircle, Users } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Facebook, Globe2, Instagram, Linkedin, Mail, MessageCircle, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BrandLogo } from '../components/brand/BrandLogo';
 import { publicContactEmails } from '../config/publicContact';
 
 export function CommunityPage() {
   const generalEmail = publicContactEmails.general;
+
+  const socialLinks = [
+    { label: 'Facebook', href: 'https://www.facebook.com/', Icon: Facebook },
+    { label: 'Instagram', href: 'https://www.instagram.com/', Icon: Instagram },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/', Icon: Linkedin },
+  ];
 
   return (
     <main className="min-h-screen bg-[#F6F8FC] text-[#1F2937]">
@@ -39,24 +45,39 @@ export function CommunityPage() {
             Sophis Central is for students, lecturers, researchers, graduates and supporters of education. You do not need to belong to a particular institution, faculty, department, country, region or level to be part of the wider community.
           </p>
           <p className="mt-3 text-sm leading-7 text-[#5C6982]">
-            Follow our official channels and stay connected as the community grows.
+            Visit our social platforms and stay connected as the community grows.
           </p>
         </article>
 
-        <article className="rounded-3xl border border-[#E1E7F0] bg-white p-6 shadow-sm sm:p-8">
+        <article className="min-w-0 rounded-3xl border border-[#E1E7F0] bg-white p-5 shadow-sm sm:p-8">
           <span className="inline-flex rounded-2xl bg-[#EAF1FF] p-3 text-[#004BEC]"><MessageCircle size={24} /></span>
-          <h2 className="mt-5 text-2xl font-bold text-[#091F5B]">Connect with Sophis Central</h2>
+          <h2 className="mt-5 break-words text-xl font-bold text-[#091F5B] sm:text-2xl">Connect with Sophis Central</h2>
           <p className="mt-3 text-sm leading-7 text-[#5C6982]">
-            For general enquiries, partnership conversations or information about joining the wider community, reach us by email.
+            Visit Facebook, Instagram or LinkedIn. These temporary links open the platforms themselves; Sophis Central profile links can be added when the pages are ready.
           </p>
-          <a href={`mailto:${generalEmail}?subject=${encodeURIComponent('Sophis Central Community')}`} className="mt-6 inline-flex w-full min-w-0 flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#DCE4EF] bg-[#F8FAFF] px-4 py-4 text-left transition hover:border-[#B9C8F5] hover:bg-[#F3F6FC]">
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {socialLinks.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${label}`}
+                className="inline-flex min-w-0 items-center justify-center gap-2 rounded-xl border border-[#DCE4EF] bg-[#F8FAFF] px-3 py-3 text-sm font-semibold text-[#334155] transition hover:border-[#B9C8F5] hover:bg-[#F3F6FC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6121D0] focus-visible:ring-offset-2"
+              >
+                <Icon size={18} aria-hidden="true" />
+                {label}
+                <ArrowUpRight size={15} className="shrink-0 text-[#6121D0]" aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+          <a href={`mailto:${generalEmail}?subject=${encodeURIComponent('Sophis Central Community')}`} className="mt-5 inline-flex w-full min-w-0 flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#DCE4EF] bg-[#F8FAFF] px-4 py-4 text-left transition hover:border-[#B9C8F5] hover:bg-[#F3F6FC]">
             <span className="flex min-w-0 items-center gap-3">
               <span className="rounded-xl bg-white p-2.5 text-[#6121D0] shadow-sm"><Mail size={19} /></span>
               <span className="min-w-0"><span className="block text-xs font-semibold uppercase tracking-wide text-[#71809A]">General enquiries</span><span className="mt-1 block break-all text-sm font-semibold text-[#091F5B]">{generalEmail}</span></span>
             </span>
             <ArrowUpRight size={18} className="shrink-0 text-[#6121D0]" />
           </a>
-          <p className="mt-4 text-xs leading-6 text-[#8995A8]">Official social profile and community invitation links will be added here once confirmed.</p>
         </article>
       </section>
 
