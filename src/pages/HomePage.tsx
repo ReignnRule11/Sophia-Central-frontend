@@ -38,9 +38,9 @@ export default function HomePage() {
   return (
     <div id="top" className="homepage min-h-screen overflow-hidden bg-white text-[#1F2937]">
       <header className="homepage-nav sticky top-0 z-50 border-b border-[#E5EAF4] bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-3 py-3 sm:gap-4 sm:px-6 lg:px-8">
           <BrandLogo variant="full" tone="dark" />
-          <nav aria-label="Primary navigation" className="hidden items-center gap-8 text-sm font-semibold text-[#091F5B] md:flex">
+          <nav aria-label="Primary navigation" className="hidden items-center gap-6 text-sm font-semibold text-[#091F5B] lg:flex">
             <a href="#features" className="homepage-nav-link">Features</a>
             <a href="#resources" className="homepage-nav-link">Resources</a>
             <a href="#community" className="homepage-nav-link">Community</a>
@@ -52,7 +52,7 @@ export default function HomePage() {
             <Link to="/onboarding" className="brand-button gap-2 px-3.5 py-2.5 text-sm font-semibold shadow-md shadow-[#6121D0]/20 sm:px-5">Get started <ArrowRight size={16} /></Link>
           </div>
         </div>
-        <div className="border-t border-[#E5EAF4] px-4 py-2 md:hidden">
+        <div className="border-t border-[#E5EAF4] px-4 py-2 lg:hidden">
           <nav aria-label="Mobile primary navigation" className="mx-auto flex max-w-7xl items-center gap-5 overflow-x-auto whitespace-nowrap text-xs font-semibold text-[#091F5B]">
             <a href="#features" className="homepage-nav-link py-1">Features</a>
             <a href="#resources" className="homepage-nav-link py-1">Resources</a>
