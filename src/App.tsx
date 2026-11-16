@@ -9,6 +9,11 @@ import { AppShell } from './components/layout/AppShell';
 import { BrandLogo } from './components/brand/BrandLogo';
 import { BrandedPageLoader } from './components/brand/BrandedPageLoader';
 
+import { PasswordInput } from './components/PasswordInput';
+import { ProtectedRoute } from './routes/ProtectedRoute';
+import { loginSchema, type LoginValues } from './lib/validation';
+import { SupportRequestsPanel } from './components/moderation/SupportRequestsPanel';
+
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage').then((module) => ({ default: module.NotificationsPage })));
 const OpenSourceResourcePage = lazy(() => import('./pages/OpenSourceResourcePage').then((module) => ({ default: module.OpenSourceResourcePage })));
 const PublicResourcePage = lazy(() => import('./pages/PublicResourcePage').then((module) => ({ default: module.PublicResourcePage })));
@@ -37,10 +42,14 @@ const ContactUsPage = lazy(() => import('./pages/ContactUsPage').then((module) =
 const CareersPage = lazy(() => import('./pages/CareersPage').then((module) => ({ default: module.CareersPage })));
 const CommunityPage = lazy(() => import('./pages/CommunityPage').then((module) => ({ default: module.CommunityPage })));
 const HomePage = lazy(() => import('./pages/HomePage'));
-import { PasswordInput } from './components/PasswordInput';
-import { ProtectedRoute } from './routes/ProtectedRoute';
-import { loginSchema, type LoginValues } from './lib/validation';
-import { SupportRequestsPanel } from './components/moderation/SupportRequestsPanel';
+const DashboardPage = lazy(() => import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })));
+const ModeratorDashboardPage = lazy(() => import('./pages/ModeratorDashboardPage').then((module) => ({ default: module.ModeratorDashboardPage })));
+const LibraryPage = lazy(() => import('./pages/LibraryPage').then((module) => ({ default: module.LibraryPage })));
+const OpenSourceLibraryPage = lazy(() => import('./pages/OpenSourceLibraryPage').then((module) => ({ default: module.OpenSourceLibraryPage })));
+const AITutorPage = lazy(() => import('./pages/AITutorPage').then((module) => ({ default: module.AITutorPage })));
+const ResourceReaderPage = lazy(() => import('./pages/ResourceReaderPage').then((module) => ({ default: module.ResourceReaderPage })));
+const ChatPage = lazy(() => import('./pages/ChatPage').then((module) => ({ default: module.ChatPage })));
+
 
 const PUBLIC_PAGE_SEO: Record<string, { title: string; description: string }> = {
   '/': {
