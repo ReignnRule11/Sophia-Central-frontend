@@ -70,7 +70,6 @@ function BrandedPageLoaderView() {
           alt="Sophis Central"
           className="sc-branded-page-loader__logo"
           decoding="async"
-          fetchPriority="high"
         />
         <div className="sc-branded-page-loader__progress" aria-hidden="true">
           <span />
