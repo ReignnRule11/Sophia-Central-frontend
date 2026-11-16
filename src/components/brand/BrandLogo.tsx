@@ -16,7 +16,7 @@ export function BrandLogo({
   const logoSrc =
     variant === 'full'
       ? '/sophia-central-logo.png'
-      : '/sophia-central-mark.png';
+      : '/sophis-central-pwa-icon.svg';
 
   const logo = (
     <img
