@@ -444,7 +444,11 @@ export function ChatPage() {
             playSophisTone('receive');
           }
 
-          if (mode === 'direct' && recipient && incoming.length) {
+          // An open conversation is the user's active read surface. Re-assert its
+          // read cursor on every history refresh, not only when this tab detects
+          // a newly arrived message. This retries transient read-receipt failures
+          // and keeps the recipient's unread count aligned with sender-side Seen.
+          if (mode === 'direct' && recipient) {
             void markConversationRead(recipient);
           }
 
