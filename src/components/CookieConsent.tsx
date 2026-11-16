@@ -143,21 +143,21 @@ export function CookieSettingsPage() {
                 <span className="block font-semibold text-[#091F5B]">Preferences</span>
                 <span className="mt-1 block text-sm leading-6 text-[#64748B]">Allow optional technologies to remember selected preferences and settings.</span>
               </span>
-              <input aria-label="User Engagement and Personalization" type="checkbox" checked={engagement} onChange={(event) => { setEngagement(event.target.checked); setSaved(false); }} className="mt-1 h-5 w-5 shrink-0 accent-[#6121D0]" />
+              <input aria-label="Preferences" type="checkbox" checked={engagement} onChange={(event) => { setEngagement(event.target.checked); setSaved(false); }} className="mt-1 h-5 w-5 shrink-0 accent-[#6121D0]" />
             </label>
             <label className="flex cursor-pointer items-start justify-between gap-4 p-4 sm:p-5">
               <span className="min-w-0">
                 <span className="block font-semibold text-[#091F5B]">Platform Usage</span>
                 <span className="mt-1 block text-sm leading-6 text-[#64748B]">If enabled and available, help us understand general platform usage and improve the service.</span>
               </span>
-              <input aria-label="Performance and Behavior Analytics" type="checkbox" checked={analytics} onChange={(event) => { setAnalytics(event.target.checked); setSaved(false); }} className="mt-1 h-5 w-5 shrink-0 accent-[#6121D0]" />
+              <input aria-label="Platform Usage" type="checkbox" checked={analytics} onChange={(event) => { setAnalytics(event.target.checked); setSaved(false); }} className="mt-1 h-5 w-5 shrink-0 accent-[#6121D0]" />
             </label>
             <label className="flex cursor-pointer items-start justify-between gap-4 p-4 sm:p-5">
               <span className="min-w-0">
                 <span className="block font-semibold text-[#091F5B]">Campaign Measurement</span>
                 <span className="mt-1 block text-sm leading-6 text-[#64748B]">If enabled and available, help us understand visits from outreach campaigns.</span>
               </span>
-              <input aria-label="Conversion Tracking" type="checkbox" checked={conversion} onChange={(event) => { setConversion(event.target.checked); setSaved(false); }} className="mt-1 h-5 w-5 shrink-0 accent-[#6121D0]" />
+              <input aria-label="Campaign Measurement" type="checkbox" checked={conversion} onChange={(event) => { setConversion(event.target.checked); setSaved(false); }} className="mt-1 h-5 w-5 shrink-0 accent-[#6121D0]" />
             </label>
           </div>
 
