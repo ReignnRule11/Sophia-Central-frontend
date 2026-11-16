@@ -27,7 +27,7 @@ function isPublicStaticAsset(request, url) {
     return url.pathname.startsWith('/assets/');
   }
 
-  if (request.destination === 'image' || request.destination === 'image') {
+  if (request.destination === 'image') {
     return url.pathname.startsWith('/assets/') ||
       url.pathname.startsWith('/images/') ||
       PUBLIC_ASSET_PATHS.has(url.pathname);
@@ -86,7 +86,7 @@ self.addEventListener('fetch', (event) => {
       const isBrandAsset = PUBLIC_ASSET_PATHS.has(url.pathname);
       const cached = await caches.match(request);
 
-      // Prefer the latest deployed brand assets so installed devices can refresh icons.
+      // Prefer current deployed brand assets so installed devices can refresh icons.
       if (isBrandAsset) {
         try {
           const response = await fetch(request, { cache: 'no-cache' });
@@ -113,4 +113,4 @@ self.addEventListener('fetch', (event) => {
       }
     })()
   );
-}
+})
