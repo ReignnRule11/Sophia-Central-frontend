@@ -29,6 +29,15 @@ function readConsent(): CookieConsent | null {
   }
 }
 
+export function getCookieConsent(): CookieConsent | null {
+  return readConsent();
+}
+
+/** Optional integrations must call this before loading their scripts or setting cookies. */
+export function hasOptionalCookieConsent(category: 'analytics' | 'marketing'): boolean {
+  return readConsent()?.[category] === true;
+}
+
 export function saveCookieConsent(
   analytics: boolean,
   marketing: boolean,
