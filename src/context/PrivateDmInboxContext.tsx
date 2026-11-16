@@ -6,6 +6,7 @@ type InboxState = { ownerId: string | null; items: ChatInboxItem[] };
 type PrivateDmInboxContextValue = {
   inbox: ChatInboxItem[];
   refreshInbox: () => Promise<ChatInboxItem[]>;
+  eventVersion: number;
 };
 
 const PrivateDmInboxContext = createContext<PrivateDmInboxContextValue | null>(null);
@@ -14,6 +15,7 @@ export function PrivateDmInboxProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const canUsePrivateDm = user?.role === 'student' || user?.role === 'lecturer';
   const [state, setState] = useState<InboxState>({ ownerId: null, items: [] });
+  const [eventVersion, setEventVersion] = useState(0);
   const currentUserIdRef = useRef<string | null>(user?.id ?? null);
   const requestSequenceRef = useRef(0);
   currentUserIdRef.current = user?.id ?? null;
@@ -47,6 +49,7 @@ export function PrivateDmInboxProvider({ children }: { children: ReactNode }) {
     let active = true;
     const refresh = () => {
       if (!active || document.visibilityState === 'hidden') return;
+      setEventVersion(version => version + 1);
       void refreshInbox().catch(() => {
         // The last successful inbox remains visible; foreground recovery and polling retry.
       });
@@ -79,7 +82,7 @@ export function PrivateDmInboxProvider({ children }: { children: ReactNode }) {
   }, [user?.id, canUsePrivateDm, refreshInbox]);
 
   const inbox = state.ownerId === user?.id ? state.items : [];
-  const value = useMemo(() => ({ inbox, refreshInbox }), [inbox, refreshInbox]);
+  const value = useMemo(() => ({ inbox, refreshInbox, eventVersion }), [inbox, refreshInbox, eventVersion]);
 
   return <PrivateDmInboxContext.Provider value={value}>{children}</PrivateDmInboxContext.Provider>;
 }
