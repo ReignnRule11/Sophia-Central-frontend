@@ -640,6 +640,7 @@ export function ChatPage() {
     setOnlineContactIds(new Set());
     setInboxRefreshError('');
     setReadReceiptError('');
+    setError('');
     knownMessageIdsRef.current = null;
     knownInboxMessageIdsRef.current = null;
     requestSequenceRef.current += 1;
@@ -675,23 +676,12 @@ export function ChatPage() {
   }, [eventVersion, loadMessages]);
 
   useEffect(() => {
-    const refreshWhenActive = () => {
-      if (document.visibilityState !== 'visible') return;
-      void loadMessages(true);
+    const refreshHistory = () => {
+      if (document.visibilityState === 'visible') void loadMessages(true);
     };
-    const timer = window.setInterval(refreshWhenActive, 30000);
-    window.addEventListener('focus', refreshWhenActive);
-    window.addEventListener('pageshow', refreshWhenActive);
-    window.addEventListener('online', refreshWhenActive);
-    document.addEventListener('visibilitychange', refreshWhenActive);
-    return () => {
-      window.clearInterval(timer);
-      window.removeEventListener('focus', refreshWhenActive);
-      window.removeEventListener('pageshow', refreshWhenActive);
-      window.removeEventListener('online', refreshWhenActive);
-      document.removeEventListener('visibilitychange', refreshWhenActive);
-    };
-  }, [loadMessages, loadInbox]);
+    const timer = window.setInterval(refreshHistory, 30000);
+    return () => window.clearInterval(timer);
+  }, [loadMessages]);
 
   useEffect(() => {
     const container = listRef.current;
