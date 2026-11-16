@@ -1213,6 +1213,13 @@ body,
     min-height: 100dvh;
   }
 
+  /* The iOS standalone status bar is translucent, so reserve its safe area
+     inside the sticky app header before rendering the title and controls. */
+  .app-shell > .flex > main > header {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+    scroll-margin-top: env(safe-area-inset-top);
+  }
+
   .app-shell .page-shell {
     padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
   }
