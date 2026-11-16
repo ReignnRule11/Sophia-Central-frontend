@@ -1,16 +1,24 @@
 const CACHE_PREFIX = 'sophis-central-';
-const CACHE_NAME = 'sophis-central-shell-v7';
+const CACHE_NAME = 'sophis-central-shell-v8';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
   '/sophis-central-icon.svg',
+  '/sophis-central-pwa-icon.svg',
+  '/sophis-central-favicon.png',
+  '/sophis-central-favicon.ico',
+  '/sophia-central-mark.png',
   '/sophia-central-logo.png'
 ];
 
 const PUBLIC_ASSET_PATHS = new Set([
   '/manifest.webmanifest',
   '/sophis-central-icon.svg',
+  '/sophis-central-pwa-icon.svg',
+  '/sophis-central-favicon.png',
+  '/sophis-central-favicon.ico',
+  '/sophia-central-mark.png',
   '/sophia-central-logo.png'
 ]);
 
@@ -19,7 +27,7 @@ function isPublicStaticAsset(request, url) {
     return url.pathname.startsWith('/assets/');
   }
 
-  if (request.destination === 'image') {
+  if (request.destination === 'image' || request.destination === 'image') {
     return url.pathname.startsWith('/assets/') ||
       url.pathname.startsWith('/images/') ||
       PUBLIC_ASSET_PATHS.has(url.pathname);
@@ -71,8 +79,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Only cache versioned app bundles and explicitly public static assets.
-  // User uploads, API responses, and other potentially private images are network-only.
   if (!isPublicStaticAsset(request, url)) return;
 
   event.respondWith(
@@ -80,8 +86,7 @@ self.addEventListener('fetch', (event) => {
       const isBrandAsset = PUBLIC_ASSET_PATHS.has(url.pathname);
       const cached = await caches.match(request);
 
-      // Always prefer the current deployed brand assets. Older phones may
-      // otherwise keep showing a previous logo indefinitely from cache.
+      // Prefer the latest deployed brand assets so installed devices can refresh icons.
       if (isBrandAsset) {
         try {
           const response = await fetch(request, { cache: 'no-cache' });
@@ -108,4 +113,4 @@ self.addEventListener('fetch', (event) => {
       }
     })()
   );
-});
+}
