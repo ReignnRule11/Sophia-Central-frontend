@@ -35,6 +35,7 @@ export function BrandLogo({
     <div
       className={`inline-flex items-center ${className}`}
       data-logo-tone={tone}
+      data-logo-variant={variant}
     >
       {logo}
     </div>
