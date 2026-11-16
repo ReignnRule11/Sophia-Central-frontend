@@ -6,9 +6,11 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "any",
   "background_color": "#F3F6FC",
   "theme_color": "#091F5B",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/sophis-central-favicon.png",
