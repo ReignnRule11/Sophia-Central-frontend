@@ -33,15 +33,15 @@ export function CookiePolicyPage() {
                   <p className="mt-1">These technologies support secure access, account sessions, platform security and essential website functions. They are always active and cannot be switched off through the preference manager.</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#091F5B]">User Engagement &amp; Personalization</h3>
+                  <h3 className="font-semibold text-[#091F5B]">Preferences</h3>
                   <p className="mt-1">If available and enabled, these technologies may remember selected preferences and settings.</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#091F5B]">Performance &amp; Behavior Analytics</h3>
+                  <h3 className="font-semibold text-[#091F5B]">Platform Usage</h3>
                   <p className="mt-1">If available and enabled, these technologies may help us understand general platform usage and identify areas for improvement.</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#091F5B]">Conversion Tracking</h3>
+                  <h3 className="font-semibold text-[#091F5B]">Campaign Measurement</h3>
                   <p className="mt-1">If available and enabled, these technologies may help measure visits from outreach campaigns.</p>
                 </div>
               </div>
