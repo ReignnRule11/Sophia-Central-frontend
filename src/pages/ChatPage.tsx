@@ -676,14 +676,6 @@ export function ChatPage() {
   }, [eventVersion, loadMessages]);
 
   useEffect(() => {
-    const refreshHistory = () => {
-      if (document.visibilityState === 'visible') void loadMessages(true);
-    };
-    const timer = window.setInterval(refreshHistory, 30000);
-    return () => window.clearInterval(timer);
-  }, [loadMessages]);
-
-  useEffect(() => {
     const container = listRef.current;
     if (!container) return;
 
