@@ -363,17 +363,6 @@ export function ChatPage() {
     }
   }, []);
 
-  const loadInbox = useCallback(async () => {
-    try {
-      await refreshInbox();
-      setInboxRefreshError('');
-    } catch (cause) {
-      setInboxRefreshError(cause instanceof Error
-        ? cause.message
-        : 'Private conversations could not be refreshed. Reconnecting…');
-    }
-  }, [refreshInbox]);
-
   useEffect(() => {
     const previousIds = knownInboxMessageIdsRef.current;
     if (previousIds) {
