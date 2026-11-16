@@ -56,8 +56,7 @@ export default function HomePage() {
           <nav aria-label="Mobile primary navigation" className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-5 gap-y-1 overflow-hidden text-xs font-semibold text-[#091F5B] sm:gap-x-6">
             <a href="#features" className="homepage-nav-link py-1">Features</a>
             <a href="#resources" className="homepage-nav-link py-1">Resources</a>
-            <a href="#community" className="homepage-nav-link py-1">Community</a>
-            <a href="/community" target="_blank" rel="noopener noreferrer" className="homepage-nav-link hidden py-1 sm:inline-flex">Academic community</a>
+            <a href="/community" target="_blank" rel="noopener noreferrer" className="homepage-nav-link py-1">Academic community</a>
             <a href="#about" className="homepage-nav-link hidden py-1 sm:inline-flex">About Us</a>
           </nav>
         </div>
