@@ -1,13 +1,19 @@
 const CACHE_PREFIX = 'sophis-central-';
-const CACHE_NAME = 'sophis-central-shell-v8';
+const CACHE_NAME = 'sophis-central-shell-v9';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
   '/sophis-central-icon.svg',
   '/sophis-central-pwa-icon.svg',
+  '/apple-touch-icon.png',
   '/sophis-central-favicon.png',
+  '/sophis-central-favicon-32.png',
+  '/sophis-central-favicon-48.png',
   '/sophis-central-favicon.ico',
+  '/sophis-central-192.png',
+  '/sophis-central-512.png',
+  '/sophis-central-maskable-512.png',
   '/sophia-central-mark.png',
   '/sophia-central-logo.png'
 ];
@@ -16,8 +22,14 @@ const PUBLIC_ASSET_PATHS = new Set([
   '/manifest.webmanifest',
   '/sophis-central-icon.svg',
   '/sophis-central-pwa-icon.svg',
+  '/apple-touch-icon.png',
   '/sophis-central-favicon.png',
+  '/sophis-central-favicon-32.png',
+  '/sophis-central-favicon-48.png',
   '/sophis-central-favicon.ico',
+  '/sophis-central-192.png',
+  '/sophis-central-512.png',
+  '/sophis-central-maskable-512.png',
   '/sophia-central-mark.png',
   '/sophia-central-logo.png'
 ]);
