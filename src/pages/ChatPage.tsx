@@ -1197,7 +1197,7 @@ export function ChatPage() {
                     setShowContactDropdown(false);
                     setError('');
                   }}
-                  data-chat-recent-item data-chat-recent-selected={recipient === item.contact.id ? 'true' : 'false'} className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
+                  data-chat-recent-item="true" data-chat-recent-selected={recipient === item.contact.id ? 'true' : 'false'} className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left transition-colors ${
                     recipient === item.contact.id
                       ? 'bg-violet-100 dark:bg-[#302347]'
                       : 'bg-violet-50 hover:bg-[#F3F0FF] dark:bg-[#172033] dark:hover:bg-[#26314A]'
