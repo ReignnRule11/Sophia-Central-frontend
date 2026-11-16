@@ -16,12 +16,6 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/sophis-central-pwa-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
       "src": "/sophis-central-favicon.png",
       "sizes": "512x512",
       "type": "image/png",
