@@ -394,14 +394,14 @@ export function ChatPage() {
   const markConversationRead = useCallback(async (userId: string) => {
     try {
       await chatApi.markRead(userId);
-      await refreshInbox();
+      await loadInbox();
       setReadReceiptError('');
     } catch (cause) {
       setReadReceiptError(cause instanceof Error
         ? cause.message
         : 'Your read receipt could not be synchronized. Please keep this conversation open while it reconnects.');
     }
-  }, [refreshInbox]);
+  }, [loadInbox]);
 
   const loadMessages = useCallback(
     async (quiet = false) => {
@@ -480,7 +480,7 @@ export function ChatPage() {
           setNextBefore(result.nextBefore ?? null);
 
           if (mode === 'direct' && recipient) {
-            void chatApi.markRead(recipient).then(loadInbox).catch(() => undefined);
+            void markConversationRead(recipient);
           }
         }
 
@@ -495,7 +495,7 @@ export function ChatPage() {
         }
       }
     },
-    [mode, recipient, mutedGroup, mutedDirect, loadInbox, markConversationRead, user?.id],
+    [mode, recipient, mutedGroup, mutedDirect, markConversationRead, user?.id],
   );
 
   const changeRetention = async (period: ChatRetentionPeriod) => {
@@ -639,6 +639,8 @@ export function ChatPage() {
     setMessages([]);
     setContacts([]);
     setOnlineContactIds(new Set());
+    setInboxRefreshError('');
+    setReadReceiptError('');
     knownMessageIdsRef.current = null;
     knownInboxMessageIdsRef.current = null;
     requestSequenceRef.current += 1;
