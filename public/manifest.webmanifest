@@ -11,7 +11,7 @@
     "minimal-ui"
   ],
   "orientation": "any",
-  "background_color": "#F3F6FC",
+  "background_color": "#FFFFFF",
   "theme_color": "#091F5B",
   "prefer_related_applications": false,
   "icons": [
@@ -19,6 +19,18 @@
       "src": "/sophis-central-icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/sophis-central-pwa-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/sophis-central-favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
