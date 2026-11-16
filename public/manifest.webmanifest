@@ -14,12 +14,6 @@
   "icons": [
     {
       "src": "/sophis-central-favicon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/sophia-central-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
