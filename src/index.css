@@ -1091,9 +1091,9 @@ html[data-theme='dark'] .app-shell .ai-tutor-page .ai-tutor-user-message button 
   min-width: 0;
   max-width: 100%;
 }
-.library-page input,
+.library-page input:not([type="checkbox"]):not([type="radio"]),
 .library-page select,
-.open-source-library-page input,
+.open-source-library-page input:not([type="checkbox"]):not([type="radio"]),
 .open-source-library-page select {
   display: block;
   width: 100%;
