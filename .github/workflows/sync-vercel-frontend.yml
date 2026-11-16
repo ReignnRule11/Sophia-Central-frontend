@@ -54,7 +54,7 @@ jobs:
 
           rsync -a --delete \
             --exclude='.git/' \
-            --exclude='/.github/workflows/sync-vercel-frontend.yml' \
+            --exclude='/.github/workflows/' \
             ./ "$RUNNER_TEMP/vercel-frontend/"
 
       - name: Commit and push frontend updates
