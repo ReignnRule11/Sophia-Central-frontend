@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import './BrandedPageLoader.css';
 
@@ -22,6 +22,7 @@ export function BrandedPageLoaderProvider({ children }: { children: ReactNode })
   const setSuspensePending = useCallback((pending: boolean) => {
     setSuspensePendingState(pending);
   }, []);
+  const contextValue = useMemo(() => ({ setSuspensePending }), [setSuspensePending]);
 
   useEffect(() => {
     if (previousPath.current === location.pathname) return;
@@ -34,7 +35,7 @@ export function BrandedPageLoaderProvider({ children }: { children: ReactNode })
   }, [location.pathname]);
 
   return (
-    <BrandedLoadingContext.Provider value={{ setSuspensePending }}>
+    <BrandedLoadingContext.Provider value={contextValue}>
       {children}
       {(routePending || suspensePending) && <BrandedPageLoaderView />}
     </BrandedLoadingContext.Provider>
