@@ -4,14 +4,12 @@ const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/sophis-central-pwa-icon.svg',
   '/sophis-central-favicon.png',
   '/sophia-central-logo.png'
 ];
 
 const PUBLIC_ASSET_PATHS = new Set([
   '/manifest.webmanifest',
-  '/sophis-central-pwa-icon.svg',
   '/sophis-central-favicon.png',
   '/sophia-central-logo.png'
 ]);
