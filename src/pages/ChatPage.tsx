@@ -171,7 +171,7 @@ export function ChatPage() {
       : 'direct';
 
   const [contacts, setContacts] = useState<ChatContact[]>([]);
-  const { inbox, refreshInbox } = usePrivateDmInbox();
+  const { inbox, refreshInbox, eventVersion } = usePrivateDmInbox();
   const knownInboxMessageIdsRef = useRef<Set<string> | null>(null);
   const [onlineContactIds, setOnlineContactIds] = useState<Set<string>>(() => new Set());
 
@@ -672,17 +672,13 @@ export function ChatPage() {
   }, [loadMessages]);
 
   useEffect(() => {
-    return chatApi.subscribe(() => {
-      void loadMessages(true);
-      void loadInbox();
-    });
-  }, [loadMessages, loadInbox]);
+    if (eventVersion > 0) void loadMessages(true);
+  }, [eventVersion, loadMessages]);
 
   useEffect(() => {
     const refreshWhenActive = () => {
       if (document.visibilityState !== 'visible') return;
       void loadMessages(true);
-      void loadInbox();
     };
     const timer = window.setInterval(refreshWhenActive, 30000);
     window.addEventListener('focus', refreshWhenActive);
@@ -1177,7 +1173,7 @@ export function ChatPage() {
   }
 
   return (
-    <section className="chat-page mx-auto flex h-[calc(100vh-110px)] min-h-[640px] max-w-6xl flex-col overflow-hidden rounded-2xl border border-[#DCE4EF] bg-white text-[#091F5B] shadow-sm dark:border-[#334155] dark:bg-[#172033] dark:text-[#F1F5F9]">
+    <section className="chat-page mx-auto flex h-[calc(100dvh-110px)] min-h-[420px] sm:min-h-[640px] max-w-6xl flex-col overflow-hidden rounded-2xl border border-[#DCE4EF] bg-white text-[#091F5B] shadow-sm dark:border-[#334155] dark:bg-[#172033] dark:text-[#F1F5F9]">
       {(inboxRefreshError || readReceiptError) && <p role="alert" className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">{readReceiptError || inboxRefreshError}</p>}
       {/* Chat header */}
       <div data-chat-desktop-header className="flex flex-wrap items-center justify-between gap-3 border-b border-violet-200 bg-violet-100 p-4 dark:border-[#334155] dark:bg-[#172033]">
