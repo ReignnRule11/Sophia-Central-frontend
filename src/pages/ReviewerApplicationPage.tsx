@@ -69,6 +69,9 @@ export function ReviewerApplicationPage() {
   };
 
   const canResubmit = !application || ['rejected', 'more_information_required'].includes(application.status);
+  const accessBlocked = user?.reviewerStatus === 'suspended' || user?.reviewerStatus === 'revoked';
+  if (accessBlocked) return <div className="mx-auto w-full max-w-3xl rounded-2xl border border-rose-200 bg-rose-50 p-5 sm:p-7 dark:border-rose-900 dark:bg-rose-950/30"><h2 className="text-xl font-bold text-rose-900 dark:text-rose-200">Reviewer access is {user?.reviewerStatus}</h2><p className="mt-2 text-sm leading-6 text-rose-800 dark:text-rose-200">This account cannot submit a new reviewer application or enter the reviewer workspace while access is suspended or revoked. Contact Sophis Central support or an administrator for a formal access review.</p></div>;
+
   return <div className="mx-auto max-w-4xl space-y-6">
     <section className="rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-4 sm:p-7 dark:border-[#40365A] dark:bg-[#211A34]">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6121D0] dark:text-[#C4A7FF]">Additional account capability</p>
