@@ -77,5 +77,6 @@ export interface ModerationItem {
   createdAt?: string;
   isVerified?: boolean;
   assignedReviewerId?: string | null;
+  reviewConflictDeclaration?: 'no_conflict' | 'recuse' | null;
   [key: string]: unknown;
 }
