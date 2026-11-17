@@ -68,7 +68,7 @@ export function OnboardingPage() {
         referralCode: draft.referralCode,
       });
       saveRegistrationDraft(draft);
-      navigate(`/verify-email?email=${encodeURIComponent(draft.email)}`, { replace: true, state: registration });
+      navigate(`/verify-email?email=${encodeURIComponent(draft.email)}&intent=${encodeURIComponent(role)}`, { replace: true, state: registration });
     } catch (error) {
       const message = error instanceof Error ? error.message : '';
       setSubmitError(message.toLowerCase().includes('academic handle') || message.toLowerCase().includes('username')
