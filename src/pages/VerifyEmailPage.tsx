@@ -11,6 +11,7 @@ export function VerifyEmailPage() {
   const location = useLocation();
   const registrationNotice = location.state as { emailSent?: boolean; message?: string } | null;
   const token = params.get('token') || '';
+  const intent = params.get('intent');
   const [email, setEmail] = useState(params.get('email') || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -107,7 +108,7 @@ export function VerifyEmailPage() {
             </form>
           </>
         )}
-        <p className="mt-7 text-center text-sm text-[#5C6982]"><Link to="/login" className="font-semibold text-[#2C36D9] hover:text-[#6121D0]">Return to sign in</Link></p>
+        <p className="mt-7 text-center text-sm text-[#5C6982]"><Link to={intent ? `/login?intent=${encodeURIComponent(intent)}` : '/login'} className="font-semibold text-[#2C36D9] hover:text-[#6121D0]">Return to sign in</Link></p>
       </section>
     </main>
   );
