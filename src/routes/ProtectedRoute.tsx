@@ -6,9 +6,11 @@ import { getDefaultWorkspacePath, getPrimaryRole, hasReviewerAccess } from '../l
 export function ProtectedRoute({
   children,
   allowedRoles,
+  requireReviewerAccess = false,
 }: {
   children: ReactNode;
   allowedRoles: Array<'student' | 'lecturer' | 'reviewer' | 'moderator' | 'admin'>;
+  requireReviewerAccess?: boolean;
 }) {
   const { isAuthenticated, user, isLoading } = useAuth();
   const location = useLocation();
@@ -25,9 +27,11 @@ export function ProtectedRoute({
     return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
   const primaryRole = getPrimaryRole(user);
-  const roleAllowed = allowedRoles.some((role) =>
-    role === 'reviewer' ? hasReviewerAccess(user) : role === primaryRole,
-  );
+  const roleAllowed = requireReviewerAccess
+    ? hasReviewerAccess(user) || primaryRole === 'admin' || primaryRole === 'moderator'
+    : allowedRoles.some((role) =>
+      role === 'reviewer' ? hasReviewerAccess(user) || primaryRole === 'reviewer' : role === primaryRole,
+    );
   if (!roleAllowed) {
     return <Navigate to={getDefaultWorkspacePath(user)} replace />;
   }
