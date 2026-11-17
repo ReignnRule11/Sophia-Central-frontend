@@ -76,7 +76,6 @@ const reviewerNav = [
 const adminNav = [
   { label: 'Dashboard', href: '/analytics', icon: LayoutGrid },
   { label: 'Users', href: '/admin/users', icon: Users },
-  { label: 'Reviewer applications', href: '/admin/reviewer-applications', icon: ShieldCheck },
   { label: 'Resource review', href: '/moderation', icon: ShieldCheck },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
