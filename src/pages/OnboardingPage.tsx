@@ -21,9 +21,9 @@ export function OnboardingPage() {
     defaultValues: {
       firstName: '',
       lastName: '',
-      email: '',
+      email: params.get('email') || '',
       referralCode: role === 'student' ? params.get('ref') || '' : '',
-      handle: '',
+      handle: params.get('handle') || '',
       termsAccepted: false,
     },
   });
