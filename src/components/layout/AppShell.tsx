@@ -134,7 +134,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const goBack = () => {
     const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (historyIndex > 0) navigate(-1);
-    else navigate(user?.role === 'moderator' ? '/moderator/dashboard' : user?.role === 'lecturer' ? '/lecturer/dashboard' : user?.role === 'reviewer' || user?.role === 'admin' ? '/moderation' : '/student/dashboard');
+    else navigate(user?.role === 'moderator' ? '/moderator/dashboard' : user?.role === 'lecturer' ? '/lecturer/dashboard' : user?.role === 'reviewer' ? (user.hasReviewerAccess ? '/moderation' : '/profile') : user?.role === 'admin' ? '/moderation' : '/student/dashboard');
   };
 
   const nav = (
