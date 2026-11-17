@@ -76,7 +76,7 @@ export function ReviewerApplicationPage() {
     <section className="rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-4 sm:p-7 dark:border-[#40365A] dark:bg-[#211A34]">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6121D0] dark:text-[#C4A7FF]">Additional account capability</p>
       <h2 className="mt-2 text-2xl font-bold text-[#091F5B] dark:text-white">Become an Academic Reviewer</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300 dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : user?.role === 'reviewer' ? 'External Reviewer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : user?.role === 'reviewer' ? 'External Reviewer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
     </section>
     {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : application && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
       <p className="text-sm font-semibold text-[#091F5B] dark:text-slate-100 dark:text-white">Latest application status</p>
