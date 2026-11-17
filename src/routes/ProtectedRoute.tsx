@@ -30,7 +30,7 @@ export function ProtectedRoute({
   }
 
   if (requiresReviewerAccess && user.role !== 'admin' && user.role !== 'moderator' && user.hasReviewerAccess !== true) {
-    return <Navigate to={user.role === 'student' || user.role === 'lecturer' ? '/student/dashboard' : '/login'} replace />;
+    return <Navigate to={user.role === 'student' || user.role === 'lecturer' ? (user.role === 'lecturer' ? '/lecturer/dashboard' : '/student/dashboard') : user.role === 'reviewer' ? '/profile' : '/login'} replace />;
   }
 
   if (
