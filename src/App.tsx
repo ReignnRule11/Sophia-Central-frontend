@@ -228,12 +228,12 @@ function resolveRegistrationIntent(user: { role?: string; hasReviewerAccess?: bo
   if (!user || !intent || !['student', 'lecturer', 'reviewer'].includes(intent)) return { path: destinationForUser(user) };
   if (user.role === 'student') {
     if (intent === 'lecturer') return { path: '/student/dashboard', error: 'This account is registered as a Student. Student and Lecturer identities cannot be combined or switched.' };
-    if (intent === 'reviewer') return { path: user.hasReviewerAccess === true ? '/moderation' : '/reviewer-application' };
+    if (intent === 'reviewer') return { path: user.hasReviewerAccess === true ? '/workspace' : '/student/dashboard' };
     return { path: '/student/dashboard' };
   }
   if (user.role === 'lecturer') {
     if (intent === 'student') return { path: '/lecturer/dashboard', error: 'This account is registered as a Lecturer. Lecturer and Student identities cannot be combined or switched.' };
-    if (intent === 'reviewer') return { path: user.hasReviewerAccess === true ? '/moderation' : '/reviewer-application' };
+    if (intent === 'reviewer') return { path: user.hasReviewerAccess === true ? '/workspace' : '/lecturer/dashboard' };
     return { path: '/lecturer/dashboard' };
   }
   if (user.role === 'reviewer') {
