@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       return { requiresOnboarding: true };
     }
-    setUser(response.user);
+    setUser(normalizeUser(response.user));
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
     void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
     return { requiresOnboarding: false };
@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await initializeCsrf();
     const response = await authApi.completePreAccountOnboarding(token, payload);
     // A successful pre-account conversion means profile onboarding is complete.
-    setUser({ ...response.user, isProfileComplete: true });
+    setUser({ ...normalizeUser(response.user), isProfileComplete: true });
     clearPreAccountSession();
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
     void authApi.csrf().then((refreshed) => setCsrfToken(refreshed.csrfToken)).catch(() => setCsrfToken(null));
