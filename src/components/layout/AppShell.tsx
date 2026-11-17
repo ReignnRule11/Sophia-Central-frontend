@@ -66,7 +66,7 @@ const moderatorNav = [
 
 const reviewerNav = [
   { label: 'Assigned review queue', href: '/moderation', icon: ShieldCheck },
-  { label: 'Explore additional access', href: '/reviewer-account-transition', icon: LayoutGrid },
+  { label: 'Become a Student or Lecturer', href: '/reviewer-account-transition', icon: LayoutGrid },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
   { label: 'My saved resources', href: '/my-resources', icon: Bookmark },
