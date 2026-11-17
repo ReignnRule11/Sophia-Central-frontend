@@ -10,7 +10,8 @@ import type { ModerationItem } from '../types';
 import { AcademicCatalogueReviewPanel } from '../components/AcademicCatalogueReviewPanel';
 import { ContentReportsPanel } from '../components/moderation/ContentReportsPanel';
 
-type ModerationTab = 'queue' | 'history' | 'catalogue' | 'reports';
+type ModerationTab = 'queue' | 'history' | 'catalogue' | 'reports' | 'conflicts';
+type ConflictAuditItem = { id: string; declaration: 'no_conflict' | 'recuse'; reason?: string | null; createdAt: string; resourceTitle?: string; reviewerFirstName?: string; reviewerLastName?: string; reviewerEmail?: string; reviewerAcademicHandle?: string };
 type ReviewerOption = { id: string; firstName?: string; lastName?: string; email: string; role: string; hasReviewerAccess?: boolean; reviewerExpertise?: string[]; isSuspended?: boolean };
 
 export function ModerationPage() {
@@ -20,6 +21,8 @@ export function ModerationPage() {
   const isReviewer = user?.role === 'reviewer' || user?.hasReviewerAccess === true;
   const [items, setItems] = useState<ModerationItem[]>([]);
   const [history, setHistory] = useState<ModerationHistoryItem[]>([]);
+  const [conflictAudit, setConflictAudit] = useState<ConflictAuditItem[]>([]);
+  const [conflictAuditLoading, setConflictAuditLoading] = useState(false);
   const [reviewers, setReviewers] = useState<ReviewerOption[]>([]);
   const [assignments, setAssignments] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
@@ -28,6 +31,7 @@ export function ModerationPage() {
   const [tab, setTab] = useState<ModerationTab>(() => {
     const requested = new URLSearchParams(window.location.search).get('tab');
     if (requested === 'reports' && isPlatformModerator) return 'reports';
+    if (requested === 'conflicts' && user?.role === 'admin') return 'conflicts';
     return user?.role === 'moderator' ? 'reports' : 'queue';
   });
   const [loading, setLoading] = useState(true);
@@ -55,6 +59,16 @@ export function ModerationPage() {
     } finally { setLoading(false); }
   };
 
+  const loadConflictAudit = async () => {
+    try {
+      setConflictAuditLoading(true); setError('');
+      const entries = await apiRequest<ConflictAuditItem[]>('/moderation/conflict-declarations');
+      setConflictAudit(Array.isArray(entries) ? entries : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to load reviewer conflict audit.');
+    } finally { setConflictAuditLoading(false); }
+  };
+
   const loadHistory = async () => {
     try {
       setHistoryLoading(true); setError('');
@@ -67,6 +81,7 @@ export function ModerationPage() {
 
   useEffect(() => { if (isReviewer || isAdmin) void loadQueue(); }, [user?.id, isReviewer, isAdmin]);
   useEffect(() => { if (tab === 'history' && (isReviewer || isAdmin)) void loadHistory(); }, [tab, isReviewer, isAdmin]);
+  useEffect(() => { if (tab === 'conflicts' && isAdmin) void loadConflictAudit(); }, [tab, isAdmin]);
 
   const pending = useMemo(() => items.filter((item) => (item.status ?? 'pending').toLowerCase() === 'pending'), [items]);
 
@@ -150,9 +165,10 @@ export function ModerationPage() {
       {(isReviewer || isAdmin) && <button type="button" role="tab" aria-selected={tab === 'history'} onClick={() => setTab('history')} className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${tab === 'history' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B] hover:border-[#2C36D9]'}`}>Review history</button>}
       {isPlatformModerator && <button type="button" role="tab" aria-selected={tab === 'reports'} onClick={() => setTab('reports')} className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${tab === 'reports' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B] hover:border-[#2C36D9]'}`}>User & content reports</button>}
       {isAdmin && <button type="button" role="tab" aria-selected={tab === 'catalogue'} onClick={() => setTab('catalogue')} className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${tab === 'catalogue' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B] hover:border-[#2C36D9]'}`}>Academic catalogue</button>}
+      {isAdmin && <button type="button" role="tab" aria-selected={tab === 'conflicts'} onClick={() => setTab('conflicts')} className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${tab === 'conflicts' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B] hover:border-[#2C36D9]'}`}>Reviewer conflict audit</button>}
     </div>
 
-    {tab === 'reports' && isPlatformModerator ? <ContentReportsPanel /> : tab === 'catalogue' && isAdmin ? <AcademicCatalogueReviewPanel /> : tab === 'queue' && (isReviewer || isAdmin) ? <OverviewCard title={`${pending.length} pending academic materials`} action="Review queue">
+    {tab === 'reports' && isPlatformModerator ? <ContentReportsPanel /> : tab === 'catalogue' && isAdmin ? <AcademicCatalogueReviewPanel /> : tab === 'conflicts' && isAdmin ? <OverviewCard title="Reviewer conflict declarations" action={`${conflictAudit.length} audit records`}><div className="space-y-3"><div className="flex justify-end"><button type="button" onClick={() => void loadConflictAudit()} disabled={conflictAuditLoading} className="rounded-xl border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-medium text-[#091F5B] disabled:opacity-50"><RefreshCw size={14} className={conflictAuditLoading ? 'mr-2 inline animate-spin' : 'mr-2 inline'}/>Refresh audit</button></div>{conflictAuditLoading ? <p className="p-5 text-sm text-[#5C6982]">Loading declarations…</p> : conflictAudit.length === 0 ? <p className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-5 text-sm text-[#5C6982]">No reviewer conflict declarations recorded yet.</p> : conflictAudit.map(entry => <article key={entry.id} className="rounded-xl border border-[#DCE4EF] bg-white p-4"><div className="flex flex-wrap items-start justify-between gap-2"><div className="min-w-0"><h3 className="break-words font-semibold text-[#091F5B]">{entry.resourceTitle || 'Resource no longer available'}</h3><p className="mt-1 text-sm text-[#52627B]">{[entry.reviewerFirstName, entry.reviewerLastName].filter(Boolean).join(' ') || 'Reviewer'} · {entry.reviewerEmail || 'Email unavailable'} · @{entry.reviewerAcademicHandle || 'handle unavailable'}</p></div><span className={`rounded-full px-3 py-1 text-xs font-semibold ${entry.declaration === 'recuse' ? 'bg-rose-50 text-rose-900' : 'bg-emerald-50 text-emerald-900'}`}>{entry.declaration === 'recuse' ? 'Recused' : 'No conflict declared'}</span></div>{entry.reason && <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[#26364F]">{entry.reason}</p>}<p className="mt-2 text-xs text-[#64748B]">{new Date(entry.createdAt).toLocaleString()}</p></article>)}</div></OverviewCard> : tab === 'queue' && (isReviewer || isAdmin) ? <OverviewCard title={`${pending.length} pending academic materials`} action="Review queue">
       <div className="space-y-3">
         <div className="flex justify-end"><button type="button" onClick={() => void loadQueue()} disabled={loading || Boolean(processingId)} className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-medium text-[#091F5B] hover:border-[#6121D0] disabled:opacity-50"><RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh queue</button></div>
         {loading ? <div className="p-6 text-sm text-[#5C6982]">Loading assigned academic materials…</div> : pending.length === 0 ? <div className="p-8 text-center text-sm text-[#5C6982]"><ShieldCheck size={24} className="mx-auto mb-2 text-[#6121D0]" />No pending materials assigned to this review workspace.</div> : pending.map((item) => {
