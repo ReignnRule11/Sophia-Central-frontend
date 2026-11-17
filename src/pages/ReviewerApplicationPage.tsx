@@ -93,7 +93,7 @@ export function ReviewerApplicationPage() {
     } finally { setSaving(false); }
   };
 
-  const canResubmit = !application || ['rejected', 'more_information_required'].includes(application.status);
+  const canResubmit = application ? ['rejected', 'more_information_required'].includes(application.status) : !['submitted', 'under_review', 'approved', 'suspended', 'revoked'].includes(user?.reviewerStatus || 'not_applied');
   const accessBlocked = user?.reviewerStatus === 'suspended' || user?.reviewerStatus === 'revoked';
   if (accessBlocked) return <div className="mx-auto w-full max-w-3xl rounded-2xl border border-rose-200 bg-rose-50 p-5 sm:p-7 dark:border-rose-900 dark:bg-rose-950/30"><h2 className="text-xl font-bold text-rose-900 dark:text-rose-200">Reviewer access is {user?.reviewerStatus}</h2><p className="mt-2 text-sm leading-6 text-rose-800 dark:text-rose-200">This account cannot submit a new reviewer application or enter the reviewer workspace while access is suspended or revoked. Contact Sophis Central support or an administrator for a formal access review.</p></div>;
 
@@ -103,9 +103,9 @@ export function ReviewerApplicationPage() {
       <h2 className="mt-2 text-2xl font-bold text-[#091F5B] dark:text-white">Become an Academic Reviewer</h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : user?.role === 'reviewer' ? 'External Reviewer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
     </section>
-    {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : application && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
+    {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : (application || (user?.reviewerStatus && user.reviewerStatus !== 'not_applied')) && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
       <p className="text-sm font-semibold text-[#091F5B] dark:text-white">Latest application status</p>
-      <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0] dark:bg-[#35264F] dark:text-[#D8C6FF]">{application.status.replace(/_/g, ' ')}</p>
+      <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0] dark:bg-[#35264F] dark:text-[#D8C6FF]">{(application?.status ?? user?.reviewerStatus ?? 'not_applied').replace(/_/g, ' ')}</p>
       {application.decisionNote && <p className="mt-3 text-sm leading-6 text-[#52627B] dark:text-slate-300">Administrator note: {application.decisionNote}</p>}
       <p className="mt-2 text-xs text-[#64748B] dark:text-slate-400">Submitted {new Date(application.createdAt).toLocaleString()}</p>
     </section>}
