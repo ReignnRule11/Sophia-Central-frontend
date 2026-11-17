@@ -14,6 +14,12 @@ type RegisterPayload = {
 };
 type OnboardingPayload = Parameters<typeof academicApi.completeOnboarding>[0];
 type AuthContextValue = { user: User | null; isAuthenticated: boolean; isLoading: boolean; login: (identifier: string, password: string, _role?: UserRole) => Promise<{ requiresOnboarding: boolean }>; register: (payload: RegisterPayload) => Promise<{ emailSent: boolean; message: string }>; completeOnboarding: (payload: OnboardingPayload) => Promise<void>; completePreAccountOnboarding: (token: string, payload: OnboardingPayload) => Promise<void>; logout: () => Promise<void>; refreshSession: () => Promise<void> };
+function normalizeUser(user: User): User {
+  if (user.role === 'reviewer' && (user.reviewerBaseRole === 'student' || user.reviewerBaseRole === 'lecturer')) {
+    return { ...user, role: user.reviewerBaseRole };
+  }
+  return user;
+}
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -28,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Keep session restoration independent from any separate image-URL request.
   const refreshSession = useCallback(async () => {
     const response = await authApi.me();
-    setUser(response.user);
+    setUser(normalizeUser(response.user));
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
   }, []);
 
@@ -86,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await academicApi.completeOnboarding(payload);
     // The onboarding endpoint has successfully completed the profile; keep the
     // client route guard in sync even if the response contains a stale flag.
-    setUser({ ...response.user, isProfileComplete: true });
+    setUser({ ...normalizeUser(response.user), isProfileComplete: true });
   }, []);
   const completePreAccountOnboarding = useCallback(async (token: string, payload: OnboardingPayload) => {
     await initializeCsrf();
