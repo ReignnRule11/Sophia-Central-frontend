@@ -73,7 +73,7 @@ export function UploadPage() {
     clearPendingUpload();
     setAttachment(null);
     setSuccess('Your contribution has been submitted for moderator review.');
-    reset({ title: '', description: '', course: '', topic: '', institution: user?.institution || '', level: '', type: 'lecture_notes', license: 'CC-BY-4.0', attribution: '', rightsConfirmed: false, tags: '' });
+    reset({ title: '', description: '', course: '', topic: '', institution: user?.institution || '', level: '', type: 'lecture_notes', license: 'CC-BY-4.0', attribution: '', rightsConfirmed: false, tags: '', coAuthorHandles: '' });
   };
 
   const retryPendingUpload = async () => {
