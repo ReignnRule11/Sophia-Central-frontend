@@ -9,12 +9,21 @@ type Application = {
   decisionNote?: string | null;
   createdAt: string;
   updatedAt: string;
+  qualifications?: string[];
+  expertiseAreas?: string[];
+  institution?: string | null;
+  faculty?: string | null;
+  department?: string | null;
+  academicLevels?: string[];
+  reviewExperience?: string;
+  supportingDocuments?: string[];
+  conflictDeclaration?: string;
 };
 
 const splitLines = (value: string) => value.split(/[\n,;]/).map(item => item.trim()).filter(Boolean);
 
 export function ReviewerApplicationPage() {
-  const { user } = useAuth();
+  const { user, refreshSession } = useAuth();
   const { theme } = useTheme();
   const dark = theme === 'dark';
   const [application, setApplication] = useState<Application | null>(null);
@@ -36,11 +45,26 @@ export function ReviewerApplicationPage() {
   useEffect(() => {
     let active = true;
     apiRequest<Application[]>('/reviewer-applications/me')
-      .then(items => { if (active && items.length) setApplication(items[0]); })
+      .then(items => {
+        if (!active || !items.length) return;
+        const latest = items[0];
+        setApplication(latest);
+        if (['rejected', 'more_information_required'].includes(latest.status)) {
+          setQualifications((latest.qualifications ?? []).join('\n'));
+          setExpertiseAreas((latest.expertiseAreas ?? []).join('\n'));
+          setInstitution(latest.institution ?? user?.institution ?? '');
+          setFaculty(latest.faculty ?? user?.faculty ?? '');
+          setDepartment(latest.department ?? user?.department ?? '');
+          setAcademicLevels((latest.academicLevels ?? []).join('\n'));
+          setReviewExperience(latest.reviewExperience ?? '');
+          setSupportingDocuments((latest.supportingDocuments ?? []).join('\n'));
+          setConflictDeclaration(latest.conflictDeclaration ?? '');
+        }
+      })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Unable to load your application status.'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, []);
+  }, [user?.id, user?.institution, user?.faculty, user?.department]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -62,6 +86,7 @@ export function ReviewerApplicationPage() {
         }),
       });
       setApplication(result);
+      await refreshSession().catch(() => undefined);
       setNotice('Your Academic Reviewer application has been submitted for administrator review.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to submit your application.');
