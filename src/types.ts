@@ -7,6 +7,8 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  hasReviewerAccess?: boolean;
+  reviewerStatus?: 'not_applied' | 'draft' | 'submitted' | 'under_review' | 'more_information_required' | 'approved' | 'rejected' | 'suspended' | 'revoked';
   institution?: string;
   faculty?: string;
   department?: string;
