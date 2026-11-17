@@ -129,7 +129,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? reviewerNav : [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : [
     ...academicNav,
     ...(user?.hasReviewerAccess ? [{ label: 'Academic Reviewer workspace', href: '/moderation', icon: ShieldCheck }] : []),
-    ...(!user?.hasReviewerAccess && ['not_applied', 'rejected', 'revoked', undefined].includes(user?.reviewerStatus) ? [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }] : []),
+    ...(!user?.hasReviewerAccess && ['not_applied', 'rejected', undefined].includes(user?.reviewerStatus) ? [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }] : []),
   ];
   const goBack = () => {
     const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
