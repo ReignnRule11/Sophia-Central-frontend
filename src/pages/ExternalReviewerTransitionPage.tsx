@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { BookOpen, GraduationCap, Users } from 'lucide-react';
 import { academicApi, type InstitutionOption } from '../api/academic';
 import { apiRequest } from '../lib/api/client';
@@ -10,7 +10,9 @@ type TargetRole = 'student' | 'lecturer';
 export function ExternalReviewerTransitionPage() {
   const { user, refreshSession } = useAuth();
   const navigate = useNavigate();
-  const [targetRole, setTargetRole] = useState<TargetRole | null>(null);
+  const [searchParams] = useSearchParams();
+  const targetIntent = searchParams.get('target');
+  const [targetRole, setTargetRole] = useState<TargetRole | null>(() => targetIntent === 'student' || targetIntent === 'lecturer' ? targetIntent : null);
   const [institutions, setInstitutions] = useState<InstitutionOption[]>([]);
   const [institutionId, setInstitutionId] = useState('');
   const [faculty, setFaculty] = useState('');
