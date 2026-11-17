@@ -28,7 +28,7 @@ export function WorkspaceSelectorPage() {
     <section className={`rounded-2xl border p-5 sm:p-7 ${dark ? 'border-[#40365A] bg-[#211A34]' : 'border-[#E4DDF8] bg-[#F7F4FF]'}`}>
       <p className={`text-xs font-bold uppercase tracking-[0.18em] ${dark ? 'text-[#C4A7FF]' : 'text-[#6121D0]'}`}>Your Sophis Central account</p>
       <h2 className={`mt-2 text-2xl font-bold ${dark ? 'text-white' : 'text-[#091F5B]'}`}>Choose a workspace</h2>
-      <p className={`mt-2 max-w-2xl text-sm leading-6 ${description}`}>Your academic identity stays the same. Choose the workspace you want to open; access is checked again by Sophis Central when each protected page loads.</p>
+      <p className={`mt-2 max-w-2xl text-sm leading-6 ${description}`}>Your academic identity stays the same. Choose the workspace you want to use, and switch between the workspaces available to your account whenever you need.</p>
     </section>
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <button type="button" onClick={() => choose('academic', primaryPath)} className={`group min-w-0 rounded-2xl border p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#6121D0] sm:p-6 ${card}`}>
