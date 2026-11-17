@@ -233,7 +233,7 @@ function resolveRegistrationIntent(user: { role?: string; hasReviewerAccess?: bo
   }
   if (user.role === 'lecturer') {
     if (intent === 'student') return { path: '/lecturer/dashboard', error: 'This account is registered as a Lecturer. Lecturer and Student identities cannot be combined or switched.' };
-    if (intent === 'reviewer') return { path: '/reviewer-application' };
+    if (intent === 'reviewer') return { path: user.hasReviewerAccess === true ? '/moderation' : '/reviewer-application' };
     return { path: '/lecturer/dashboard' };
   }
   if (user.role === 'reviewer') {
