@@ -104,9 +104,9 @@ export function ReviewerApplicationPage() {
       <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : user?.role === 'reviewer' ? 'External Reviewer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
     </section>
     {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : application && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
-      <p className="text-sm font-semibold text-[#091F5B] dark:text-slate-100 dark:text-white">Latest application status</p>
+      <p className="text-sm font-semibold text-[#091F5B] dark:text-white">Latest application status</p>
       <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0] dark:bg-[#35264F] dark:text-[#D8C6FF]">{application.status.replace(/_/g, ' ')}</p>
-      {application.decisionNote && <p className="mt-3 text-sm leading-6 text-[#52627B] dark:text-slate-300 dark:text-slate-300">Administrator note: {application.decisionNote}</p>}
+      {application.decisionNote && <p className="mt-3 text-sm leading-6 text-[#52627B] dark:text-slate-300">Administrator note: {application.decisionNote}</p>}
       <p className="mt-2 text-xs text-[#64748B] dark:text-slate-400">Submitted {new Date(application.createdAt).toLocaleString()}</p>
     </section>}
     {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">{error}</p>}
