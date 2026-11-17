@@ -73,6 +73,13 @@ const reviewerNav = [
   { label: 'Notifications', href: '/notifications', icon: Bell },
 ];
 
+const externalNav = [
+  { label: 'Academic Library', href: '/library', icon: BookOpen },
+  { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
+  { label: 'My saved resources', href: '/my-resources', icon: Bookmark },
+  { label: 'Notifications', href: '/notifications', icon: Bell },
+];
+
 const adminNav = [
   { label: 'Dashboard', href: '/analytics', icon: LayoutGrid },
   { label: 'Users', href: '/admin/users', icon: Users },
@@ -127,11 +134,11 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
 
   const primaryRole = getPrimaryRole(user);
   const reviewerWorkspace = Boolean(user && hasReviewerAccess(user) && location.pathname.startsWith('/moderation') && primaryRole !== 'admin' && primaryRole !== 'moderator');
-  const navItems = primaryRole === 'moderator' ? moderatorNav : primaryRole === 'admin' ? adminNav : reviewerWorkspace ? reviewerNav : primaryRole === 'lecturer' ? lecturerNav : primaryRole === 'reviewer' ? reviewerNav : studentNav;
+  const navItems = primaryRole === 'moderator' ? moderatorNav : primaryRole === 'admin' ? adminNav : reviewerWorkspace ? reviewerNav : primaryRole === 'lecturer' ? lecturerNav : primaryRole === 'reviewer' ? (hasReviewerAccess(user) ? reviewerNav : externalNav) : studentNav;
   const goBack = () => {
     const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (historyIndex > 0) navigate(-1);
-    else navigate(reviewerWorkspace ? '/moderation' : primaryRole === 'moderator' ? '/moderator/dashboard' : primaryRole === 'lecturer' ? '/lecturer/dashboard' : primaryRole === 'reviewer' || primaryRole === 'admin' ? '/moderation' : '/student/dashboard');
+    else navigate(reviewerWorkspace ? '/moderation' : primaryRole === 'moderator' ? '/moderator/dashboard' : primaryRole === 'lecturer' ? '/lecturer/dashboard' : primaryRole === 'reviewer' ? (hasReviewerAccess(user) ? '/moderation' : '/profile') : primaryRole === 'admin' ? '/moderation' : '/student/dashboard');
   };
 
   const nav = (
