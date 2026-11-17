@@ -33,7 +33,7 @@ export function getDefaultWorkspacePath(user: WorkspaceUser): string {
   if (role === 'admin') return '/moderation';
   if ((role === 'student' || role === 'lecturer') && user?.isProfileComplete === false) return '/onboarding/profile';
   if (hasMultipleWorkspaces(user)) return '/workspace';
-  if (role === 'reviewer') return '/moderation';
+  if (role === 'reviewer') return hasReviewerAccess(user) ? '/moderation' : '/profile';
   if (role === 'lecturer') return '/lecturer/dashboard';
   return '/student/dashboard';
 }
