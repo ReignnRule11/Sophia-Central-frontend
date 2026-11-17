@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { BrandLogo } from '../components/brand/BrandLogo';
 import { authApi } from '../api/auth';
+import { setCsrfToken } from '../lib/api/client';
 
 export function BecomeReviewerPage() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export function BecomeReviewerPage() {
     setError('');
     setBusy(true);
     try {
+      const csrf = await authApi.csrf();
+      setCsrfToken(csrf.csrfToken);
       const result = await authApi.checkReviewerRegistrationIntent({
         email: email.trim().toLowerCase(),
         academicHandle: academicHandle.trim().replace(/^@+/, '').toLowerCase(),
