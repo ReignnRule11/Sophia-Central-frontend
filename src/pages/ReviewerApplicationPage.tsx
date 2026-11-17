@@ -106,8 +106,8 @@ export function ReviewerApplicationPage() {
     {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : (application || (user?.reviewerStatus && user.reviewerStatus !== 'not_applied')) && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
       <p className="text-sm font-semibold text-[#091F5B] dark:text-white">Latest application status</p>
       <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0] dark:bg-[#35264F] dark:text-[#D8C6FF]">{(application?.status ?? user?.reviewerStatus ?? 'not_applied').replace(/_/g, ' ')}</p>
-      {application.decisionNote && <p className="mt-3 text-sm leading-6 text-[#52627B] dark:text-slate-300">Administrator note: {application.decisionNote}</p>}
-      <p className="mt-2 text-xs text-[#64748B] dark:text-slate-400">Submitted {new Date(application.createdAt).toLocaleString()}</p>
+      {application?.decisionNote && <p className="mt-3 text-sm leading-6 text-[#52627B] dark:text-slate-300">Administrator note: {application.decisionNote}</p>}
+      {application?.createdAt && <p className="mt-2 text-xs text-[#64748B] dark:text-slate-400">Submitted {new Date(application.createdAt).toLocaleString()}</p>}
     </section>}
     {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">{error}</p>}
     {notice && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">{notice}</p>}
