@@ -75,7 +75,7 @@ export function ExternalReviewerTransitionPage() {
   return <div className="mx-auto w-full max-w-4xl space-y-6">
     <section className="rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-5 sm:p-7 dark:border-[#40365A] dark:bg-[#211A34]">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6121D0] dark:text-[#C4A7FF]">External Reviewer account</p>
-      <h2 className="mt-2 text-2xl font-bold text-[#091F5B] dark:text-white">Explore additional access</h2>
+      <h2 className="mt-2 text-2xl font-bold text-[#091F5B] dark:text-white">Become a Student or Lecturer</h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300">You can add one academic identity to your existing reviewer account. Choose Student or Lecturer—not both. This choice becomes permanent after you submit it; your reviewer access and review history will be retained.</p>
     </section>
 
