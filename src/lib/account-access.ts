@@ -10,7 +10,7 @@ export type WorkspaceUser = {
 /** Resolve legacy reviewer accounts to their original academic account type. */
 export function getPrimaryRole(user: WorkspaceUser): AcademicAccountRole | undefined {
   if (!user?.role) return undefined;
-  if (user.role === 'reviewer' && (user.reviewerBaseRole === 'student' || user.reviewerBaseRole === 'lecturer')) {
+  if (user.role === 'reviewer' && user.hasReviewerAccess === true && (user.reviewerBaseRole === 'student' || user.reviewerBaseRole === 'lecturer')) {
     return user.reviewerBaseRole;
   }
   return user.role as AcademicAccountRole;
@@ -19,12 +19,12 @@ export function getPrimaryRole(user: WorkspaceUser): AcademicAccountRole | undef
 /** Older reviewer-only sessions remain supported while the capability migration rolls out. */
 export function hasReviewerAccess(user: WorkspaceUser): boolean {
   return user?.hasReviewerAccess === true ||
-    (user?.hasReviewerAccess == null && user?.role === 'reviewer' && !user.reviewerBaseRole);
+    (user?.hasReviewerAccess == null && user?.role === 'reviewer');
 }
 
 export function hasMultipleWorkspaces(user: WorkspaceUser): boolean {
   const role = getPrimaryRole(user);
-  return hasReviewerAccess(user) && (role === 'student' || role === 'lecturer');
+  return user?.hasReviewerAccess === true && (role === 'student' || role === 'lecturer');
 }
 
 export function getDefaultWorkspacePath(user: WorkspaceUser): string {
