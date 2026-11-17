@@ -21,6 +21,7 @@ export function ModerationPage() {
   const { user } = useAuth();
   const isPlatformModerator = user?.role === 'moderator' || user?.role === 'admin';
   const isAdmin = user?.role === 'admin';
+  const showReviewerGovernanceAdminTools = false;
   const isReviewer = user?.role === 'reviewer' || user?.hasReviewerAccess === true;
   const [items, setItems] = useState<ModerationItem[]>([]);
   const [history, setHistory] = useState<ModerationHistoryItem[]>([]);
@@ -41,7 +42,7 @@ export function ModerationPage() {
   const [tab, setTab] = useState<ModerationTab>(() => {
     const requested = new URLSearchParams(window.location.search).get('tab');
     if (requested === 'reports' && isPlatformModerator) return 'reports';
-    if (false && requested === 'conflicts' && user?.role === 'admin') return 'conflicts';
+    if (showReviewerGovernanceAdminTools && requested === 'conflicts' && user?.role === 'admin') return 'conflicts';
     if (false && requested === 'appeals' && user?.role === 'admin') return 'appeals';
     if (false && requested === 'integrity' && user?.role === 'admin') return 'integrity';
     return user?.role === 'moderator' ? 'reports' : 'queue';
