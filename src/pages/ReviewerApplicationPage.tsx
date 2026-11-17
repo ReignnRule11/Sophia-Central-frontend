@@ -71,7 +71,7 @@ export function ReviewerApplicationPage() {
     </section>
     {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : application && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-5">
       <p className="text-sm font-semibold text-[#091F5B]">Latest application status</p>
-      <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0]">{application.status.replaceAll('_', ' ')}</p>
+      <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0]">{application.status.replace(/_/g, ' ')}</p>
       {application.decisionNote && <p className="mt-3 text-sm leading-6 text-[#52627B]">Administrator note: {application.decisionNote}</p>}
       <p className="mt-2 text-xs text-[#64748B]">Submitted {new Date(application.createdAt).toLocaleString()}</p>
     </section>}
