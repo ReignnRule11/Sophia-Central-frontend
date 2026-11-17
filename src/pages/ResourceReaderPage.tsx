@@ -79,10 +79,6 @@ export function ResourceReaderPage() {
     return () => { active = false; };
   }, [id, isAuthenticated, user]);
 
-  if (loading) return <LoadingState message="Opening approved resource..." />;
-  if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />;
-  if (!resource) return <div className="rounded-2xl border border-[#DCE4EF] bg-white p-6 text-[#091F5B]">Resource not found. <Link to="/library" className="font-semibold text-[#6121D0] underline">Return to library</Link></div>;
-
   useEffect(() => {
     if (user?.role !== 'admin' || !id) return;
     let active = true;
@@ -91,6 +87,10 @@ export function ResourceReaderPage() {
       .catch(() => { if (active) setOverrideHistory([]); });
     return () => { active = false; };
   }, [id, user?.id, user?.role]);
+
+  if (loading) return <LoadingState message="Opening approved resource..." />;
+  if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />;
+  if (!resource) return <div className="rounded-2xl border border-[#DCE4EF] bg-white p-6 text-[#091F5B]">Resource not found. <Link to="/library" className="font-semibold text-[#6121D0] underline">Return to library</Link></div>;
 
   const hasFile = Boolean(resource.hasFile || resource.fileUrl || resource.file_url || resource.contentUrl || resource.content_url || resource.url);
   const reviewerAccess = ['reviewer', 'moderator', 'admin'].includes(user?.role ?? '');
