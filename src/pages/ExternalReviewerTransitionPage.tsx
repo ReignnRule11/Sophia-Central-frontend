@@ -66,7 +66,7 @@ export function ExternalReviewerTransitionPage() {
     } finally { setSaving(false); }
   };
 
-  const field = 'brand-input';
+  const field = 'brand-input dark:border-slate-700 dark:bg-slate-950 dark:text-white';
   const card = 'min-w-0 rounded-2xl border p-5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#6121D0] sm:p-6';
   if (user.hasReviewerAccess !== true || user.reviewerStatus !== 'approved') {
     return <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#DCE4EF] bg-white p-5 sm:p-8"><h2 className="text-xl font-bold text-[#091F5B]">Additional access is not available yet</h2><p className="mt-2 text-sm leading-6 text-[#52627B]">Your External Reviewer account must first receive Admin approval. Your current reviewer application status is <strong className="capitalize">{user.reviewerStatus?.replace(/_/g, ' ') || 'not applied'}</strong>.</p><button type="button" onClick={() => navigate('/reviewer-application')} className="mt-5 rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white">View reviewer application</button></section>;
