@@ -43,7 +43,7 @@ export function ModerationPage() {
       if (isAdmin) {
         try {
           const accounts = await apiRequest<ReviewerOption[]>('/users/management');
-          setReviewers(accounts.filter((account) => account.hasReviewerAccess === true && !account.isSuspended));
+          setReviewers(accounts.filter((account) => (account.hasReviewerAccess === true || (account.hasReviewerAccess == null && account.role === 'reviewer')) && !account.isSuspended));
         } catch {
           setReviewers([]);
         }
