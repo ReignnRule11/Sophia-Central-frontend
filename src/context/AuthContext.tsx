@@ -15,7 +15,7 @@ type RegisterPayload = {
 type OnboardingPayload = Parameters<typeof academicApi.completeOnboarding>[0];
 type AuthContextValue = { user: User | null; isAuthenticated: boolean; isLoading: boolean; login: (identifier: string, password: string, _role?: UserRole) => Promise<{ requiresOnboarding: boolean }>; register: (payload: RegisterPayload) => Promise<{ emailSent: boolean; message: string }>; completeOnboarding: (payload: OnboardingPayload) => Promise<void>; completePreAccountOnboarding: (token: string, payload: OnboardingPayload) => Promise<void>; logout: () => Promise<void>; refreshSession: () => Promise<void> };
 function normalizeUser(user: User): User {
-  if (user.role === 'reviewer' && (user.reviewerBaseRole === 'student' || user.reviewerBaseRole === 'lecturer')) {
+  if (user.role === 'reviewer' && user.hasReviewerAccess === true && (user.reviewerBaseRole === 'student' || user.reviewerBaseRole === 'lecturer')) {
     return { ...user, role: user.reviewerBaseRole };
   }
   return user;
