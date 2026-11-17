@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { setCsrfToken } from '../lib/api/client';
 import { PasswordInput } from '../components/PasswordInput';
 import { clearRegistrationDraft, readRegistrationDraft, savePreAccountSession } from '../lib/registration-session';
 
@@ -38,6 +39,8 @@ export function VerifyEmailPage() {
     setVerificationState('loading');
     setVerificationMessage('Verifying your email and preparing your onboarding session…');
     try {
+      const csrf = await authApi.csrf();
+      setCsrfToken(csrf.csrfToken);
       const response = await authApi.confirmEmailVerification(token, password);
       if (response.onboardingToken && response.preAccount) {
         savePreAccountSession({ ...response.preAccount, onboardingToken: response.onboardingToken });
@@ -70,6 +73,8 @@ export function VerifyEmailPage() {
       if (!draft || draft.email.toLowerCase() !== email.trim().toLowerCase()) {
         throw new Error('For security, this registration can only be resent from the browser where it was started. Return to account creation and enter your details again if you no longer have that session.');
       }
+      const csrf = await authApi.csrf();
+      setCsrfToken(csrf.csrfToken);
       const response = await authApi.resendEmailVerification(draft);
       setResendMessage(response.message);
     } catch (error) {
