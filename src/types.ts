@@ -7,6 +7,8 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  hasReviewerAccess?: boolean;
+  reviewerBaseRole?: 'student' | 'lecturer' | null;
   institution?: string;
   faculty?: string;
   department?: string;
