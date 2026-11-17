@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getDefaultWorkspacePath, getPrimaryRole, hasReviewerAccess } from '../lib/account-access';
 
 export function ProtectedRoute({
   children,
@@ -23,12 +24,16 @@ export function ProtectedRoute({
     const redirectTo = location.pathname === '/library' && !hasAuthenticatedBefore ? '/onboarding' : '/login';
     return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to={user.role === 'moderator' ? '/moderator/dashboard' : user.role === 'reviewer' || user.role === 'admin' ? '/moderation' : user.role === 'lecturer' ? '/lecturer/dashboard' : '/student/dashboard'} replace />;
+  const primaryRole = getPrimaryRole(user);
+  const roleAllowed = allowedRoles.some((role) =>
+    role === 'reviewer' ? hasReviewerAccess(user) : role === primaryRole,
+  );
+  if (!roleAllowed) {
+    return <Navigate to={getDefaultWorkspacePath(user)} replace />;
   }
 
   if (
-    (user.role === 'student' || user.role === 'lecturer') &&
+    (primaryRole === 'student' || primaryRole === 'lecturer') &&
     user.isProfileComplete === false &&
     location.pathname !== '/onboarding/profile'
   ) {
