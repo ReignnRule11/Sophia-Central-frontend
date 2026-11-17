@@ -6,14 +6,14 @@ type RegisterPayload = {
   email: string;
   firstName: string;
   lastName: string;
-  role?: Extract<UserRole, 'student' | 'lecturer'>;
+  role?: Extract<UserRole, 'student' | 'lecturer' | 'reviewer'>;
   academicHandle: string;
   referralCode?: string;
 };
 
 export const authApi = {
   csrf: () => apiRequest<{ csrfToken: string }>('/auth/csrf'),
-  login: (payload: LoginPayload) => apiRequest<{ user: User } | { preAccountRequired: true; onboardingToken: string; preAccount: { email: string; firstName: string; lastName: string; academicHandle: string; role: Extract<UserRole, 'student' | 'lecturer'>; progress?: Record<string, unknown> } }>('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
+  login: (payload: LoginPayload) => apiRequest<{ user: User } | { preAccountRequired: true; onboardingToken: string; preAccount: { email: string; firstName: string; lastName: string; academicHandle: string; role: Extract<UserRole, 'student' | 'lecturer' | 'reviewer'>; progress?: Record<string, unknown> } }>('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
   checkAcademicHandleAvailability: (handle: string) => apiRequest<{ available: boolean; message: string }>(`/auth/academic-handle/availability?handle=${encodeURIComponent(handle)}`),
   register: (payload: RegisterPayload) => apiRequest<{ emailSent: boolean; message: string }>('/auth/signup', { method: 'POST', body: JSON.stringify(payload) }),
   resendEmailVerification: (payload: RegisterPayload) => apiRequest<{ message: string }>('/auth/email-verification/resend', { method: 'POST', body: JSON.stringify(payload) }),
