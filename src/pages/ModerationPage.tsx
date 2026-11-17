@@ -9,15 +9,16 @@ import { useAuth } from '../context/AuthContext';
 import type { ModerationItem } from '../types';
 import { AcademicCatalogueReviewPanel } from '../components/AcademicCatalogueReviewPanel';
 import { ContentReportsPanel } from '../components/moderation/ContentReportsPanel';
+import { hasReviewerAccess } from '../lib/account-access';
 
 type ModerationTab = 'queue' | 'history' | 'catalogue' | 'reports';
-type ReviewerOption = { id: string; firstName?: string; lastName?: string; email: string; role: string; reviewerExpertise?: string[]; isSuspended?: boolean };
+type ReviewerOption = { id: string; firstName?: string; lastName?: string; email: string; role: string; hasReviewerAccess?: boolean; reviewerExpertise?: string[]; isSuspended?: boolean };
 
 export function ModerationPage() {
   const { user } = useAuth();
   const isPlatformModerator = user?.role === 'moderator' || user?.role === 'admin';
   const isAdmin = user?.role === 'admin';
-  const isReviewer = user?.role === 'reviewer';
+  const isReviewer = hasReviewerAccess(user);
   const [items, setItems] = useState<ModerationItem[]>([]);
   const [history, setHistory] = useState<ModerationHistoryItem[]>([]);
   const [reviewers, setReviewers] = useState<ReviewerOption[]>([]);
@@ -42,7 +43,7 @@ export function ModerationPage() {
       if (isAdmin) {
         try {
           const accounts = await apiRequest<ReviewerOption[]>('/users/management');
-          setReviewers(accounts.filter((account) => account.role === 'reviewer' && !account.isSuspended));
+          setReviewers(accounts.filter((account) => account.hasReviewerAccess === true && !account.isSuspended));
         } catch {
           setReviewers([]);
         }
