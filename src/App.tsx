@@ -203,10 +203,11 @@ function RouteSeo() {
   return null;
 }
 
-function destinationForUser(user?: { role?: string; isProfileComplete?: boolean } | null) {
+function destinationForUser(user?: { role?: string; isProfileComplete?: boolean; hasReviewerAccess?: boolean } | null) {
   if (user?.role === 'student' || user?.role === 'lecturer') { if (user.isProfileComplete === false) return '/onboarding/profile'; }
   if (user?.role === 'moderator') return '/moderator/dashboard';
-  if (user?.role === 'admin' || user?.role === 'reviewer') return '/moderation';
+  if (user?.role === 'admin') return '/moderation';
+  if (user?.role === 'reviewer') return user.hasReviewerAccess === true ? '/moderation' : '/profile';
   if (user?.role === 'lecturer') return '/lecturer/dashboard';
   return '/student/dashboard';
 }
