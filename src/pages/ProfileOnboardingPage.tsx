@@ -29,6 +29,8 @@ export function ProfileOnboardingPage() {
   const [institutionId, setInstitutionId] = useState(user?.institutionId ?? savedString('institutionId'));
   const [institutionType, setInstitutionType] = useState<InstitutionType>((savedString('institutionType') as InstitutionType) || 'university');
   const [institutionManual, setInstitutionManual] = useState(savedString('institutionManual'));
+  const [externalAffiliation, setExternalAffiliation] = useState(savedString('externalAffiliation'));
+  const [externalBio, setExternalBio] = useState(savedString('externalBio'));
   const [institutionDropdownOpen, setInstitutionDropdownOpen] = useState(false);
   const [institutionSearch, setInstitutionSearch] = useState(savedString('institutionSearch'));
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
@@ -52,7 +54,7 @@ export function ProfileOnboardingPage() {
     step, institutionId, institutionType, institutionManual, institutionSearch,
     facultyId, facultySearch, facultyManual, department, departmentSearch,
     departmentManual, program, studyLevel, teachingAssignments,
-    courseTitleInput, courseCodeInput, courseLevelInput,
+    courseTitleInput, courseCodeInput, courseLevelInput, externalAffiliation, externalBio,
   };
   const leaveSetup = async () => {
     try {
@@ -68,7 +70,7 @@ export function ProfileOnboardingPage() {
         step, institutionId, institutionType, institutionManual, institutionSearch,
         facultyId, facultySearch, facultyManual, department, departmentSearch,
         departmentManual, program, studyLevel, teachingAssignments,
-        courseTitleInput, courseCodeInput, courseLevelInput,
+        courseTitleInput, courseCodeInput, courseLevelInput, externalAffiliation, externalBio,
       };
       void authApi.savePreAccountProgress(preAccount.onboardingToken, progress).catch(() => undefined);
     }, 500);
@@ -77,9 +79,10 @@ export function ProfileOnboardingPage() {
     preAccount?.onboardingToken, onboardingCompleted, step, institutionId, institutionType,
     institutionManual, institutionSearch, facultyId, facultySearch, facultyManual,
     department, departmentSearch, departmentManual, program, studyLevel,
-    teachingAssignments, courseTitleInput, courseCodeInput, courseLevelInput,
+    teachingAssignments, courseTitleInput, courseCodeInput, courseLevelInput, externalAffiliation, externalBio,
   ]);
 
+  const isExternalReviewer = (user?.role ?? preAccount?.role) === 'reviewer';
   const isLecturer = (user?.role ?? preAccount?.role) === 'lecturer';
   const totalSteps = isLecturer ? 4 : 3;
   const selectedInstitution = useMemo(() => institutions.find((item) => item.id === institutionId), [institutions, institutionId]);
@@ -112,7 +115,7 @@ export function ProfileOnboardingPage() {
   const useManualInstitution = false;
   const useManualFaculty = facultyId === '__manual__';
 
-  useEffect(() => { let active = true; academicApi.institutions().then((data) => { if (active) setInstitutions(Array.isArray(data) ? data : []); }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : 'Unable to load institutions.'); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, []);
+  useEffect(() => { if (isExternalReviewer) { setLoading(false); return; } let active = true; academicApi.institutions().then((data) => { if (active) setInstitutions(Array.isArray(data) ? data : []); }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : 'Unable to load institutions.'); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, [isExternalReviewer]);
   useEffect(() => { if (!user?.institutionId || !institutions.length) return; const assigned = institutions.find((item) => item.id === user.institutionId); if (assigned) setInstitutionType(assigned.institutionType ?? 'university'); }, [user?.institutionId, institutions]);
   useEffect(() => { if (!institutionId || institutionId === '__manual__' || !isLecturer) { setCourses([]); return; } let active = true; academicApi.courses(institutionId).then((data) => { if (active) setCourses(Array.isArray(data) ? data : []); }).catch(() => { if (active) setCourses([]); }); return () => { active = false; }; }, [institutionId, isLecturer]);
 
@@ -137,6 +140,23 @@ export function ProfileOnboardingPage() {
     setCourseLevelInput('');
     setError('');
   };
+  const saveExternalReviewer = async () => {
+    setSaving(true);
+    setError('');
+    try {
+      if (!preAccount?.onboardingToken) throw new Error('Your verified external reviewer registration session has expired. Please restart registration.');
+      await completePreAccountOnboarding(preAccount.onboardingToken, {
+        institution: externalAffiliation.trim() || undefined,
+        bio: externalBio.trim() || undefined,
+      });
+      setOnboardingCompleted(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Unable to save your external researcher profile.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const save = async () => {
     if (!canContinue()) return;
     setSaving(true);
@@ -166,6 +186,17 @@ export function ProfileOnboardingPage() {
   };
 
   if (!user && !preAccount) return <Navigate to="/onboarding" replace />;
+  if (isExternalReviewer) return <main className="min-h-screen bg-[#F3F6FC] px-4 py-6 text-[#091F5B] sm:px-6 sm:py-8"><div className="mx-auto w-full max-w-2xl">
+    <header className="mb-6 rounded-3xl bg-[#2C36D9] p-6 text-white shadow-sm sm:p-8"><p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/80">Sophis Central · External researcher setup</p><h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">Set up your researcher profile</h1><p className="mt-2 max-w-xl text-sm leading-6 text-white/90">You are registering as an External Reviewer. You do not need a Student or Lecturer identity or an institution from our catalogue. Reviewer access is granted only after an administrator approves your application.</p></header>
+    <section className="rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm sm:p-8">
+      {onboardingCompleted ? <div className="space-y-5 py-6 text-center"><div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-2xl text-emerald-600" aria-hidden="true">✓</div><h2 className="text-2xl font-bold text-[#091F5B]">Your external profile is ready</h2><p className="mx-auto max-w-xl text-sm leading-6 text-[#5C6982]">Your account has been created. Submit your Academic Reviewer application next; your reviewer workspace will remain locked until Admin approval.</p><button type="button" onClick={() => navigate('/reviewer-application', { replace: true })} className="rounded-xl bg-[#6121D0] px-6 py-3 font-semibold text-white hover:bg-[#5120B0]">Continue to reviewer application</button></div> : <form onSubmit={event => { event.preventDefault(); void saveExternalReviewer(); }} className="space-y-5">
+        <div><label htmlFor="external-affiliation" className="mb-2 block text-sm font-semibold text-[#091F5B]">Institution or research affiliation <span className="font-normal text-[#71809A]">(optional)</span></label><input id="external-affiliation" value={externalAffiliation} onChange={event => setExternalAffiliation(event.target.value)} maxLength={160} placeholder="University, research institute, independent researcher…" className={fieldClass}/></div>
+        <div><label htmlFor="external-bio" className="mb-2 block text-sm font-semibold text-[#091F5B]">Research / professional summary <span className="font-normal text-[#71809A]">(optional)</span></label><textarea id="external-bio" value={externalBio} onChange={event => setExternalBio(event.target.value)} maxLength={2000} rows={5} placeholder="Briefly describe your research or professional background…" className={fieldClass}/></div>
+        {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between"><button type="button" onClick={() => void leaveSetup()} disabled={saving} className="rounded-xl border border-[#DCE4EF] px-4 py-3 text-sm font-semibold text-[#52627B]">Leave setup · Sign out</button><button type="submit" disabled={saving} className="rounded-xl bg-[#6121D0] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{saving ? 'Creating account…' : 'Create external reviewer account'}</button></div>
+      </form>}
+    </section>
+  </div></main>;
   const stepLabel = isLecturer ? 'Lecturer' : 'Student';
   return <main className="profile-onboarding min-h-screen bg-[#F3F6FC] px-4 py-6 text-[#091F5B] sm:px-6 sm:py-8"><div className="mx-auto w-full max-w-4xl">
     <div className="mb-7 rounded-3xl bg-[#2C36D9] p-6 text-white shadow-sm sm:p-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/80">Sophis Central · Academic setup</p><h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">{isLecturer ? 'Set up your lecturer profile' : 'Set up your student profile'}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-white/90">Complete your academic path before entering your dashboard.</p></div><div className="flex flex-wrap items-center gap-2"><div className="rounded-full bg-[#6121D0] px-4 py-2 text-xs font-semibold text-white">{stepLabel}</div><button type="button" onClick={() => void leaveSetup()} disabled={saving} className="rounded-xl border border-white/40 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-50">Leave setup · Sign out</button></div></div></div>
