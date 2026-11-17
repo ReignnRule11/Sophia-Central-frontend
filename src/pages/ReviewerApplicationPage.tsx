@@ -23,6 +23,9 @@ export function ReviewerApplicationPage() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [qualifications, setQualifications] = useState('');
+  const [institution, setInstitution] = useState(user?.institution || '');
+  const [faculty, setFaculty] = useState(user?.faculty || '');
+  const [department, setDepartment] = useState(user?.department || '');
   const [expertiseAreas, setExpertiseAreas] = useState('');
   const [academicLevels, setAcademicLevels] = useState('');
   const [reviewExperience, setReviewExperience] = useState('');
@@ -48,9 +51,9 @@ export function ReviewerApplicationPage() {
         body: JSON.stringify({
           qualifications: splitLines(qualifications),
           expertiseAreas: splitLines(expertiseAreas),
-          institution: user?.institution || '',
-          faculty: user?.faculty || '',
-          department: user?.department || '',
+          institution: institution.trim(),
+          faculty: faculty.trim(),
+          department: department.trim(),
           academicLevels: splitLines(academicLevels),
           reviewExperience,
           supportingDocuments: splitLines(supportingDocuments),
@@ -70,7 +73,7 @@ export function ReviewerApplicationPage() {
     <section className="rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-4 sm:p-7 dark:border-[#40365A] dark:bg-[#211A34]">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6121D0] dark:text-[#C4A7FF]">Additional account capability</p>
       <h2 className="mt-2 text-2xl font-bold text-[#091F5B] dark:text-white">Become an Academic Reviewer</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300 dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300 dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : user?.role === 'reviewer' ? 'External Reviewer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
     </section>
     {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : application && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
       <p className="text-sm font-semibold text-[#091F5B] dark:text-slate-100 dark:text-white">Latest application status</p>
@@ -84,7 +87,7 @@ export function ReviewerApplicationPage() {
       <p className="text-sm leading-6 text-[#52627B] dark:text-slate-300 dark:text-slate-300">Provide accurate, verifiable information. Separate entries with commas or new lines.</p>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Qualifications and credentials<textarea required minLength={2} value={qualifications} onChange={e => setQualifications(e.target.value)} placeholder="Degrees, professional credentials, certifications…" className="mt-2 min-h-24 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Subject expertise<textarea required minLength={2} value={expertiseAreas} onChange={e => setExpertiseAreas(e.target.value)} placeholder="e.g. Computer science, statistics, research methods…" className="mt-2 min-h-24 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
-      <div className="grid gap-4 sm:grid-cols-3"><label className="text-sm font-semibold text-[#091F5B] dark:text-slate-100">Institution<input readOnly value={user?.institution || ''} className="mt-2 w-full rounded-xl border border-[#DCE4EF] bg-slate-50 p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200" /></label><label className="text-sm font-semibold text-[#091F5B] dark:text-slate-100">Faculty<input readOnly value={user?.faculty || ''} className="mt-2 w-full rounded-xl border border-[#DCE4EF] bg-slate-50 p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200" /></label><label className="text-sm font-semibold text-[#091F5B] dark:text-slate-100">Department<input readOnly value={user?.department || ''} className="mt-2 w-full rounded-xl border border-[#DCE4EF] bg-slate-50 p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200" /></label></div>
+      <div className="grid min-w-0 gap-4 sm:grid-cols-3"><label className="min-w-0 text-sm font-semibold text-[#091F5B] dark:text-slate-100">{user?.role === 'reviewer' ? 'Institution / research affiliation (optional)' : 'Institution'}<input readOnly={user?.role !== 'reviewer'} value={institution} onChange={e => setInstitution(e.target.value)} placeholder="Institution or independent researcher" className="mt-2 w-full min-w-0 rounded-xl border border-[#DCE4EF] bg-slate-50 p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200" /></label><label className="min-w-0 text-sm font-semibold text-[#091F5B] dark:text-slate-100">{user?.role === 'reviewer' ? 'Faculty / research unit (optional)' : 'Faculty'}<input readOnly={user?.role !== 'reviewer'} value={faculty} onChange={e => setFaculty(e.target.value)} placeholder="Faculty or research unit" className="mt-2 w-full min-w-0 rounded-xl border border-[#DCE4EF] bg-slate-50 p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200" /></label><label className="min-w-0 text-sm font-semibold text-[#091F5B] dark:text-slate-100">{user?.role === 'reviewer' ? 'Department / specialty (optional)' : 'Department'}<input readOnly={user?.role !== 'reviewer'} value={department} onChange={e => setDepartment(e.target.value)} placeholder="Department or specialty" className="mt-2 w-full min-w-0 rounded-xl border border-[#DCE4EF] bg-slate-50 p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200" /></label></div>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Academic levels qualified to review<textarea required value={academicLevels} onChange={e => setAcademicLevels(e.target.value)} placeholder="e.g. Undergraduate, postgraduate, doctoral…" className="mt-2 min-h-20 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Academic, research or peer-review experience<textarea required minLength={30} maxLength={5000} value={reviewExperience} onChange={e => setReviewExperience(e.target.value)} placeholder="Describe relevant experience and responsibilities…" className="mt-2 min-h-32 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Supporting document links (HTTPS only)<textarea value={supportingDocuments} onChange={e => setSupportingDocuments(e.target.value)} placeholder="https://… (one link per line)" className="mt-2 min-h-20 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
