@@ -126,7 +126,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
 
 
   const academicNav = user?.role === 'lecturer' ? lecturerNav : studentNav;
-  const navItems = user?.role === 'reviewer' ? reviewerNav : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : [
+  const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? reviewerNav : [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : [
     ...academicNav,
     ...(user?.hasReviewerAccess ? [{ label: 'Academic Reviewer workspace', href: '/moderation', icon: ShieldCheck }] : []),
     ...(!user?.hasReviewerAccess && ['not_applied', 'rejected', 'revoked', undefined].includes(user?.reviewerStatus) ? [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }] : []),
@@ -134,7 +134,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const goBack = () => {
     const historyIndex = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (historyIndex > 0) navigate(-1);
-    else navigate(user?.role === 'moderator' ? '/moderator/dashboard' : user?.role === 'lecturer' ? '/lecturer/dashboard' : user?.role === 'reviewer' ? (user.hasReviewerAccess ? '/moderation' : '/profile') : user?.role === 'admin' ? '/moderation' : '/student/dashboard');
+    else navigate(user?.role === 'moderator' ? '/moderator/dashboard' : user?.role === 'lecturer' ? '/lecturer/dashboard' : user?.role === 'reviewer' ? (user.hasReviewerAccess ? '/moderation' : '/reviewer-application') : user?.role === 'admin' ? '/moderation' : '/student/dashboard');
   };
 
   const nav = (
