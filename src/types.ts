@@ -73,6 +73,7 @@ export interface ModerationItem {
   summary?: string;
   status?: string;
   fileUrl?: string;
+  hasFile?: boolean;
   level?: string;
   topic?: string;
   tags?: string[];
