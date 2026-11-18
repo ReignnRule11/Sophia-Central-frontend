@@ -11,10 +11,19 @@ export function BecomeReviewerPage() {
   const [academicHandle, setAcademicHandle] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [comingSoon, setComingSoon] = useState(false);
+  const recruitmentOpen = import.meta.env.VITE_REVIEWER_RECRUITMENT_OPEN === 'true';
+  const testAccountEmail = (import.meta.env.VITE_REVIEWER_TEST_ACCOUNT_EMAIL || '').trim().toLowerCase();
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
+    const submittedEmail = email.trim().toLowerCase();
+    if (!recruitmentOpen && (!testAccountEmail || submittedEmail !== testAccountEmail)) {
+      setComingSoon(true);
+      return;
+    }
+    setComingSoon(false);
     setBusy(true);
     try {
       const csrf = await authApi.csrf();
@@ -51,6 +60,7 @@ export function BecomeReviewerPage() {
           <label className="block text-sm font-semibold text-[#091F5B]">Academic handle
             <input required minLength={3} maxLength={30} autoCapitalize="none" autoComplete="username" spellCheck={false} value={academicHandle} onChange={event => setAcademicHandle(event.target.value.replace(/^@+/, '').toLowerCase())} placeholder="yourhandle" className="brand-input mt-2" />
           </label>
+          {comingSoon && <div role="status" className="mt-6 rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-5 text-center"><p className="text-lg font-bold text-[#091F5B]">Reviewer registration is coming soon</p><p className="mt-2 text-sm leading-6 text-[#52627B]">We’re preparing the Academic Reviewer programme. Recruitment is temporarily closed while we complete testing. Please check back when applications officially open.</p></div>}
           {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{error}</p>}
           <button type="submit" disabled={busy || !email.trim() || !academicHandle.trim()} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#6121D0] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#5120B0] disabled:cursor-not-allowed disabled:opacity-60">
             {busy ? 'Checking details…' : 'Continue'} {!busy && <ArrowRight size={17} />}
