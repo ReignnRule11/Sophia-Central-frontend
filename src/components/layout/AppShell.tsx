@@ -77,7 +77,6 @@ const adminNav = [
   { label: 'Dashboard', href: '/admin', icon: LayoutGrid },
   { label: 'Users', href: '/admin', icon: Users },
   { label: 'Reviewer governance', href: '/admin/reviewers?tab=applications', icon: ShieldCheck },
-  { label: 'Reviewer governance', href: '/admin/reviewers', icon: ShieldCheck },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
