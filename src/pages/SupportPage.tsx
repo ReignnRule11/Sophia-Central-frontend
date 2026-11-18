@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { AlertCircle, CheckCircle2, FileImage, Link2, LifeBuoy, Loader2, Paperclip, Send, RefreshCw } from 'lucide-react';
-import { supportApi, type SupportRequest } from '../api/support';
+import { supportApi, type SupportTicketTracking } from '../api/support';
 import { supportAttachmentApi } from '../api/upload';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,7 +20,7 @@ export function SupportPage() {
   const [description, setDescription] = useState('');
   const [linkText, setLinkText] = useState('');
   const [attachments, setAttachments] = useState<string[]>([]);
-  const [requests, setRequests] = useState<SupportRequest[]>([]);
+  const [requests, setRequests] = useState<SupportTicketTracking[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [sending, setSending] = useState(false);
