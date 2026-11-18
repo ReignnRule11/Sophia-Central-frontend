@@ -14,6 +14,7 @@ export type SupportRequest = {
   links: string[];
   attachments: string[];
   status: SupportRequestStatus;
+  escalatedToRole?: 'moderator' | 'admin' | null;
   resolutionMessage?: string | null;
   reviewerId?: string | null;
   reviewer?: { id: string; firstName?: string; lastName?: string; email?: string; role?: string } | null;
