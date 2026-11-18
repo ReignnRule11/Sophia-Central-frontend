@@ -8,6 +8,7 @@ export interface User {
   email: string;
   role: UserRole;
   hasReviewerAccess?: boolean;
+  isGlobalReviewer?: boolean;
   reviewerStatus?: 'not_applied' | 'draft' | 'submitted' | 'under_review' | 'more_information_required' | 'approved' | 'rejected' | 'suspended' | 'revoked';
   academicAccountType?: 'student' | 'lecturer' | 'external_reviewer' | null;
   reviewerAcademicLevels?: string[];
