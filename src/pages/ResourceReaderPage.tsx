@@ -66,7 +66,7 @@ export function ResourceReaderPage() {
               const hasDownloaded = downloadedResources.some((item) => item.id === id);
               if (active) {
                 setDownloaded(hasDownloaded);
-                if (user.role === 'student' && !hasDownloaded && (result as ResourceWithFile).hasFile) setDownloadPromptOpen(true);
+                if (['student', 'lecturer'].includes(user.role) && !hasDownloaded && (result as ResourceWithFile).hasFile && (result as ResourceWithFile).uploaderId !== user.id) setDownloadPromptOpen(true);
               }
             }
           }
@@ -97,18 +97,14 @@ export function ResourceReaderPage() {
   const privilegedPreviewOnly = user?.role === 'reviewer';
   const moderatorOrAdmin = user?.role === 'moderator' || user?.role === 'admin';
   const resourceDownloadRestricted = Boolean(resource.downloadRestricted || resource.canDownload === false || String(resource.accessLevel || '').toLowerCase() === 'restricted');
-  const ownLecturerResource = user?.role === 'lecturer' && resource.uploadedBy === user.id;
+  const ownLecturerResource = user?.role === 'lecturer' && resource.uploaderId === user.id;
   const downloadRestricted = resourceDownloadRestricted && !moderatorOrAdmin && !ownLecturerResource;
   const canDownload = !privilegedPreviewOnly && (moderatorOrAdmin || !downloadRestricted);
   const accessFile = async (download: boolean) => {
     if (!hasFile || fileAction || (download && !canDownload)) return;
     if (download && !canDownload) return;
-    if (!download && user?.role === 'student' && !downloaded && !ownLecturerResource) {
+    if (!download && ['student', 'lecturer'].includes(user?.role ?? '') && !downloaded && resource.uploaderId !== user?.id) {
       setDownloadPromptOpen(true);
-      return;
-    }
-    if (!download && user?.role === 'lecturer' && !downloaded && !ownLecturerResource) {
-      setError('Download this resource in-app before viewing it.');
       return;
     }
     setFileAction(download ? 'download' : 'open');
@@ -221,6 +217,6 @@ export function ResourceReaderPage() {
         {hasFile ? <><div className="flex flex-wrap gap-3 border-t border-[#DCE4EF] pt-5"><button type="button" onClick={() => void accessFile(false)} disabled={Boolean(fileAction)} className="inline-flex items-center gap-2 rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2C36D9] disabled:opacity-60"><BookOpen size={16} /> {fileAction === 'open' ? 'Opening in reader…' : viewerUrl ? 'Refresh in-app reader' : 'Read in app'}</button>{canDownload && <button type="button" onClick={() => void accessFile(true)} disabled={Boolean(fileAction) || downloaded} className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4EF] bg-white px-4 py-3 text-sm font-semibold text-[#091F5B] transition hover:border-[#6121D0] hover:bg-[#F8F5FF] disabled:opacity-60"><Download size={16} /> {fileAction === 'download' ? 'Downloading in app…' : downloaded ? 'Downloaded to My resources' : 'Download in app'}</button>}<button type="button" onClick={() => void toggleSaved()} disabled={Boolean(fileAction)} className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4EF] bg-white px-4 py-3 text-sm font-semibold text-[#091F5B] transition hover:border-[#6121D0] hover:bg-[#F8F5FF] disabled:opacity-60"><Bookmark size={16} fill={saved ? 'currentColor' : 'none'} /> {saved ? 'Saved · Unsave' : 'Save for later'}</button></div>{privilegedPreviewOnly && <p className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-3 text-sm text-[#4B5563]">Reviewer access: preview is available for assigned academic review. Platform-wide downloads and contributions are not part of the reviewer role.</p>}{downloadRestricted && <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">Downloads are disabled for this restricted resource. You may read it here if your account has viewing permission.</p>}{viewerUrl && <section className="overflow-hidden rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD]"><div className="flex items-center gap-2 border-b border-[#DCE4EF] px-4 py-3 text-sm font-semibold text-[#091F5B]"><FileText size={16} className="text-[#6121D0]"/> In-app resource reader</div><iframe title={`Reader: ${resource.title}`} src={viewerUrl} className="h-[75vh] min-h-[420px] w-full bg-white" referrerPolicy="no-referrer" /></section>}</> : <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">This resource has no attached file. You can still review its details above.</p>}
       </div>
     </article>
-    {downloadPromptOpen && <div role="dialog" aria-modal="true" aria-labelledby="download-resource-title" className="fixed inset-0 z-50 flex items-center justify-center bg-[#091F5B]/60 p-4"><div className="w-full max-w-md rounded-2xl border border-[#DCE4EF] bg-white p-6 shadow-2xl"><h3 id="download-resource-title" className="text-xl font-bold text-[#091F5B]">Download resource to view?</h3><p className="mt-3 text-sm leading-6 text-[#4B5563]">This resource must be downloaded in-app before you can view it. It will be saved to Downloaded resources under My resources for this account.</p><div className="mt-6 flex flex-wrap justify-end gap-3"><button type="button" onClick={() => setDownloadPromptOpen(false)} className="rounded-xl border border-[#DCE4EF] px-4 py-2.5 text-sm font-semibold text-[#091F5B]">Cancel</button><button type="button" onClick={() => void downloadAndView()} disabled={Boolean(fileAction)} className="inline-flex items-center gap-2 rounded-xl bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"><Download size={16}/> Download and view resource</button></div></div></div>}
+    {downloadPromptOpen && <div role="dialog" aria-modal="true" aria-labelledby="download-resource-title" className="fixed inset-0 z-50 flex items-center justify-center bg-[#091F5B]/60 p-4"><div className="w-full max-w-md rounded-2xl border border-[#DCE4EF] bg-white p-6 shadow-2xl"><h3 id="download-resource-title" className="text-xl font-bold text-[#091F5B]">Download resource to view?</h3><p className="mt-3 text-sm leading-6 text-[#4B5563]">This resource must be downloaded in-app before you can view it. It will be saved to Downloaded resources under My resources for this account.</p><div className="mt-6 flex flex-wrap justify-end gap-3"><button type="button" onClick={() => setDownloadPromptOpen(false)} className="rounded-xl border border-[#DCE4EF] px-4 py-2.5 text-sm font-semibold text-[#091F5B]">Cancel</button><button type="button" onClick={() => void downloadAndView()} disabled={Boolean(fileAction)} className="inline-flex items-center gap-2 rounded-xl bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"><Download size={16}/> Download and read in app</button></div></div></div>}
   </div>;
 }
