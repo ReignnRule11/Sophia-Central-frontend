@@ -124,8 +124,8 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
         if (!active) return;
         const reviewerWorkspace = user.role === 'reviewer' || location.pathname.startsWith('/reviewer/');
         const reviewerTypes = new Set(['resource_review_assigned', 'reviewer_application_decision']);
-        const count = reviewerWorkspace
-          ? (result.notifications ?? []).filter(item => reviewerTypes.has(item.type) && !item.isRead).length
+        const count = reviewerWorkspace || user.role === 'student'
+          ? (result.notifications ?? []).filter(item => !item.isRead && (reviewerWorkspace ? reviewerTypes.has(item.type) : !reviewerTypes.has(item.type))).length
           : result.unreadCount ?? 0;
         setUnreadCount(count);
       } catch { /* Keep navigation usable when notifications are temporarily unavailable. */ }
