@@ -55,7 +55,7 @@ export function NotificationsPage({ reviewerOnly = false, studentOnly = false }:
         ? notifications.filter(item => reviewerNotificationTypes.has(item.type))
          : studentOnly ? notifications.filter(item => !reviewerNotificationTypes.has(item.type)) : notifications;
       setItems(visibleNotifications);
-      setUnreadCount(reviewerOnly
+      setUnreadCount(reviewerOnly || studentOnly
         ? visibleNotifications.filter(item => !item.isRead).length
         : result.unreadCount ?? 0);
     } catch (cause) {
