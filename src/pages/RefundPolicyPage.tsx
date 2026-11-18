@@ -37,7 +37,7 @@ const sections = [
     'Never send passwords, PINs, one-time passcodes, full card numbers, card security codes, or online-banking credentials. These secrets are not required to verify a refund request.'
   ]},
   { title: '7. Review and decision process', paragraphs: [
-    'Sophis Central may check payment-provider records, transaction status, account activity, resource-access logs, points history, and relevant communications. We may request reasonable additional information where necessary.',
+    'Sophis Central may check payment-provider records, transaction status, account activity, resource-access logs, points history, and relevant communications. We may request reasonable additional information where necessary. Failed or disputed electronic-payment transactions will be handled promptly in cooperation with the relevant payment provider and in accordance with applicable Central Bank of Nigeria requirements and timelines; the general assessment target below does not extend a mandatory payment-system deadline.',
     'We aim to acknowledge a complete request within two (2) business days and normally communicate an assessment outcome within seven (7) business days after receiving the information reasonably required to investigate it. Complex cases, third-party investigations, or circumstances outside our control may take longer; where practicable, we will explain the delay and provide an update.',
     'If a request is declined in whole or in part, we will provide a brief explanation and identify any available next step. Users may request an internal review if they believe relevant information was overlooked.'
   ]},
@@ -49,7 +49,7 @@ const sections = [
   { title: '9. Failed payments, reversals, and chargebacks', paragraphs: [
     'A payment marked as pending, failed, reversed, or disputed may require reconciliation before Sophis Central can confirm the final outcome. Where a debit is unresolved, users should check the transaction status before paying again.',
     'If you initiate a bank or payment-provider dispute, please also notify Sophis Central so that we can investigate and avoid duplicate recovery. Access associated with a reversed or charged-back payment may be reviewed or suspended, subject to a fair process and applicable law.',
-    'Bank and payment-provider processing times are outside Sophis Central direct control. This policy does not replace any dispute process available through your bank, payment provider, or a competent consumer-protection authority.'
+    'Bank and payment-provider processing times are outside Sophis Central's direct control. This policy does not replace any dispute process available through your bank, payment provider, or a competent consumer-protection authority.'
   ]},
   { title: '10. Contact and escalation', paragraphs: [
     'For refund requests and payment complaints, contact our financial-enquiry address or use the official Contact Us page. Include “Refund Request” in the subject line and provide the transaction reference where available.',
