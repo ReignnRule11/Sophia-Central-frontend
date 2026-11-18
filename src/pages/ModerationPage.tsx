@@ -56,6 +56,7 @@ export function ModerationPage() {
       const queue = await sophiaApi.moderation.list();
       setItems(Array.isArray(queue) ? queue : []);
       setConflictDeclarations(Object.fromEntries((Array.isArray(queue) ? queue : []).map(item => [item.id, item.reviewConflictDeclaration ?? ''])));
+      setConflictAcknowledged({});
       if (canGovernReviewers) {
         try {
           const accounts = await apiRequest<ReviewerOption[]>('/moderation/reviewers');
