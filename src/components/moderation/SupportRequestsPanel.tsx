@@ -20,11 +20,14 @@ export function SupportRequestsPanel() {
     void supportApi.emailStatus().then(setEmailStatus).catch(() => setEmailStatus(null));
     try {
       const pending = await supportApi.queue('pending');
-      setPendingCount(pending.length);
+      const underReview = await supportApi.queue('under_review');
+      const reviewed = await supportApi.queue('reviewed');
+      setPendingCount(pending.length + underReview.length + reviewed.length);
       if (status === 'history') {
-        const concluded = await supportApi.queue('response_sent');
-        setItems([...pending, ...concluded].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        const responseSent = await supportApi.queue('response_sent');
+        setItems([...pending, ...underReview, ...reviewed, ...responseSent].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       } else if (status === 'pending') setItems(pending);
+      else if (status === 'history') setItems([...pending, ...underReview, ...reviewed]);
       else setItems(await supportApi.queue(status));
     }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load support requests.'); }
@@ -73,7 +76,7 @@ export function SupportRequestsPanel() {
       <Search size={17} className="shrink-0 text-[#71809A]"/>
       <input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search ticket, requester, email, subject or category…" aria-label="Search support requests" className="w-full text-sm outline-none"/>
     </label>
-    <div className="flex flex-wrap gap-2" role="tablist" aria-label="Support request views"><button type="button" role="tab" aria-selected={status === 'pending'} onClick={() => { setStatus('pending'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'pending' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`} >Pending ({pendingCount})</button><button type="button" role="tab" aria-selected={status === 'concluded'} onClick={() => { setStatus('concluded'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'concluded' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`}>Concluded</button><button type="button" role="tab" aria-selected={status === 'history'} onClick={() => { setStatus('history'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'history' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`}>Request history</button></div>
+    <div className="flex flex-wrap gap-2" role="tablist" aria-label="Support request views"><button type="button" role="tab" aria-selected={status === 'pending'} onClick={() => { setStatus('pending'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'pending' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`} >Pending ({pendingCount})</button><button type="button" role="tab" aria-selected={status === 'under_review'} onClick={() => { setStatus('under_review'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'under_review' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`}>Under review</button><button type="button" role="tab" aria-selected={status === 'reviewed'} onClick={() => { setStatus('reviewed'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'reviewed' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`}>Reviewed</button><button type="button" role="tab" aria-selected={status === 'response_sent'} onClick={() => { setStatus('response_sent'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'response_sent' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`}>Response sent</button><button type="button" role="tab" aria-selected={status === 'history'} onClick={() => { setStatus('history'); setNotice(''); }} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${status === 'history' ? 'border-[#6121D0] bg-[#6121D0] text-white' : 'border-[#DCE4EF] bg-white text-[#091F5B]'}`}>Request history</button></div>
     <div className="space-y-4">{loading ? <p className="rounded-xl bg-[#F8FAFD] p-6 text-sm text-[#5C6982]">Loading support requests…</p> : visibleItems.length === 0 ? <div className="rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD] p-8 text-center"><ShieldCheck size={24} className="mx-auto text-[#6121D0]"/><p className="mt-3 font-semibold text-[#091F5B]">{items.length === 0 ? (status === 'history' ? 'No support request history' : `No ${status} support requests`) : 'No matching support requests'}</p><p className="mt-1 text-sm text-[#5C6982]">New tickets from students and lecturers will appear here.</p></div> : visibleItems.map(item => {
       const owner = item.user;
       const busy = processingId === item.id;
