@@ -6,7 +6,7 @@ import { SectionTitle } from '../components/layout/AppShell';
 
 type ActivityTab = 'all' | 'reports' | 'support';
 const reportStatus: Record<string, string> = { pending: 'Awaiting review', reviewing: 'Under review', actioned: 'Reviewed · action recorded', dismissed: 'Closed · no action taken' };
-const supportStatus = (item: SupportRequest) => item.status === 'under_review' && item.escalatedToRole ? `Under ${item.escalatedToRole === 'moderator' ? 'Moderator' : 'Admin'} review` : ({ pending: 'Submitted', under_review: 'Under Support review', reviewed: 'Reviewed', response_sent: 'Response sent', concluded: 'Response sent' }[item.status] || label(item.status));
+const supportStatus = (item: SupportRequest) => item.escalatedToRole && !['reviewed','response_sent','concluded'].includes(item.status) ? `Under ${item.escalatedToRole === 'moderator' ? 'Moderator' : 'Admin'} review` : ({ pending: 'Submitted', under_review: 'Under Support review', reviewed: 'Reviewed', response_sent: 'Response sent', concluded: 'Response sent' }[item.status] || label(item.status));
 const label = (value: string) => value.replace(/_/g, ' ');
 
 export function MyActivityPage() {
