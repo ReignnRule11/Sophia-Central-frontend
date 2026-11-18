@@ -56,6 +56,8 @@ export interface Resource {
   views?: number;
   downloads?: number;
   moderationStatus?: 'pending' | 'approved' | 'rejected' | 'flagged' | string;
+  pricingMode?: 'free' | 'fixed' | 'custom';
+  priceAmount?: number;
   isVerified?: boolean;
   uploadedBy?: string;
   uploaderId?: string | null;
