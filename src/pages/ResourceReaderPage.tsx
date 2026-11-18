@@ -9,7 +9,7 @@ import { ErrorState } from '../components/states/ErrorState';
 import type { Resource } from '../types';
 import { ReportContentButton } from '../components/ReportContentButton';
 
-type ResourceWithFile = Resource & { fileUrl?: string; file_url?: string; url?: string; contentUrl?: string; content_url?: string; hasFile?: boolean; downloadRestricted?: boolean; accessLevel?: string; canDownload?: boolean };
+type ResourceWithFile = Resource & { uploaderId?: string | null; fileUrl?: string; file_url?: string; url?: string; contentUrl?: string; content_url?: string; hasFile?: boolean; downloadRestricted?: boolean; accessLevel?: string; canDownload?: boolean };
 type ReviewHistoryItem = { id: string; status: string; note?: string | null; createdAt: string; reviewer?: { firstName?: string; lastName?: string } | null };
 type ResourceAppeal = { id: string; resourceId: string; appealType: 'reconsideration' | 'favoritism_report'; reason: string; status: string; createdAt: string };
 type OverrideHistoryItem = { id: string; originalStatus: string; newStatus: string; reason: string; createdAt: string; adminFirstName?: string; adminLastName?: string; originalReviewerFirstName?: string; originalReviewerLastName?: string };
