@@ -41,6 +41,9 @@ export function ReviewerApplicationPage() {
   const [supportingDocuments, setSupportingDocuments] = useState('');
   const [conflictDeclaration, setConflictDeclaration] = useState('');
   const [policyAccepted, setPolicyAccepted] = useState(false);
+  const recruitmentOpen = import.meta.env.VITE_REVIEWER_RECRUITMENT_OPEN === 'true';
+  const testAccountEmail = (import.meta.env.VITE_REVIEWER_TEST_ACCOUNT_EMAIL || '').trim().toLowerCase();
+  const testAccountAllowed = Boolean(testAccountEmail && user?.email?.trim().toLowerCase() === testAccountEmail);
 
   useEffect(() => {
     let active = true;
@@ -103,6 +106,7 @@ export function ReviewerApplicationPage() {
       <h2 className="mt-2 text-2xl font-bold text-[#091F5B] dark:text-white">Become an Academic Reviewer</h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300">Reviewer access is an additional capability. Your existing {user?.role === 'lecturer' ? 'Lecturer' : user?.role === 'reviewer' ? 'External Reviewer' : 'Student'} account, resources and academic identity remain unchanged. Access is enabled only after administrator approval.</p>
     </section>
+    {!recruitmentOpen && !testAccountAllowed && !user?.hasReviewerAccess && <section role="status" className="rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-5 sm:p-7 dark:border-[#40365A] dark:bg-[#211A34]"><h3 className="text-xl font-bold text-[#091F5B] dark:text-white">Reviewer registration is coming soon</h3><p className="mt-2 text-sm leading-6 text-[#52627B] dark:text-slate-300">We’re preparing the Academic Reviewer programme. Recruitment is temporarily closed while we complete testing. Please check back when applications officially open.</p></section>}
     {loading ? <p className="text-sm text-[#64748B]">Loading application status…</p> : (application || (user?.reviewerStatus && user.reviewerStatus !== 'not_applied')) && <section className="rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900">
       <p className="text-sm font-semibold text-[#091F5B] dark:text-white">Latest application status</p>
       <p className="mt-2 inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-sm font-semibold capitalize text-[#6121D0] dark:bg-[#35264F] dark:text-[#D8C6FF]">{(application?.status ?? user?.reviewerStatus ?? 'not_applied').replace(/_/g, ' ')}</p>
@@ -111,7 +115,7 @@ export function ReviewerApplicationPage() {
     </section>}
     {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">{error}</p>}
     {notice && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200">{notice}</p>}
-    {canResubmit && <form onSubmit={submit} className="space-y-5 rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900 sm:p-7">
+    {(recruitmentOpen || testAccountAllowed || user?.hasReviewerAccess) && canResubmit && <form onSubmit={submit} className="space-y-5 rounded-2xl border border-[#DCE4EF] bg-white p-4 sm:p-5 dark:border-slate-700 dark:bg-slate-900 sm:p-7">
       <p className="text-sm leading-6 text-[#52627B] dark:text-slate-300 dark:text-slate-300">Provide accurate, verifiable information. Separate entries with commas or new lines.</p>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Qualifications and credentials<textarea required minLength={2} value={qualifications} onChange={e => setQualifications(e.target.value)} placeholder="Degrees, professional credentials, certifications…" className="mt-2 min-h-24 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
       <label className="block text-sm font-semibold text-[#091F5B] dark:text-slate-100">Subject expertise<textarea required minLength={2} value={expertiseAreas} onChange={e => setExpertiseAreas(e.target.value)} placeholder="e.g. Computer science, statistics, research methods…" className="mt-2 min-h-24 w-full rounded-xl border border-[#DCE4EF] p-3 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white placeholder:dark:text-slate-500" /></label>
