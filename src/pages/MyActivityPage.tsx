@@ -19,7 +19,7 @@ export function MyActivityPage() {
   const load = async () => {
     setLoading(true); setError('');
     try {
-      const [reportItems, supportItems] = await Promise.all([reportsApi.mine(), supportApi.mine()]);
+      const [reportItems, supportItems] = await Promise.all([reportsApi.mine(), supportApi.mineActivity()]);
       setReports(reportItems); setRequests(supportItems);
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load your activity.'); }
     finally { setLoading(false); }
