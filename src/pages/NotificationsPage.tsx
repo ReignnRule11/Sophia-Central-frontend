@@ -61,7 +61,7 @@ export function NotificationsPage({ reviewerOnly = false, studentOnly = false }:
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to load notifications.');
     } finally { if (!quiet) setLoading(false); }
-  }, [reviewerOnly]);
+  }, [reviewerOnly, studentOnly]);
 
   useEffect(() => {
     void load();
