@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Flag, LifeBuoy, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Flag, RefreshCw } from 'lucide-react';
 import { reportsApi, type ContentReport } from '../api/reports';
 import { supportApi, type SupportRequest } from '../api/support';
 import { SectionTitle } from '../components/layout/AppShell';
