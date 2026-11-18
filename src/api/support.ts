@@ -2,7 +2,7 @@ import { apiRequest } from '../lib/api/client';
 
 export type SupportRequestStatus = 'pending' | 'under_review' | 'reviewed' | 'response_sent' | 'concluded';
 export type SupportEmailStatus = { configured: boolean; provider: 'resend'; inboundReplySync: boolean };
-export type SupportTicketTracking = Pick<SupportRequest, 'id' | 'ticketNumber' | 'subject' | 'category' | 'status' | 'createdAt'>;
+export type SupportTicketTracking = Pick<SupportRequest, 'id' | 'ticketNumber' | 'subject' | 'category' | 'status' | 'escalatedToRole' | 'createdAt'>;
 
 export type SupportRequest = {
   id: string;
