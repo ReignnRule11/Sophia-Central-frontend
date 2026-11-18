@@ -22,7 +22,7 @@ export type SupportRequest = {
 };
 
 export const supportApi = {
-  emailStatus: () => apiRequest<SupportEmailStatus>('/moderation/support-email-status'),
+  emailStatus: () => apiRequest<SupportEmailStatus>('/support-requests/email-status'),
   create: (payload: { subject: string; category: string; description: string; links: string[]; attachments: string[] }) =>
     apiRequest<SupportRequest>('/support-requests', { method: 'POST', body: JSON.stringify(payload) }),
   mine: () => apiRequest<SupportRequest[]>('/support-requests/mine'),
@@ -31,10 +31,14 @@ export const supportApi = {
     body.append('file', file);
     return apiRequest<{ url: string; key: string }>('/upload/support-attachment', { method: 'POST', body });
   },
-  moderationList: (status: SupportRequestStatus) =>
-    apiRequest<SupportRequest[]>(`/moderation/support-requests?status=${status}`),
+  queue: (status: SupportRequestStatus) =>
+    apiRequest<SupportRequest[]>(`/support-requests/queue?status=${status}`),
+  updateStatus: (id: string, status: 'under_review' | 'reviewed') =>
+    apiRequest<SupportRequest>(`/support-requests/${encodeURIComponent(id)}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  escalate: (id: string, targetRole: 'moderator' | 'admin', reason: string) =>
+    apiRequest<{ success: boolean; ticketNumber: string; notified: number }>(`/support-requests/${encodeURIComponent(id)}/escalate`, { method: 'PATCH', body: JSON.stringify({ targetRole, reason }) }),
   conclude: (id: string, resolutionMessage: string) =>
-    apiRequest<SupportRequest>(`/moderation/support-requests/${encodeURIComponent(id)}/conclude`, {
+    apiRequest<SupportRequest>(`/support-requests/${encodeURIComponent(id)}/respond`, {
       method: 'PATCH',
       body: JSON.stringify({ resolutionMessage }),
     }),
