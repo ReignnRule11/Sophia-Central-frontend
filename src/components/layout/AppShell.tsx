@@ -116,13 +116,21 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
     if (!user) { setUnreadCount(0); return; }
     let active = true;
     const refreshUnread = async () => {
-      try { const result = await notificationsApi.list(1); if (active) setUnreadCount(result.unreadCount ?? 0); }
-      catch { /* Keep navigation usable when notifications are temporarily unavailable. */ }
+      try {
+        const result = await notificationsApi.list(100);
+        if (!active) return;
+        const reviewerWorkspace = user.role === 'reviewer' || location.pathname.startsWith('/reviewer/');
+        const reviewerTypes = new Set(['resource_review_assigned', 'reviewer_application_decision']);
+        const count = reviewerWorkspace
+          ? (result.notifications ?? []).filter(item => reviewerTypes.has(item.type) && !item.isRead).length
+          : result.unreadCount ?? 0;
+        setUnreadCount(count);
+      } catch { /* Keep navigation usable when notifications are temporarily unavailable. */ }
     };
     void refreshUnread();
     const interval = window.setInterval(() => { void refreshUnread(); }, 30000);
     return () => { active = false; window.clearInterval(interval); };
-  }, [user?.id]);
+  }, [user?.id, location.pathname]);
 
 
   const academicNav = user?.role === 'lecturer' ? lecturerNav : studentNav;
