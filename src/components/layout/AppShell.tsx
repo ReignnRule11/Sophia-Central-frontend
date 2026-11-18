@@ -47,7 +47,7 @@ const lecturerNav = [
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
   { label: 'Upload Resource', href: '/lecturer/upload', icon: Upload },
   { label: 'Private DM', href: '/messages', icon: MessageCircle },
-  { label: 'My reports', href: '/reports', icon: Flag },
+  { label: 'My activity', href: '/my-activity', icon: Flag },
 ];
 
 const moderatorNav = [
@@ -86,7 +86,6 @@ const adminNav = [
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
   { label: 'Analytics', href: '/analytics', icon: LayoutGrid },
-  { label: 'Support requests', href: '/support', icon: LifeBuoy },
   { label: 'Notifications', href: '/notifications', icon: Bell },
 ];
 
