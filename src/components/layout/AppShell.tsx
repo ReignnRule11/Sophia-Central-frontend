@@ -76,7 +76,8 @@ const reviewerNav = [
 const adminNav = [
   { label: 'Dashboard', href: '/admin', icon: LayoutGrid },
   { label: 'Users', href: '/admin', icon: Users },
-  { label: 'Resource review', href: '/reviewer', icon: ShieldCheck },
+  { label: 'Reviewer governance', href: '/admin/reviewers', icon: ShieldCheck },
+  { label: 'Reviewer governance', href: '/admin/reviewers', icon: ShieldCheck },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
@@ -151,7 +152,8 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
         ...(user?.role === 'lecturer' ? [{ label: 'Analytics', href: '/lecturer/analytics', icon: ChartNoAxesCombined }] : []),
         { label: 'Profile', href: '/profile', icon: UserCircle },
         { label: 'Settings', href: '/settings', icon: Settings },
-        ...(user?.role === 'student' || user?.role === 'lecturer' ? [{ label: 'Contact support', href: '/student/support', icon: LifeBuoy }] : []),
+        ...(user?.role === 'student' ? [{ label: 'Contact support', href: '/student/support', icon: LifeBuoy }] : []),
+        ...(user?.role === 'lecturer' ? [{ label: 'Contact support', href: '/lecturer/support', icon: LifeBuoy }] : []),
       ].map(({ label, href, icon: Icon }) => (
         <NavLink key={label} to={href} onClick={() => setMobileNavOpen(false)} className={({ isActive }) => `sidebar-nav-link flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${isActive ? 'is-active bg-[#F3F0FF] text-[#6121D0] ring-1 ring-[#6121D0]/20' : 'text-[#1F2937] hover:bg-[#F3F0FF] hover:text-[#6121D0]'}`}>
           <Icon size={17} />
