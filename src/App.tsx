@@ -47,7 +47,7 @@ const LegalPage = lazy(() => import('./pages/LegalPage').then((module) => ({ def
 const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage').then((module) => ({ default: module.RefundPolicyPage })));
 const CookiePolicyPage = lazy(() => import('./pages/CookiePolicyPage').then((module) => ({ default: module.CookiePolicyPage })));
 const MyActivityPage = lazy(() => import('./pages/MyActivityPage').then((module) => ({ default: module.MyActivityPage })));
-const MyReportsPage = lazy(() => import('./pages/MyReportsPage').then((module) => ({ default: module.MyReportsPage })));
+
 const ContactUsPage = lazy(() => import('./pages/ContactUsPage').then((module) => ({ default: module.ContactUsPage })));
 const CareersPage = lazy(() => import('./pages/CareersPage').then((module) => ({ default: module.CareersPage })));
 const CommunityPage = lazy(() => import('./pages/CommunityPage').then((module) => ({ default: module.CommunityPage })));
