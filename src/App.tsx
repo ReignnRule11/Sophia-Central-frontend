@@ -227,6 +227,7 @@ function destinationForUser(user?: { role?: string; isProfileComplete?: boolean;
     }
   }
   if (user?.role === 'moderator') return '/moderation';
+  if (user?.role === 'support') return '/support';
   if (user?.role === 'admin') return '/admin';
   if (user?.role === 'reviewer') return user.hasReviewerAccess === true ? '/reviewer/dashboard' : '/reviewer-application';
   if (user?.role === 'lecturer') return '/lecturer/dashboard';
