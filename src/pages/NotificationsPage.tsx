@@ -83,7 +83,7 @@ export function NotificationsPage({ reviewerOnly = false }: { reviewerOnly?: boo
   }, [items, filter, query]);
 
   const markRead = async (item: AppNotification) => {
-    if (item.isRead) { if (item.link) navigate(item.link); return; }
+    if (item.isRead) { if (item.link) navigate(reviewerDestination(item, reviewerOnly)); return; }
     setBusy(true);
     try {
       await notificationsApi.markRead(item.id);
