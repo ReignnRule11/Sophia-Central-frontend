@@ -2,6 +2,8 @@ import { apiRequest } from '../lib/api/client';
 
 export type SupportRequestStatus = 'pending' | 'under_review' | 'reviewed' | 'response_sent' | 'concluded';
 export type SupportEmailStatus = { configured: boolean; provider: 'resend'; inboundReplySync: boolean };
+export type SupportTicketTracking = Pick<SupportRequest, 'id' | 'ticketNumber' | 'subject' | 'category' | 'status' | 'createdAt'>;
+
 export type SupportRequest = {
   id: string;
   ticketNumber?: string;
@@ -25,7 +27,8 @@ export const supportApi = {
   emailStatus: () => apiRequest<SupportEmailStatus>('/support-requests/email-status'),
   create: (payload: { subject: string; category: string; description: string; links: string[]; attachments: string[] }) =>
     apiRequest<SupportRequest>('/support-requests', { method: 'POST', body: JSON.stringify(payload) }),
-  mine: () => apiRequest<SupportRequest[]>('/support-requests/mine'),
+  mine: () => apiRequest<SupportTicketTracking[]>('/support-requests/mine'),
+  mineActivity: () => apiRequest<SupportRequest[]>('/support-requests/mine/activity'),
   uploadImage: async (file: File) => {
     const body = new FormData();
     body.append('file', file);
