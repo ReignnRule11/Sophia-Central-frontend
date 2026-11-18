@@ -137,6 +137,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
   const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? [...reviewerNav.filter(item => !(user.isGlobalReviewer && item.href === '/reviewer-account-transition')), ...(user.isGlobalReviewer ? [{ label: 'Reviewer management', href: '/reviewer/governance?tab=applications', icon: Users }] : [])] : ['suspended', 'revoked'].includes(user.reviewerStatus || '') ? [] : [{ label: ['submitted', 'under_review', 'more_information_required'].includes(user.reviewerStatus || '') ? 'View reviewer application' : 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : [
     ...academicNav,
     ...(user?.hasReviewerAccess ? [{ label: 'Academic Reviewer workspace', href: '/reviewer/dashboard', icon: ShieldCheck }] : []),
+    ...(user?.hasReviewerAccess && location.pathname.startsWith('/reviewer/') ? [{ label: 'Reviewer notifications', href: '/reviewer/notifications', icon: Bell }] : []),
     ...(!user?.hasReviewerAccess && ['not_applied', 'rejected', undefined].includes(user?.reviewerStatus) ? [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }] : []),
   ];
   const goBack = () => {
