@@ -55,7 +55,7 @@ export function SupportRequestsPanel() {
   const visibleItems = useMemo(() => {
     const term = query.trim().toLowerCase();
     if (!term) return items;
-    return items.filter(item => [item.id, item.subject, item.category, item.description, item.user?.email, item.user?.firstName, item.user?.lastName, item.user?.name].filter(Boolean).join(' ').toLowerCase().includes(term));
+    return items.filter(item => [item.ticketNumber, item.id, item.subject, item.category, item.description, item.user?.email, item.user?.firstName, item.user?.lastName, item.user?.name].filter(Boolean).join(' ').toLowerCase().includes(term));
   }, [items, query]);
 
   const accountName = (user?: SupportRequest['user']) =>
