@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { BrandLogo } from '../components/brand/BrandLogo';
 import { isConfiguredEmail, publicContactEmails } from '../config/publicContact';
 
-const sections = [
+type PolicySection = { title: string; paragraphs?: string[]; bullets?: string[] };
+
+const sections: PolicySection[] = [
   { title: '1. Scope and principles', paragraphs: [
     'This policy explains how Sophis Central reviews refund requests for paid academic materials, Wisdom Points, platform services, and other paid offerings purchased through payment channels officially provided or approved by Sophis Central.',
     'Requests are assessed fairly using the transaction record, the service or access promised, the evidence available, the circumstances of the request, and applicable consumer-protection law.'
