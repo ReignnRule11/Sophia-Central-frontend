@@ -103,8 +103,9 @@ export function ResourceReaderPage() {
   const privilegedPreviewOnly = reviewerAccess || moderatorOrAdmin;
   const resourceDownloadRestricted = Boolean(resource.downloadRestricted || resource.canDownload === false || String(resource.accessLevel || '').toLowerCase() === 'restricted');
   const ownResource = Boolean(user && resource.uploaderId === user.id);
+  const lecturerUploader = user?.role === 'lecturer' && ownResource;
   const downloadRestricted = resourceDownloadRestricted && !ownResource;
-  const canDownload = !privilegedPreviewOnly && !downloadRestricted;
+  const canDownload = (!privilegedPreviewOnly || lecturerUploader) && !downloadRestricted;
   const accessFile = async (download: boolean) => {
     if (!hasFile || fileAction || (download && !canDownload)) return;
     if (download && !canDownload) return;
