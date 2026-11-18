@@ -51,7 +51,7 @@ const sections: PolicySection[] = [
   { title: '9. Failed payments, reversals, and chargebacks', paragraphs: [
     'A payment marked as pending, failed, reversed, or disputed may require reconciliation before Sophis Central can confirm the final outcome. Where a debit is unresolved, users should check the transaction status before paying again.',
     'If you initiate a bank or payment-provider dispute, please also notify Sophis Central so that we can investigate and avoid duplicate recovery. Access associated with a reversed or charged-back payment may be reviewed or suspended, subject to a fair process and applicable law.',
-    'Bank and payment-provider processing times are outside Sophis Central's direct control. This policy does not replace any dispute process available through your bank, payment provider, or a competent consumer-protection authority.'
+    'Bank and payment-provider processing times are outside Sophis Central\'s direct control. This policy does not replace any dispute process available through your bank, payment provider, or a competent consumer-protection authority.'
   ]},
   { title: '10. Contact and escalation', paragraphs: [
     'For refund requests and payment complaints, contact our financial-enquiry address or use the official Contact Us page. Include “Refund Request” in the subject line and provide the transaction reference where available.',
