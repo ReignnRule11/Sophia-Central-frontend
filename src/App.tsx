@@ -14,6 +14,7 @@ import { ProtectedRoute } from './routes/ProtectedRoute';
 import { loginSchema, type LoginValues } from './lib/validation';
 import { SupportRequestsPanel } from './components/moderation/SupportRequestsPanel';
 import { CookieConsentBanner, CookieSettingsPage } from './components/CookieConsent';
+import { readPreAccountSession } from './lib/registration-session';
 
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage').then((module) => ({ default: module.NotificationsPage })));
 const OpenSourceResourcePage = lazy(() => import('./pages/OpenSourceResourcePage').then((module) => ({ default: module.OpenSourceResourcePage })));
@@ -207,7 +208,7 @@ function RouteSeo() {
 
 function destinationForUser(user?: { role?: string; isProfileComplete?: boolean; hasReviewerAccess?: boolean } | null) {
   if (user?.role === 'student' || user?.role === 'lecturer') {
-    if (user.isProfileComplete === false) return user.role === 'lecturer' ? '/lecturer/onboarding/profile' : user.role === 'reviewer' ? '/reviewer/onboarding/profile' : '/student/onboarding/profile';
+    if (user.isProfileComplete === false) return user.role === 'lecturer' ? '/lecturer/onboarding/profile' : '/student/onboarding/profile';
     if (user.hasReviewerAccess === true) {
       try {
         const preferred = window.localStorage.getItem('sophis-central-preferred-workspace');
@@ -273,7 +274,8 @@ function LoginPage() {
     try {
       const result = await login(values.identifier.trim(), values.password);
       if (result.requiresOnboarding) {
-        navigate(registrationIntent ? `/student/onboarding/profile?intent=${encodeURIComponent(registrationIntent)}` : user.role === 'lecturer' ? '/lecturer/onboarding/profile' : user.role === 'reviewer' ? '/reviewer/onboarding/profile' : '/student/onboarding/profile', { replace: true });
+        const pendingRole = readPreAccountSession()?.role;
+        navigate(registrationIntent ? `/student/onboarding/profile?intent=${encodeURIComponent(registrationIntent)}` : pendingRole === 'lecturer' ? '/lecturer/onboarding/profile' : pendingRole === 'reviewer' ? '/reviewer/onboarding/profile' : '/student/onboarding/profile', { replace: true });
       } else if (registrationIntent) {
         navigate(`/login?intent=${encodeURIComponent(registrationIntent)}`, { replace: true });
       }
