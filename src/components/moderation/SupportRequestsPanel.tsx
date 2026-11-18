@@ -27,7 +27,6 @@ export function SupportRequestsPanel() {
         const responseSent = await supportApi.queue('response_sent');
         setItems([...pending, ...underReview, ...reviewed, ...responseSent].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       } else if (status === 'pending') setItems(pending);
-      else if (status === 'history') setItems([...pending, ...underReview, ...reviewed]);
       else setItems(await supportApi.queue(status));
     }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load support requests.'); }
