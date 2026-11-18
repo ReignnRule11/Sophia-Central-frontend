@@ -5,6 +5,7 @@ export type ReportReason = 'spam' | 'harassment' | 'impersonation' | 'inappropri
 export type ContentReportStatus = 'pending' | 'reviewing' | 'actioned' | 'dismissed';
 export type ContentReport = {
   id: string;
+  ticketNumber?: string;
   reporterId?: string | null;
   reporter?: { id?: string; firstName?: string; lastName?: string; email?: string; academicHandle?: string } | null;
   targetType: ReportTargetType;
