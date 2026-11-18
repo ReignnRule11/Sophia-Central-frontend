@@ -13,7 +13,6 @@ export type ContentReport = {
   targetOwnerId?: string | null;
   targetLabel: string;
   targetSnapshot?: Record<string, unknown>;
-  targetSnapshot?: Record<string, unknown>;
   reason: ReportReason;
   details?: string | null;
   status: ContentReportStatus;
