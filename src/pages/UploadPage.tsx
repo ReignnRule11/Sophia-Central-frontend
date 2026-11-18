@@ -175,10 +175,10 @@ export function UploadPage() {
         void handleSubmit(submit)(event);
       }
     }} className="mt-6 grid gap-4 sm:grid-cols-2">
-      <label className="text-sm font-semibold">Name / title <span className="text-rose-600">*</span><input required className={field} required disabled={Boolean(pendingUpload)} {...register('title')} />{errors.title?.message}</label>
+      <label className="text-sm font-semibold">Name / title <span className="text-rose-600">*</span><input required className={field} disabled={Boolean(pendingUpload)} {...register('title')} />{errors.title?.message}</label>
       <label className="text-sm font-semibold">Material type <span className="text-rose-600">*</span><select className={field} required disabled={Boolean(pendingUpload)} {...register('type')}><option value="lecture_notes">Lecture notes</option><option value="past_question">Past question</option><option value="research_paper">Research paper</option><option value="project">Project</option><option value="slides">Slides</option><option value="other">Other</option></select></label>
-      <label className="text-sm font-semibold">Course / subject <span className="text-rose-600">*</span><input required className={field} required disabled={Boolean(pendingUpload)} {...register('course')} />{errors.course?.message}</label>
-      <label className="text-sm font-semibold">Topic <span className="text-rose-600">*</span><input required className={field} required disabled={Boolean(pendingUpload)} {...register('topic')} />{errors.topic?.message}</label>
+      <label className="text-sm font-semibold">Course / subject <span className="text-rose-600">*</span><input required className={field} disabled={Boolean(pendingUpload)} {...register('course')} />{errors.course?.message}</label>
+      <label className="text-sm font-semibold">Topic <span className="text-rose-600">*</span><input required className={field} disabled={Boolean(pendingUpload)} {...register('topic')} />{errors.topic?.message}</label>
       <label className="text-sm font-semibold">Institution <span className="text-rose-600">*</span><input className={field} required disabled={Boolean(pendingUpload)} {...register('institution')} />{errors.institution?.message}</label>
       <label className="text-sm font-semibold">Academic level <span className="text-rose-600">*</span><input className={field} required disabled={Boolean(pendingUpload)} {...register('level')} />{errors.level?.message}</label>
       <label className="sm:col-span-2 text-sm font-semibold">Description <span className="text-rose-600">*</span><textarea rows={4} className={field} required disabled={Boolean(pendingUpload)} {...register('description')} />{errors.description?.message}</label>
