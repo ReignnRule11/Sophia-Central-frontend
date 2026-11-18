@@ -65,7 +65,7 @@ const moderatorNav = [
 
 
 const reviewerNav = [
-  { label: 'Assigned review queue', href: '/moderation', icon: ShieldCheck },
+  { label: 'Academic review queue', href: '/moderation', icon: ShieldCheck },
   { label: 'Become a Student or Lecturer', href: '/reviewer-account-transition', icon: LayoutGrid },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
@@ -126,7 +126,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
 
 
   const academicNav = user?.role === 'lecturer' ? lecturerNav : studentNav;
-  const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? reviewerNav : ['suspended', 'revoked'].includes(user.reviewerStatus || '') ? [] : [{ label: ['submitted', 'under_review', 'more_information_required'].includes(user.reviewerStatus || '') ? 'View reviewer application' : 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : [
+  const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? [...reviewerNav, ...(user.isGlobalReviewer ? [{ label: 'Reviewer applications', href: '/moderation?tab=applications', icon: ShieldCheck }, { label: 'Reviewer roster', href: '/moderation?tab=reviewers', icon: Users }, { label: 'Conflict audit', href: '/moderation?tab=conflicts', icon: ShieldCheck }] : [])] : ['suspended', 'revoked'].includes(user.reviewerStatus || '') ? [] : [{ label: ['submitted', 'under_review', 'more_information_required'].includes(user.reviewerStatus || '') ? 'View reviewer application' : 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'admin' ? adminNav : [
     ...academicNav,
     ...(user?.hasReviewerAccess ? [{ label: 'Academic Reviewer workspace', href: '/moderation', icon: ShieldCheck }] : []),
     ...(!user?.hasReviewerAccess && ['not_applied', 'rejected', undefined].includes(user?.reviewerStatus) ? [{ label: 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }] : []),
