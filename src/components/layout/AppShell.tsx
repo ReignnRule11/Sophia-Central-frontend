@@ -130,7 +130,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
     void refreshUnread();
     const interval = window.setInterval(() => { void refreshUnread(); }, 30000);
     return () => { active = false; window.clearInterval(interval); };
-  }, [user?.id, location.pathname]);
+  }, [user?.id, user?.role, location.pathname]);
 
 
   const academicNav = user?.role === 'lecturer' ? lecturerNav : studentNav;
