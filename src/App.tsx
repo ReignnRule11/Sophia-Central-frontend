@@ -275,7 +275,8 @@ function LoginPage() {
       const result = await login(values.identifier.trim(), values.password);
       if (result.requiresOnboarding) {
         const pendingRole = readPreAccountSession()?.role;
-        navigate(registrationIntent ? `/student/onboarding/profile?intent=${encodeURIComponent(registrationIntent)}` : pendingRole === 'lecturer' ? '/lecturer/onboarding/profile' : pendingRole === 'reviewer' ? '/reviewer/onboarding/profile' : '/student/onboarding/profile', { replace: true });
+        const onboardingPath = pendingRole === 'lecturer' ? '/lecturer/onboarding/profile' : pendingRole === 'reviewer' ? '/reviewer/onboarding/profile' : '/student/onboarding/profile';
+        navigate(registrationIntent ? `${onboardingPath}?intent=${encodeURIComponent(registrationIntent)}` : onboardingPath, { replace: true });
       } else if (registrationIntent) {
         navigate(`/login?intent=${encodeURIComponent(registrationIntent)}`, { replace: true });
       }
