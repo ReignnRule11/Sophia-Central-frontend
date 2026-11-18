@@ -35,7 +35,7 @@ const reviewerFilters: { value: NotificationFilter; label: string }[] = [
   { value: 'governance', label: 'Application updates' },
 ];
 
-export function NotificationsPage({ reviewerOnly = false }: { reviewerOnly?: boolean }) {
+export function NotificationsPage({ reviewerOnly = false, studentOnly = false }: { reviewerOnly?: boolean; studentOnly?: boolean }) {
   const navigate = useNavigate();
   const [items, setItems] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -123,7 +123,7 @@ export function NotificationsPage({ reviewerOnly = false }: { reviewerOnly?: boo
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F3F0FF] text-[#6121D0]"><Bell size={22} aria-hidden="true" /></div>
-          <h2 className="mt-5 text-2xl font-semibold text-[#091F5B]">{reviewerOnly ? 'Reviewer notifications' : 'Notifications'}</h2>
+          <h2 className="mt-5 text-2xl font-semibold text-[#091F5B]">{reviewerOnly ? 'Reviewer notifications' : studentOnly ? 'Student notifications' : 'Notifications'}</h2>
           <p className="mt-2 text-sm leading-6 text-[#4B5563]">{reviewerOnly ? 'Your review assignments and reviewer application updates. New reviewer updates refresh automatically.' : `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}. New updates refresh automatically.`}</p>
           {reviewerOnly && <p className="mt-2 text-xs text-[#71809A]">{unreadCount} unread reviewer update{unreadCount === 1 ? '' : 's'}</p>}
         </div>
