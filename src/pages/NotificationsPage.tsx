@@ -83,13 +83,13 @@ export function NotificationsPage({ reviewerOnly = false }: { reviewerOnly?: boo
   }, [items, filter, query]);
 
   const markRead = async (item: AppNotification) => {
-    if (item.isRead) { if (item.link) navigate(reviewerDestination(item, reviewerOnly)); return; }
+    if (item.isRead) { if (item.link || reviewerOnly) navigate(reviewerDestination(item, reviewerOnly)); return; }
     setBusy(true);
     try {
       await notificationsApi.markRead(item.id);
       setItems(current => current.map(n => n.id === item.id ? { ...n, isRead: true } : n));
       setUnreadCount(current => Math.max(0, current - 1));
-      if (item.link) navigate(reviewerDestination(item, reviewerOnly));
+      if (item.link || reviewerOnly) navigate(reviewerDestination(item, reviewerOnly));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to mark notification as read.');
     } finally { setBusy(false); }
