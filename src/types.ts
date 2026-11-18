@@ -11,6 +11,7 @@ export interface User {
   isGlobalReviewer?: boolean;
   reviewerStatus?: 'not_applied' | 'draft' | 'submitted' | 'under_review' | 'more_information_required' | 'approved' | 'rejected' | 'suspended' | 'revoked';
   academicAccountType?: 'student' | 'lecturer' | 'external_reviewer' | null;
+  reviewerBaseRole?: 'student' | 'lecturer';
   reviewerAcademicLevels?: string[];
   institution?: string;
   faculty?: string;
