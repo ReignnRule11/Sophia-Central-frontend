@@ -98,7 +98,12 @@ export function NotificationsPage({ reviewerOnly = false }: { reviewerOnly?: boo
   const markAllRead = async () => {
     setBusy(true);
     try {
-      await notificationsApi.markAllRead();
+      if (reviewerOnly) {
+        const unreadReviewerItems = items.filter(item => !item.isRead);
+        await Promise.all(unreadReviewerItems.map(item => notificationsApi.markRead(item.id)));
+      } else {
+        await notificationsApi.markAllRead();
+      }
       setItems(current => current.map(n => ({ ...n, isRead: true })));
       setUnreadCount(0);
     } catch (cause) {
