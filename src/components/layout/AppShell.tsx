@@ -64,8 +64,7 @@ const moderatorNav = [
 
 
 const supportNav = [
-  { label: 'Dashboard', href: '/support', icon: LayoutGrid },
-  { label: 'Support requests', href: '/support/requests', icon: LifeBuoy },
+  { label: 'Support requests', href: '/support', icon: LifeBuoy },
   { label: 'Notifications', href: '/notifications', icon: Bell },
 ];
 
