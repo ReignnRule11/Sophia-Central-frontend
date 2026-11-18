@@ -53,7 +53,7 @@ export function NotificationsPage({ reviewerOnly = false, studentOnly = false }:
       const notifications = result.notifications ?? [];
       const visibleNotifications = reviewerOnly
         ? notifications.filter(item => reviewerNotificationTypes.has(item.type))
-        : notifications;
+         : studentOnly ? notifications.filter(item => !reviewerNotificationTypes.has(item.type)) : notifications;
       setItems(visibleNotifications);
       setUnreadCount(reviewerOnly
         ? visibleNotifications.filter(item => !item.isRead).length
