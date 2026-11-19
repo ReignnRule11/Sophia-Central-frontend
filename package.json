@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "prebuild": "node scripts/generate-seo-files.mjs",
-    "copy:zrimo-assets": "zrimo-copy-assets public/vendor/zrimo",
+    "copy:zrimo-assets": "node node_modules/@zrimo/viewer/bin/copy-assets.mjs public/vendor/zrimo",
     "predev": "npm run copy:zrimo-assets"
   },
   "dependencies": {
