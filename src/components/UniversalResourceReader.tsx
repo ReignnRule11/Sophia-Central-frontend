@@ -80,6 +80,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
   const hostRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<ReturnType<ReturnType<typeof ViewerClient.create>['createViewer']> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [progress, setProgress] = useState('');
   const [searchResult, setSearchResult] = useState<SearchSnapshot | null>(null);
@@ -96,6 +97,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
     const host = hostRef.current;
     if (!host) return;
     let active = true;
+    setReady(false);
     let client: ReturnType<typeof ViewerClient.create> | null = null;
     let viewer: ReturnType<ReturnType<typeof ViewerClient.create>['createViewer']> | null = null;
     const initialize = async () => {
@@ -112,7 +114,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
           overscan: 1,
         });
         viewerRef.current = viewer;
-        viewer.on('progress', event => {
+        viewer.on('progress', () => {
           if (active) setProgress('Preparing document…');
         });
         viewer.on('pagechange', event => {
@@ -123,6 +125,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
         viewer.on('ready', state => {
           if (!active) return;
           setLoading(false);
+          setReady(true);
           setProgress('');
           onPageCountRef.current(state.pageCount);
           onPageChangeRef.current?.(state.pageIndex + 1);
@@ -138,6 +141,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
         await viewer.load(blob, { fileName });
         if (!active) return;
         setLoading(false);
+        setReady(true);
         setProgress('');
         onPageCountRef.current(viewer.state.pageCount);
       } catch (cause) {
@@ -157,28 +161,28 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
 
   useEffect(() => {
     const viewer = viewerRef.current;
-    if (!viewer || viewer.state.status !== 'ready') return;
+    if (!ready || !viewer || viewer.state.status !== 'ready') return;
     viewer.goToPage(Math.max(0, page - 1));
-  }, [page]);
+  }, [page, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
-    if (!viewer || viewer.state.status !== 'ready') return;
+    if (!ready || !viewer || viewer.state.status !== 'ready') return;
     viewer.setZoom(Math.max(0.5, Math.min(2, zoom / 100)));
-  }, [zoom]);
+  }, [zoom, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
-    if (!viewer || viewer.state.status !== 'ready') return;
+    if (!ready || !viewer || viewer.state.status !== 'ready') return;
     viewer.setFit('width');
     viewer.fitWidth();
-  }, [widthPercent]);
+  }, [widthPercent, ready]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
     const term = searchTerm.trim();
     setSearchResult(null);
-    if (!viewer || viewer.state.status !== 'ready' || !term) {
+    if (!ready || !viewer || viewer.state.status !== 'ready' || !term) {
       onSearchStatusRef.current?.('');
       return;
     }
@@ -194,7 +198,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
       if (active) onSearchStatusRef.current?.('Search is not available for this document.');
     });
     return () => { active = false; };
-  }, [searchTerm, url]);
+  }, [searchTerm, url, ready]);
 
   const matchPages = [...new Set((searchResult?.matches || []).map(match => match.pageIndex + 1))];
   const goToMatch = (direction: 1 | -1) => {
