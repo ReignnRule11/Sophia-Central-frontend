@@ -9,6 +9,7 @@ type Props = { url: string; page: number; zoom: number; onPageCount: (count: num
 export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, searchTerm = '', onSearchStatus, widthPercent = 100, watermark = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const renderTaskRef = useRef<{ cancel: () => void } | null>(null);
   const documentRef = useRef<PDFDocumentProxy | null>(null);
   const [loading, setLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
@@ -48,6 +49,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
       const validPage = Math.min(pageCount, Math.max(1, page));
       if (validPage !== page) onPageChange?.(validPage);
       try {
+        renderTaskRef.current?.cancel();
         const pdfPage = await pdf.getPage(validPage);
         const baseViewport = pdfPage.getViewport({ scale: 1 });
         const fitScale = (containerWidth * (widthPercent / 100)) / baseViewport.width;
@@ -57,11 +59,17 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
         canvas.style.width = viewport.width + 'px'; canvas.style.height = viewport.height + 'px';
         const context = canvas.getContext('2d');
         if (!context) throw new Error('Canvas rendering is unavailable.');
-        await pdfPage.render({ canvas, canvasContext: context, viewport, transform: dpr === 1 ? undefined : [dpr, 0, 0, dpr, 0, 0] }).promise;
-      } catch (error) { if (!cancelled) setRenderError(error instanceof Error ? error.message : 'Unable to render this page.'); }
+        const task = pdfPage.render({ canvas, canvasContext: context, viewport, transform: dpr === 1 ? undefined : [dpr, 0, 0, dpr, 0, 0] });
+        renderTaskRef.current = task;
+        await task.promise;
+        if (renderTaskRef.current === task) renderTaskRef.current = null;
+      } catch (error) {
+        const cancelledRender = error instanceof Error && error.name === 'RenderingCancelledException';
+        if (!cancelled && !cancelledRender) setRenderError(error instanceof Error ? error.message : 'Unable to render this page.');
+      }
     };
     void render();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; renderTaskRef.current?.cancel(); renderTaskRef.current = null; };
   }, [page, zoom, pageCount, containerWidth, widthPercent]);
 
   useEffect(() => {
