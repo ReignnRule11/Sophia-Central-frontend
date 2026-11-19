@@ -45,7 +45,7 @@ function TextDocumentReader({ url, zoom, searchTerm = '', onSearchStatus, widthP
       setLoading(false);
     });
     return () => { active = false; };
-  }, [url, onPageCount]);
+  }, [url]);
 
   const highlighted = useMemo(() => {
     const term = searchTerm.trim();
@@ -83,6 +83,14 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
   const [error, setError] = useState('');
   const [progress, setProgress] = useState('');
   const [searchResult, setSearchResult] = useState<SearchSnapshot | null>(null);
+  const pageRef = useRef(page);
+  const onPageCountRef = useRef(onPageCount);
+  const onPageChangeRef = useRef(onPageChange);
+  const onSearchStatusRef = useRef(onSearchStatus);
+  pageRef.current = page;
+  onPageCountRef.current = onPageCount;
+  onPageChangeRef.current = onPageChange;
+  onSearchStatusRef.current = onSearchStatus;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -105,19 +113,20 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
         });
         viewerRef.current = viewer;
         viewer.on('progress', event => {
-          if (active) setProgress(event.message || 'Preparing document…');
+          if (active) setProgress('Preparing document…');
         });
         viewer.on('pagechange', event => {
           if (!active) return;
-          onPageCount(event.pageCount);
-          onPageChange?.(event.pageIndex + 1);
+          onPageCountRef.current(event.pageCount);
+          onPageChangeRef.current?.(event.pageIndex + 1);
         });
         viewer.on('ready', state => {
           if (!active) return;
           setLoading(false);
           setProgress('');
-          onPageCount(state.pageCount);
-          onPageChange?.(state.pageIndex + 1);
+          onPageCountRef.current(state.pageCount);
+          onPageChangeRef.current?.(state.pageIndex + 1);
+          viewer?.goToPage(Math.max(0, pageRef.current - 1));
         });
         viewer.on('searchchange', result => {
           if (active) setSearchResult(result as SearchSnapshot | null);
@@ -130,7 +139,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
         if (!active) return;
         setLoading(false);
         setProgress('');
-        onPageCount(viewer.state.pageCount);
+        onPageCountRef.current(viewer.state.pageCount);
       } catch (cause) {
         if (!active) return;
         setLoading(false);
@@ -144,7 +153,7 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
       if (viewer) void viewer.destroy();
       if (client) void client.destroy();
     };
-  }, [url, fileName, onPageCount, onPageChange]);
+  }, [url, fileName]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -170,22 +179,22 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
     const term = searchTerm.trim();
     setSearchResult(null);
     if (!viewer || viewer.state.status !== 'ready' || !term) {
-      onSearchStatus?.('');
+      onSearchStatusRef.current?.('');
       return;
     }
-    onSearchStatus?.('Searching document…');
+    onSearchStatusRef.current?.('Searching document…');
     let active = true;
     void viewer.search(term).then(result => {
       if (!active) return;
       const snapshot = result as SearchSnapshot;
       setSearchResult(snapshot);
-      onSearchStatus?.(snapshot.matches.length ? `Found text on ${new Set(snapshot.matches.map(match => match.pageIndex)).size} page(s).` : 'No matches found in searchable document text.');
-      if (snapshot.matches[0]) onPageChange?.(snapshot.matches[0].pageIndex + 1);
+      onSearchStatusRef.current?.(snapshot.matches.length ? `Found text on ${new Set(snapshot.matches.map(match => match.pageIndex)).size} page(s).` : 'No matches found in searchable document text.');
+      if (snapshot.matches[0]) onPageChangeRef.current?.(snapshot.matches[0].pageIndex + 1);
     }).catch(() => {
-      if (active) onSearchStatus?.('Search is not available for this document.');
+      if (active) onSearchStatusRef.current?.('Search is not available for this document.');
     });
     return () => { active = false; };
-  }, [searchTerm, url, onSearchStatus, onPageChange]);
+  }, [searchTerm, url]);
 
   const matchPages = [...new Set((searchResult?.matches || []).map(match => match.pageIndex + 1))];
   const goToMatch = (direction: 1 | -1) => {
