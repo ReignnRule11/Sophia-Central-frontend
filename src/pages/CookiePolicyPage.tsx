@@ -16,9 +16,9 @@ export function CookiePolicyPage() {
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#E4DDF7] bg-[#F8F7FF] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div>
               <h2 className="font-bold text-[#091F5B]">Your cookie preferences</h2>
-              <p className="mt-1 text-sm leading-6 text-[#52627B]">Review the technologies used by Sophis Central and revisit your available browser preference controls.</p>
+              <p className="mt-1 text-sm leading-6 text-[#52627B]">Review the essential browser technologies currently used by Sophis Central. Optional category controls are not currently offered.</p>
             </div>
-            <Link to="/cookie-settings" className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#6121D0] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4C1D95]">Manage Cookie Preferences</Link>
+            <Link to="/cookie-settings" className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#6121D0] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4C1D95]">View Cookie Settings</Link>
           </div>
 
           <div className="mt-7 space-y-7 text-sm leading-7 text-[#475569]">
