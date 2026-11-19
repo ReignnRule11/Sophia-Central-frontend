@@ -25,7 +25,7 @@ const READER_MIME_EXTENSIONS: Record<string, string> = {
 function makeReaderFileName(title: string, mimeType: string): string {
   const extension = READER_MIME_EXTENSIONS[mimeType.split(';')[0].trim().toLowerCase()];
   if (!extension) throw new Error('This resource format is not supported by the secure in-app reader.');
-  const safeTitle = title.replace(/[\\/:*?"<>|\\u0000-\\u001F]/g, '-').trim() || 'resource';
+  const safeTitle = title.replace(/[\\\/:*?"<>|]/g, '-').replace(/[\\u0000-\\u001F]/g, '').trim() || 'resource';
   return `${safeTitle}.${extension}`;
 }
 
