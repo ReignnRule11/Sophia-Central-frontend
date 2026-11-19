@@ -71,7 +71,7 @@ export function ReportContentButton({
     <button type="button" onClick={() => setOpen(true)} className={className || (compact ? 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-rose-700 hover:bg-rose-50' : 'inline-flex items-center gap-2 rounded-xl border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-semibold text-[#5C6982] hover:border-rose-300 hover:text-rose-700')} aria-label={label}>
       <Flag size={compact ? 12 : 15} /> {label}
     </button>
-    {open && <ReportContentDialog targetType={targetType} targetId={targetId} onClose={() => setOpen(false)} />}
+    {open && createPortal(<ReportContentDialog targetType={targetType} targetId={targetId} onClose={() => setOpen(false)} />, document.body)}
   </>;
 }
 
@@ -150,6 +150,6 @@ export function ReportOptionsMenu({
         <Flag size={14} className="shrink-0" /><span className="min-w-0 break-words">{option.label}</span>
       </button>)}
     </div>, document.body)}
-    {selectedOption && <ReportContentDialog targetType={selectedOption.targetType} targetId={selectedOption.targetId} onClose={() => setSelectedOption(null)} />}
+    {selectedOption && createPortal(<ReportContentDialog targetType={selectedOption.targetType} targetId={selectedOption.targetId} onClose={() => setSelectedOption(null)} />, document.body)}
   </div>;
 }
