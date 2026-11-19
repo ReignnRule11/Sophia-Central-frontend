@@ -168,7 +168,12 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!ready || !viewer || viewer.state.status !== 'ready') return;
-    viewer.setZoom(Math.max(0.5, Math.min(2, zoom / 100)));
+    if (zoom === 100) {
+      viewer.setFit('width');
+      viewer.fitWidth();
+    } else {
+      viewer.setZoom(Math.max(0.5, Math.min(2, zoom / 100)));
+    }
   }, [zoom, ready]);
 
   useEffect(() => {
