@@ -15,7 +15,7 @@ export function CookiePolicyPage() {
           <p className="mt-3 text-sm text-[#5C6982]">Last updated: 16 November 2026</p>
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#E4DDF7] bg-[#F8F7FF] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div>
-              <h2 className="font-bold text-[#091F5B]">Your cookie preferences</h2>
+              <h2 className="font-bold text-[#091F5B]">Cookie settings and browser storage</h2>
               <p className="mt-1 text-sm leading-6 text-[#52627B]">Review the essential browser technologies currently used by Sophis Central. Optional category controls are not currently offered.</p>
             </div>
             <Link to="/cookie-settings" className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#6121D0] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4C1D95]">View Cookie Settings</Link>
@@ -49,7 +49,7 @@ export function CookiePolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-bold text-[#091F5B]">6. Managing your preferences</h2>
+              <h2 className="text-lg font-bold text-[#091F5B]">6. Reviewing essential technologies</h2>
               <p className="mt-2">You can review the technologies currently used on our <Link to="/cookie-settings" className="font-semibold text-[#6121D0] underline">Cookie Settings</Link> page. You can also clear or block cookies and browser storage through your browser settings. Blocking essential technologies may affect sign-in, session continuity and core platform functions.</p>
             </section>
 
