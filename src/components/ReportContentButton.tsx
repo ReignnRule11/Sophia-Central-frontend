@@ -94,7 +94,6 @@ export function ReportOptionsMenu({
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  if (!options.length) return null;
 
   useEffect(() => {
     if (!menuOpen) { setMenuPosition(null); return; }
@@ -130,6 +129,8 @@ export function ReportOptionsMenu({
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [menuOpen, options.length]);
+
+  if (!options.length) return null;
 
   return <div className={`relative inline-flex ${className}`}>
     <button ref={triggerRef} type="button" onClick={() => setMenuOpen(value => !value)} aria-label={ariaLabel} aria-expanded={menuOpen} aria-haspopup="menu" className="inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full border border-transparent bg-transparent text-inherit shadow-none transition hover:border-transparent hover:bg-black/5 hover:text-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent dark:hover:border-transparent dark:hover:bg-white/10 dark:hover:text-inherit">
