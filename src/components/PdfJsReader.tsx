@@ -21,7 +21,11 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    const measure = () => setContainerWidth(container.clientWidth);
+    const measure = () => {
+      const styles = window.getComputedStyle(container);
+      const horizontalPadding = Number.parseFloat(styles.paddingLeft) + Number.parseFloat(styles.paddingRight);
+      setContainerWidth(Math.max(0, container.clientWidth - horizontalPadding));
+    };
     measure();
     const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
     observer?.observe(container);
@@ -51,6 +55,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
       try {
         renderTaskRef.current?.cancel();
         const pdfPage = await pdf.getPage(validPage);
+        if (cancelled) return;
         const baseViewport = pdfPage.getViewport({ scale: 1 });
         const fitScale = (containerWidth * (widthPercent / 100)) / baseViewport.width;
         const viewport = pdfPage.getViewport({ scale: fitScale * (zoom / 100) });
