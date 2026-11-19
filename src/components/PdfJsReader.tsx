@@ -60,6 +60,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
       // that touches the canvas and wait for cancellation to settle first.
       const runRender = async () => {
         if (cancelled) return;
+        setRenderError('');
         try {
           const pdfPage = await pdf.getPage(validPage);
           if (cancelled) return;
