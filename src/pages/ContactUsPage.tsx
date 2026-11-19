@@ -92,7 +92,7 @@ export function ContactUsPage() {
         description: description.trim(),
         links,
       });
-      setConfirmation(result.message);
+      setConfirmation(`We’ve sent a verification email to ${email.trim()}. Open the message and select Verify email to submit your support request. The link expires in 30 minutes. If you do not see it shortly, check your spam or junk folder. Your request will not enter the Support queue until your email is verified.`);
       setSubject('');
       setDescription('');
       setLinkText('');
@@ -117,7 +117,7 @@ export function ContactUsPage() {
 
           {(verificationBusy || verificationMessage) && <div role="status" className="mt-6 flex gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"><CheckCircle2 size={19} className="mt-0.5 shrink-0"/><p>{verificationBusy ? 'Verifying your email address…' : verificationMessage}</p></div>}
           {error && <p role="alert" className="mt-5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{error}</p>}
-          {confirmation && <div role="status" className="mt-5 flex gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"><Mail size={19} className="mt-0.5 shrink-0"/><p>{confirmation}</p></div>}
+          {confirmation && <div role="status" aria-live="polite" className="mt-5 flex gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"><Mail size={19} className="mt-0.5 shrink-0"/><div><p className="font-semibold">Check your email to verify your address</p><p className="mt-1 break-words">{confirmation}</p></div></div>}
 
           <form onSubmit={submit} className="mt-7 space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
