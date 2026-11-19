@@ -25,7 +25,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
       setPageCount(pdf.numPages); onPageCount(pdf.numPages); setLoading(false);
     }).catch(error => { if (!cancelled) { setLoading(false); setRenderError(error instanceof Error ? error.message : 'Unable to load this PDF.'); } });
     return () => { cancelled = true; documentRef.current = null; void task.destroy(); };
-  }, [url, onPageCount]);
+  }, [url]);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,7 +47,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
     };
     void render();
     return () => { cancelled = true; };
-  }, [page, zoom, pageCount, onPageChange]);
+  }, [page, zoom, pageCount]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,7 +71,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
     };
     void search();
     return () => { cancelled = true; };
-  }, [searchTerm, url, onSearchStatus]);
+  }, [searchTerm, url]);
 
   const goToSearchResult = (direction: 1 | -1) => {
     if (!searchPages.length) return;
