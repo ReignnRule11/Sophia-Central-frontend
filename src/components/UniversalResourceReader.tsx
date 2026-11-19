@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ViewerClient } from '@zrimo/viewer';
+type ZrimoClient = ReturnType<typeof import('@zrimo/viewer').ViewerClient.create>;
+type ZrimoViewer = ReturnType<ZrimoClient['createViewer']>;
 import '@zrimo/viewer/styles.css';
 import { PdfJsReader } from './PdfJsReader';
 
@@ -78,7 +79,7 @@ function TextDocumentReader({ url, zoom, searchTerm = '', onSearchStatus, widthP
 
 function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageChange, searchTerm = '', onSearchStatus, widthPercent = 100, watermark = '' }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
-  const viewerRef = useRef<ReturnType<ReturnType<typeof ViewerClient.create>['createViewer']> | null>(null);
+  const viewerRef = useRef<ZrimoViewer | null>(null);
   const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
@@ -98,10 +99,12 @@ function OfficeDocumentReader({ url, fileName, page, zoom, onPageCount, onPageCh
     if (!host) return;
     let active = true;
     setReady(false);
-    let client: ReturnType<typeof ViewerClient.create> | null = null;
-    let viewer: ReturnType<ReturnType<typeof ViewerClient.create>['createViewer']> | null = null;
+    let client: ZrimoClient | null = null;
+    let viewer: ZrimoViewer | null = null;
     const initialize = async () => {
       try {
+        const { ViewerClient } = await import('@zrimo/viewer');
+        if (!active) return;
         client = ViewerClient.create({
           assetBaseUrl: new URL('/vendor/zrimo/', window.location.href),
           limits: { maxInputBytes: 50 * 1024 * 1024 },
