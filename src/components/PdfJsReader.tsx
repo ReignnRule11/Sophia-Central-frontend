@@ -20,7 +20,7 @@ export function PdfJsReader({ url, page, zoom, onPageCount, onPageChange, search
     setLoading(true); setRenderError('');
     const task = getDocument({ url });
     task.promise.then(pdf => {
-      if (cancelled) { void pdf.destroy(); return; }
+      if (cancelled) return;
       documentRef.current = pdf;
       setPageCount(pdf.numPages); onPageCount(pdf.numPages); setLoading(false);
     }).catch(error => { if (!cancelled) { setLoading(false); setRenderError(error instanceof Error ? error.message : 'Unable to load this PDF.'); } });
