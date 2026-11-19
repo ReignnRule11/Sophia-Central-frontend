@@ -50,7 +50,7 @@ export function ResourceReaderPage() {
     let active = true;
     const load = async () => {
       try {
-        setLoading(true); setError('');
+        setLoading(true); setError(''); setDownloadStatusKnown(false); setDownloaded(false); setDownloadPromptOpen(false); setViewerUrl('');
         const result = await resourcesApi.byId(id);
         if (active) {
           setResource(result as ResourceWithFile);
