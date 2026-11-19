@@ -22,6 +22,7 @@ export function ResourceReaderPage() {
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
+  const [downloadStatusKnown, setDownloadStatusKnown] = useState(false);
   const [downloadPromptOpen, setDownloadPromptOpen] = useState(false);
   const [fileAction, setFileAction] = useState<'open' | 'download' | null>(null);
   const [viewerUrl, setViewerUrl] = useState('');
@@ -67,11 +68,15 @@ export function ResourceReaderPage() {
                   setResourceAppeals(Array.isArray(appeals) ? appeals.filter(appeal => appeal.resourceId === id) : []);
                 }
               }
-              const downloadedResources = await resourcesApi.downloaded().catch(() => []);
-              const hasDownloaded = downloadedResources.some((item) => item.id === id);
-              if (active) {
+              const downloadedResources = await resourcesApi.downloaded().catch(() => null);
+              if (active && downloadedResources) {
+                const hasDownloaded = downloadedResources.some((item) => item.id === id);
                 setDownloaded(hasDownloaded);
+                setDownloadStatusKnown(true);
                 if (!user.hasReviewerAccess && user.role !== 'reviewer' && ['student', 'lecturer'].includes(user.role) && !hasDownloaded && (result as ResourceWithFile).hasFile && (result as ResourceWithFile).uploaderId !== user.id) setDownloadPromptOpen(true);
+              } else if (active) {
+                // Do not treat a transient list failure as proof that the user has not saved the resource.
+                setDownloadStatusKnown(false);
               }
             }
           }
@@ -124,7 +129,7 @@ export function ResourceReaderPage() {
       setError('This is a paid Academic Library resource. Reviewer access does not replace the purchase required for ordinary student or lecturer access.');
       return;
     }
-    if (!download && !reviewerAccess && ['student', 'lecturer'].includes(user?.role ?? '') && !downloaded && resource.uploaderId !== user?.id) {
+    if (!download && !reviewerAccess && ['student', 'lecturer'].includes(user?.role ?? '') && downloadStatusKnown && !downloaded && resource.uploaderId !== user?.id) {
       setDownloadPromptOpen(true);
       return;
     }
@@ -141,7 +146,13 @@ export function ResourceReaderPage() {
       }
       setViewerUrl(URL.createObjectURL(file) + '#toolbar=0&navpanes=0&scrollbar=0');
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Unable to access this resource file.');
+      const message = cause instanceof Error ? cause.message : 'Unable to access this resource file.';
+      if (message.toLowerCase().includes('save this resource to my resources')) {
+        setDownloadPromptOpen(true);
+        setError('');
+      } else {
+        setError(message);
+      }
     } finally { setFileAction(null); }
   };
   const toggleSaved = async () => {
