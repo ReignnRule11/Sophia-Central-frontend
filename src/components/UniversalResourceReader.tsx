@@ -3,7 +3,7 @@ import { ViewerClient } from '@zrimo/viewer';
 import '@zrimo/viewer/styles.css';
 import { PdfJsReader } from './PdfJsReader';
 
-type SearchSnapshot = { matches: Array<{ pageIndex: number }>; activeIndex: number };
+type SearchSnapshot = { matches: ReadonlyArray<{ pageIndex: number }>; activeIndex: number };
 type Props = {
   url: string;
   fileName: string;
