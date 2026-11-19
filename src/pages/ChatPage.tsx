@@ -1584,7 +1584,7 @@ export function ChatPage() {
                     edited
                   </span>
                 )}
-                <div className="ml-auto shrink-0"><ReportOptionsMenu options={[{ targetType: 'chat_message', targetId: message.id, label: 'Report message' }, ...(mode === 'direct' && recipient ? [{ targetType: 'user' as const, targetId: recipient, label: 'Report account' }] : !message.isOwn && message.senderId ? [{ targetType: 'user' as const, targetId: message.senderId, label: 'Report account' }] : [])]} ariaLabel="Message report options" /></div>
+                {!message.isOwn && !message.isDeleted && message.senderId && <div className="ml-auto shrink-0"><ReportOptionsMenu options={[{ targetType: 'chat_message', targetId: message.id, label: 'Report message' }, { targetType: 'user', targetId: message.senderId, label: 'Report account' }]} ariaLabel="Message report options" /></div>}
               </div>
 
               {message.quotedMessage && (
