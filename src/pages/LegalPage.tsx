@@ -154,7 +154,7 @@ export function LegalPage() {
         <article className="rounded-2xl border border-[#DCE4EF] bg-white p-4 shadow-sm sm:p-8 lg:p-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6121D0]">Sophis Central</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#091F5B] sm:text-4xl">{title}</h1>
-          <p className="mt-3 text-sm text-[#5C6982]">"Last Updated: 19 November 2026"</p>
+          <p className="mt-3 text-sm text-[#5C6982]">Last Updated: 19 November 2026</p>
           {isFinancial && <p className="mt-6 text-sm leading-7 text-[#374151]">This Financial Policy explains how Sophis Central manages payments, Wisdom Points, lecturer-owned material purchases, revenue sharing, project payments, payouts, and financial records. It is intended to promote transparency, fairness, and accountability among students, lecturers, researchers, professionals, and other platform users.</p>}
           {isFinancial && <p className="mt-3 text-sm leading-7 text-[#374151]">This policy should be read together with the Terms of Use, Privacy Policy, and Refund Policy. By using a paid service or financial feature, you agree to the applicable provisions of these policies, subject to rights that cannot be waived under applicable law.</p>}
           <PolicySections sections={sections} generalEmail={publicContactEmails.general} financialEmail={publicContactEmails.financial} />
