@@ -18,7 +18,6 @@ import {
 import { Link } from 'react-router-dom';
 import { BrandLogo } from '../components/brand/BrandLogo';
 import { featureHighlights } from '../lib/mock-data';
-import { publicContactEmails } from '../config/publicContact';
 
 const featureIcons = [Search, ShieldCheck, BrainCircuit, Sparkles];
 const resourceTypes = [
