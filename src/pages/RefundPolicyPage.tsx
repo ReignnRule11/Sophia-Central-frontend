@@ -79,7 +79,7 @@ export function RefundPolicyPage() {
         <article className="rounded-2xl border border-[#DCE4EF] bg-white p-4 shadow-sm sm:p-8 lg:p-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6121D0]">Sophis Central</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#091F5B] sm:text-4xl">Refund Policy</h1>
-          <p className="mt-3 text-sm text-[#5C6982]">Last Updated: 18 November 2026</p>
+          <p className="mt-3 text-sm text-[#5C6982]">Last Updated: 19 November 2026</p>
           <p className="mt-6 text-sm leading-7 text-[#374151]">This policy explains when a payment issue may qualify for a refund or correction, how to submit a request, and what to expect during review and processing.</p>
           <div className="mt-8 space-y-8">
             {sections.map((section) => (
