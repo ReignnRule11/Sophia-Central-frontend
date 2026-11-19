@@ -12,7 +12,7 @@ export function CookiePolicyPage() {
         <article className="rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm sm:p-8 lg:p-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6121D0]">Your privacy</p>
           <h1 className="mt-3 text-3xl font-bold tracking-tight text-[#091F5B] sm:text-4xl">Cookie Policy</h1>
-          <p className="mt-3 text-sm text-[#5C6982]">Last updated: 16 November 2026</p>
+          <p className="mt-3 text-sm text-[#5C6982]">Last updated: 19 November 2026</p>
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-[#E4DDF7] bg-[#F8F7FF] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div>
               <h2 className="font-bold text-[#091F5B]">Cookie settings and browser storage</h2>
