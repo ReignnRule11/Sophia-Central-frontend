@@ -25,7 +25,8 @@ export function SupportRequestsPanel() {
       setPendingCount(pending.length);
       if (status === 'history') {
         const responseSent = await supportApi.queue('response_sent');
-        setItems([...pending, ...underReview, ...reviewed, ...responseSent].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        const concluded = await supportApi.queue('concluded');
+        setItems([...pending, ...underReview, ...reviewed, ...responseSent, ...concluded].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       } else if (status === 'pending') setItems(pending);
       else setItems(await supportApi.queue(status));
     }
