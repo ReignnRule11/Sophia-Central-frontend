@@ -28,7 +28,7 @@ export function AdminUsersPage() {
     setActionNotice('');
     try {
       await usersApi.assignPlatformRole(moderator.id, 'moderator');
-      setActionNotice('The existing Sophis Moderator account has been Admin-verified.');
+      setActionNotice('The existing Sophis Moderator account has been Admin-approved.');
       await platformQuery.refetch();
     } catch (cause) {
       setActionError(cause instanceof Error ? cause.message : 'Unable to verify the existing Moderator account.');
@@ -42,7 +42,7 @@ export function AdminUsersPage() {
       <p className="font-semibold text-white">{[account.firstName, account.lastName].filter(Boolean).join(' ') || 'Platform account'}</p>
       <p className="mt-1 break-all text-sm text-slate-400">{account.email}</p>
       <p className="mt-3 text-xs text-slate-300">
-        {account.isVerified ? 'Admin verified' : 'Admin verification pending'} · {account.emailVerified ? 'Email verified' : 'Email not verified'} · {account.accountStatus} · {account.isSuspended ? 'Suspended' : 'Not suspended'}
+        {account.platformRoleVerifiedAt ? 'Admin approved' : 'Admin approval pending'} · {account.emailVerified ? 'Email verified' : 'Email not verified'} · {account.accountStatus} · {account.isSuspended ? 'Suspended' : 'Not suspended'}
       </p>
     </>
   );
@@ -64,7 +64,7 @@ export function AdminUsersPage() {
           {moderator ? (
             <>
               <div className="mt-3">{accountDetails(moderator)}</div>
-              {!moderator.isVerified && moderator.emailVerified && moderator.accountStatus === 'active' && !moderator.isSuspended && (
+              {!moderator.platformRoleVerifiedAt && moderator.emailVerified && moderator.accountStatus === 'active' && !moderator.isSuspended && (
                 <button type="button" disabled={Boolean(updatingId)} onClick={() => void verifyExistingModerator()} className="mt-4 rounded-lg border border-violet-400/40 px-3 py-2 text-xs font-semibold text-violet-200 hover:bg-violet-500/10 disabled:opacity-50">
                   {updatingId === moderator.id ? 'Verifying…' : 'Admin-verify existing Moderator'}
                 </button>
