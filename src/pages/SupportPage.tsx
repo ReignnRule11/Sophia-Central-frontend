@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, useRef, type FormEvent } from 'react';
 import { AlertCircle, CheckCircle2, FileImage, Link2, LifeBuoy, Loader2, Paperclip, Send, RefreshCw } from 'lucide-react';
 import { supportApi, type SupportRequest } from '../api/support';
 import { supportAttachmentApi } from '../api/upload';
@@ -26,8 +26,10 @@ export function SupportPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [confirmation, setConfirmation] = useState('');
+  const submittingRef = useRef(false);
 
   const loadRequests = useCallback(async () => {
+    setError('');
     try {
       setLoading(true);
       const result = await supportApi.mineActivity();
@@ -64,6 +66,7 @@ export function SupportPage() {
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submittingRef.current) return;
     setError(''); setConfirmation('');
     const links = linkText.split('\n').map(value => value.trim()).filter(Boolean);
     if (links.length > 5) { setError('Add no more than five links.'); return; }
@@ -71,6 +74,7 @@ export function SupportPage() {
       setError('Enter valid links beginning with https:// or http://.');
       return;
     }
+    submittingRef.current = true;
     setSending(true);
     try {
       const result = await supportApi.create({ subject: subject.trim(), category, description: description.trim(), links, attachments });
@@ -79,7 +83,7 @@ export function SupportPage() {
       await loadRequests();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to send your support request. Please try again.');
-    } finally { setSending(false); }
+    } finally { submittingRef.current = false; setSending(false); }
   };
 
   const displayName = user?.firstName || user?.name || 'there';
