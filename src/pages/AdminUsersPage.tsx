@@ -88,7 +88,7 @@ export function AdminUsersPage() {
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {users.map(item => {
-                  const eligible = ['student', 'lecturer', 'reviewer'].includes(item.role) && item.isVerified === true;
+                  const eligible = ['student', 'lecturer'].includes(item.role) && item.isVerified === true && !('hasReviewerAccess' in item && item.hasReviewerAccess === true);
                   return (
                     <tr key={item.id} className="text-slate-300">
                       <td className="px-4 py-4"><div className="font-medium text-white">{item.firstName || item.name || 'Unnamed user'} {item.lastName || ''}</div><div className="text-xs text-slate-500">{item.email}</div></td>
