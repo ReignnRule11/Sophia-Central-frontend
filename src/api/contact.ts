@@ -6,6 +6,7 @@ export type ContactEnquiryPayload = {
   category: string;
   subject: string;
   message: string;
+  website?: string;
 };
 
 export const contactApi = {
