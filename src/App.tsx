@@ -79,8 +79,8 @@ const PUBLIC_PAGE_SEO: Record<string, { title: string; description: string }> = 
     description: 'Connect with the wider Sophis Central community, follow official channels and get in touch from anywhere.',
   },
   '/contact': {
-    title: 'Contact Sophis Central | Student and Lecturer Support',
-    description: 'Get in touch with Sophis Central for platform questions, academic partnerships, support and general enquiries.',
+    title: 'Contact Sophis Central | General Enquiries',
+    description: 'Contact Sophis Central for general enquiries, feedback, partnerships and questions about the platform.',
   },
   '/careers': {
     title: 'Careers | Build the Future of Academic Learning with Sophis Central',
