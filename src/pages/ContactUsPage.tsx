@@ -32,7 +32,6 @@ export function ContactUsPage() {
     event.preventDefault();
     setError('');
     setConfirmation('');
-    if (website.trim()) return;
     setSending(true);
     try {
       const result = await contactApi.submit({
@@ -41,6 +40,7 @@ export function ContactUsPage() {
         category,
         subject: subject.trim(),
         message: message.trim(),
+        website,
       });
       setConfirmation(result.message);
       setName('');
@@ -78,7 +78,7 @@ export function ContactUsPage() {
             <label className="block"><span className="mb-2 block text-sm font-semibold text-[#091F5B]">Enquiry category *</span><select value={category} onChange={event => setCategory(event.target.value)} className="brand-input">{categories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
             <label className="block"><span className="mb-2 block text-sm font-semibold text-[#091F5B]">Subject *</span><input required minLength={4} maxLength={180} value={subject} onChange={event => setSubject(event.target.value)} placeholder="Briefly describe your enquiry" className="brand-input"/></label>
             <label className="block"><span className="mb-2 block text-sm font-semibold text-[#091F5B]">Your message *</span><textarea required minLength={10} maxLength={10000} rows={7} value={message} onChange={event => setMessage(event.target.value)} placeholder="Tell us how we can help. Please include relevant context, but never include passwords, one-time passcodes or full payment-card details." className="brand-input"/><span className="mt-1 block text-right text-xs text-[#71809A]">{message.length}/10,000</span></label>
-            <div aria-hidden="true" className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"><label>Leave this field empty<input tabIndex={-1} autoComplete="off" value={website} onChange={event => setWebsite(event.target.value)}/></label></div>
+            <div aria-hidden="true" className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"><label>Leave this field empty<input name="website" tabIndex={-1} autoComplete="off" value={website} onChange={event => setWebsite(event.target.value)}/></label></div>
             <div className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4 text-xs leading-5 text-[#5C6982]"><div className="flex items-start gap-2"><ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#6121D0]"/><p>This form is for public enquiries only. Students and lecturers with Sophis Central accounts should use the Support section after signing in to submit and track platform support tickets.</p></div></div>
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between"><p className="inline-flex items-center gap-2 text-xs text-[#71809A]"><Mail size={14}/> No account or email verification required.</p><button type="submit" disabled={sending} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#6121D0] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#2C36D9] disabled:opacity-50">{sending ? <Loader2 size={17} className="animate-spin"/> : <Send size={17}/>} {sending ? 'Sending enquiry…' : 'Send enquiry'}</button></div>
           </form>
