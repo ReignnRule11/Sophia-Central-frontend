@@ -49,7 +49,7 @@ export const supportApi = {
     apiRequest<SupportRequest[]>(`/support-requests/queue?status=${status}`),
   updateStatus: (id: string, status: 'under_review' | 'reviewed') =>
     apiRequest<SupportRequest>(`/support-requests/${encodeURIComponent(id)}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
-  escalate: (id: string, targetRole: 'moderator' | 'admin', reason: string) =>
+  escalate: (id: string, targetRole: 'admin', reason: string) =>
     apiRequest<{ success: boolean; ticketNumber: string; notified: number }>(`/support-requests/${encodeURIComponent(id)}/escalate`, { method: 'PATCH', body: JSON.stringify({ targetRole, reason }) }),
   conclude: (id: string, resolutionMessage: string) =>
     apiRequest<SupportRequest>(`/support-requests/${encodeURIComponent(id)}/respond`, {
