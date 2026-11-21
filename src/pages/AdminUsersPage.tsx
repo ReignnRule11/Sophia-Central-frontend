@@ -88,14 +88,14 @@ export function AdminUsersPage() {
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {users.map(item => {
-                  const eligible = ['student', 'lecturer'].includes(item.role) && item.isVerified === true && !('hasReviewerAccess' in item && item.hasReviewerAccess === true);
+                  const eligible = ['student', 'lecturer'].includes(item.role) && item.emailVerified === true && item.accountStatus === 'active' && item.isSuspended !== true && !('hasReviewerAccess' in item && item.hasReviewerAccess === true);
                   return (
                     <tr key={item.id} className="text-slate-300">
                       <td className="px-4 py-4"><div className="font-medium text-white">{item.firstName || item.name || 'Unnamed user'} {item.lastName || ''}</div><div className="text-xs text-slate-500">{item.email}</div></td>
                       <td className="px-4 py-4 capitalize">{item.role}</td>
                       <td className="px-4 py-4">{item.institution || 'Not set'}</td>
                       <td className="px-4 py-4">{item.isProfileComplete ? <span className="text-emerald-300">Complete</span> : <span className="text-amber-300">Incomplete</span>}</td>
-                      <td className="px-4 py-4">{item.isVerified ? <span className="text-emerald-300">Verified</span> : <span className="text-amber-300">Unverified</span>}</td>
+                      <td className="px-4 py-4">{item.emailVerified ? <span className="text-emerald-300">Verified</span> : <span className="text-amber-300">Unverified</span>}</td>
                       <td className="px-4 py-4">
                         <div className="flex min-w-52 flex-wrap gap-2">
                           {(['support', 'moderator'] as PlatformRole[]).map(role => {
@@ -105,7 +105,7 @@ export function AdminUsersPage() {
                               : <button key={role} type="button" disabled={!eligible || Boolean(updatingId) || platformQuery.isError} onClick={() => setAssignment({ id: item.id, name: `${item.firstName || item.name || 'This user'} ${item.lastName || ''}`.trim(), role })} className="rounded-lg border border-violet-400/40 px-3 py-2 text-xs font-semibold text-violet-200 hover:bg-violet-500/10 disabled:cursor-not-allowed disabled:opacity-40">{updatingId === item.id ? 'Linking…' : `Link ${role === 'support' ? 'Support' : 'Moderator'}`}</button>;
                           })}
                         </div>
-                        {!eligible && ['student', 'lecturer', 'reviewer'].includes(item.role) && <p className="mt-2 text-xs text-slate-500">Requires an account verified by an Admin.</p>}
+                        {!eligible && ['student', 'lecturer', 'reviewer'].includes(item.role) && <p className="mt-2 text-xs text-slate-500">Requires a verified email and an active, unsuspended account without separate Reviewer access.</p>}
                       </td>
                     </tr>
                   );
