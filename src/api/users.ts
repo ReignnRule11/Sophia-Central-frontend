@@ -7,7 +7,7 @@ export interface PlatformAccount {
   firstName?: string;
   lastName?: string;
   role: 'support' | 'moderator';
-  isVerified: boolean;
+  platformRoleVerifiedAt?: string | null;
   emailVerified: boolean;
   isSuspended: boolean;
   accountStatus: string;
