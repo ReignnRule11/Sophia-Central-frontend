@@ -70,7 +70,19 @@ export function AdminUsersPage() {
                   <div className="mt-3">
                     <p className="font-semibold text-white">{[account.firstName, account.lastName].filter(Boolean).join(' ') || 'Platform account'}</p>
                     <p className="mt-1 break-all text-sm text-slate-400">{account.email}</p>
-                    <p className="mt-3 text-xs text-emerald-300">{account.emailVerified ? 'Email verified' : 'Email not verified'} · {account.accountStatus} · {account.isSuspended ? 'Suspended' : 'Active'}</p>
+                    <p className="mt-3 text-xs text-emerald-300">{account.isVerified ? 'Admin verified' : 'Admin verification pending'} · {account.emailVerified ? 'Email verified' : 'Email not verified'} · {account.accountStatus} · {account.isSuspended ? 'Suspended' : 'Active'}</p>
+                    {!account.isVerified && account.emailVerified && account.accountStatus === 'active' && !account.isSuspended && <button type="button" disabled={Boolean(updatingId)} onClick={async () => {
+                      setUpdatingId(account.id); setActionError(''); setActionNotice('');
+                      try {
+                        await usersApi.assignPlatformRole(account.id, role);
+                        setActionNotice(`The designated ${role === 'support' ? 'Support' : 'Moderator'} account has been Admin-verified.`);
+                        await platformQuery.refetch();
+                      } catch (cause) {
+                        setActionError(cause instanceof Error ? cause.message : 'Unable to verify this platform account.');
+                      } finally {
+                        setUpdatingId(null);
+                      }
+                    }} className="mt-3 rounded-lg border border-violet-400/40 px-3 py-2 text-xs font-semibold text-violet-200 hover:bg-violet-500/10 disabled:opacity-50">Verify platform account</button>}
                   </div>
                 ) : <p className="mt-3 text-sm text-amber-300">No account linked yet. Select an eligible verified account below.</p>}
             </article>
