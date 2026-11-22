@@ -25,8 +25,9 @@ const actionLabels: Record<DecisionAction, string> = {
   resolved: 'Resolve escalation',
 };
 
-function DecisionPanel({ decision, busy, onSubmit }: {
+function DecisionPanel({ decision, history = [], busy, onSubmit }: {
   decision?: AdminEscalationDecision | null;
+  history?: AdminEscalationDecision[];
   busy?: boolean;
   onSubmit: (action: DecisionAction, note: string) => Promise<unknown>;
 }) {
@@ -52,6 +53,7 @@ function DecisionPanel({ decision, busy, onSubmit }: {
       <p className="mt-1 whitespace-pre-wrap text-slate-700 dark:text-slate-300">{decision.note}</p>
       <p className="mt-2 text-xs text-slate-500">{decision.actorEmail || 'Admin'} · {dateLabel(decision.createdAt)}</p>
     </div> : <p className="mt-2 text-xs text-slate-600 dark:text-slate-300">No Admin decision has been recorded yet.</p>}
+    {history.length > 1 && <details className="mt-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-700 dark:text-slate-200">View full decision history ({history.length})</summary><ol className="mt-2 space-y-2">{history.map(item => <li key={item.id} className="border-l-2 border-violet-300 pl-3"><p className="font-semibold capitalize text-slate-800 dark:text-slate-100">{item.action.replace(/_/g, ' ')}</p><p className="whitespace-pre-wrap text-slate-600 dark:text-slate-300">{item.note}</p><p className="text-xs text-slate-500">{item.actorEmail || 'Admin'} · {dateLabel(item.createdAt)}</p></li>)}</ol></details>}
     {resolved ? <p className="mt-3 text-sm font-semibold text-emerald-800 dark:text-emerald-300">This escalation is resolved. Its original Support or Moderation record remains unchanged.</p> : <form onSubmit={submit} className="mt-3 space-y-3">
       <label className="block text-xs font-semibold text-slate-700 dark:text-slate-200">Admin action
         <select value={action} onChange={event => setAction(event.target.value as DecisionAction)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-white">
@@ -81,7 +83,7 @@ function SupportEscalationCard({ ticket, onDecision, busy }: {
     <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50/70 p-3"><p className="text-xs font-semibold uppercase tracking-wider text-amber-900">Support escalation reason</p><p className="mt-1 whitespace-pre-wrap text-sm leading-5 text-amber-950">{ticket.escalationReason || 'Historical escalation; reason not available.'}</p></div>
     {(ticket.attachments?.length || ticket.links?.length) ? <div className="mt-4 flex flex-wrap gap-3 text-sm">{ticket.attachments?.map((url, index) => <a key={url} href={url} target="_blank" rel="noreferrer" className="font-semibold text-violet-700 underline">Attachment {index + 1}</a>)}{ticket.links?.map(url => <a key={url} href={url} target="_blank" rel="noreferrer" className="break-all font-semibold text-violet-700 underline">Related link</a>)}</div> : null}
     <p className="mt-4 text-xs text-slate-500">Escalated: {dateLabel(ticket.escalatedAt)} · Submitted: {dateLabel(ticket.createdAt)}</p>
-    <DecisionPanel decision={ticket.adminDecision} busy={busy} onSubmit={(action, note) => onDecision(ticket.id, action, note)}/>
+    <DecisionPanel decision={ticket.adminDecision} history={ticket.adminDecisionHistory} busy={busy} onSubmit={(action, note) => onDecision(ticket.id, action, note)}/>
   </article>;
 }
 
@@ -99,7 +101,7 @@ function ModerationEscalationCard({ report, onDecision, busy }: {
     <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50/70 p-3"><p className="text-xs font-semibold uppercase tracking-wider text-amber-900">Moderator escalation reason</p><p className="mt-1 whitespace-pre-wrap text-sm leading-5 text-amber-950">{report.escalationReason || 'Escalation reason not available.'}</p></div>
     {report.assignedModerator && <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">Assigned Moderator: <span className="font-medium text-slate-900 dark:text-white"><AccountLabel {...(report.assignedModerator ?? {})}/></span></p>}
     <p className="mt-4 text-xs text-slate-500">Escalated: {dateLabel(report.escalatedAt)} · Reported: {dateLabel(report.createdAt)}</p>
-    <DecisionPanel decision={report.adminDecision} busy={busy} onSubmit={(action, note) => onDecision(report.id, action, note)}/>
+    <DecisionPanel decision={report.adminDecision} history={report.adminDecisionHistory} busy={busy} onSubmit={(action, note) => onDecision(report.id, action, note)}/>
   </article>;
 }
 
