@@ -32,7 +32,7 @@ function PlatformAccountCard({
 }) {
   return <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
     <div className="flex items-start justify-between gap-3">
-      <div><p className="text-xs font-semibold uppercase tracking-wider text-violet-700">{title}</p><h3 className="mt-2 text-lg font-bold text-slate-950">{account ? [account.firstName, account.lastName].filter(Boolean).join(' ') || 'Platform account' : 'Not provisioned'}</h3></div>
+      <div><p className="text-xs font-semibold uppercase tracking-wider text-violet-700">{title}</p><h3 className="mt-2 text-lg font-bold text-slate-950">{account ? [account.firstName, account.lastName].filter(Boolean).join(' ') || 'Platform account'  : 'Unavailable'}</h3></div>
       <span className="rounded-xl bg-violet-50 p-3 text-violet-700"><UserCog size={20}/></span>
     </div>
     {account ? <>
