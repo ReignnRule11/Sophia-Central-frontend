@@ -29,6 +29,37 @@ export interface AdminOverview {
   };
 }
 
+export interface AdminSupportEscalation {
+  id: string;
+  ticketNumber: string;
+  subject: string;
+  category: string;
+  description: string;
+  status: string;
+  escalationReason?: string | null;
+  escalatedAt?: string | null;
+  createdAt: string;
+  attachments?: string[];
+  links?: string[];
+  user?: { firstName?: string; lastName?: string; email?: string };
+}
+
+export interface AdminModerationEscalation {
+  id: string;
+  ticketNumber: string;
+  targetType: string;
+  targetLabel: string;
+  reason: string;
+  details?: string | null;
+  targetSnapshot?: Record<string, unknown>;
+  status: string;
+  escalationReason?: string | null;
+  escalatedAt?: string | null;
+  createdAt: string;
+  reporter?: { firstName?: string; lastName?: string; email?: string };
+  assignedModerator?: { firstName?: string; lastName?: string; email?: string };
+}
+
 export interface AdminAuditEvent {
   id: string;
   eventType: 'platform_role' | 'reviewer_application' | 'reviewer_assignment' | 'resource_review' | 'admin_bootstrap';
@@ -62,6 +93,8 @@ export const usersApi = {
   list: () => apiRequest<User[]>('/users'),
   platformAccounts: () => apiRequest<PlatformAccount[]>('/users/platform-accounts'),
   adminOverview: () => apiRequest<AdminOverview>('/users/admin/overview'),
+  adminSupportEscalations: () => apiRequest<AdminSupportEscalation[]>('/support-requests/admin/escalations'),
+  adminModerationEscalations: () => apiRequest<AdminModerationEscalation[]>('/moderation/reports/admin/escalations'),
   adminAuditEvents: (limit = 50) => apiRequest<AdminAuditEvent[]>(`/users/admin/audit-events?limit=${limit}`),
   updatePlatformRoleAccess: (id: string, action: 'suspend' | 'restore' | 'revoke', reason?: string) =>
     apiRequest<PlatformAccount>(`/users/${encodeURIComponent(id)}/platform-access`, {
