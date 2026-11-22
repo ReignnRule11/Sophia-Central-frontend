@@ -10,6 +10,8 @@ const statuses: Array<{ value: ContentReportStatus | 'all'; label: string }> = [
 const label = (value: string) => value.replace(/_/g, ' ');
 
 export function ContentReportsPanel() {
+  const { user } = useAuth();
+  const isModerator = user?.role === 'moderator';
   const [items, setItems] = useState<ContentReport[]>([]);
   const [filter, setFilter] = useState<ContentReportStatus | 'all'>('pending');
   const [notes, setNotes] = useState<Record<string, string>>({});
