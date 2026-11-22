@@ -62,7 +62,7 @@ export interface AdminModerationEscalation {
 
 export interface AdminAuditEvent {
   id: string;
-  eventType: 'platform_role' | 'reviewer_application' | 'reviewer_assignment' | 'resource_review' | 'admin_bootstrap';
+  eventType: 'platform_role' | 'reviewer_application' | 'reviewer_assignment' | 'resource_review' | 'admin_bootstrap' | 'admin_escalation';
   action: string;
   role: string;
   actorId?: string | null;
