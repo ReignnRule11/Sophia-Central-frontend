@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, LifeBuoy, Flag, ClipboardCheck } from 'lucide-react';
 import { usersApi, type AdminEscalationDecision, type AdminModerationEscalation, type AdminSupportEscalation } from '../api/users';
@@ -34,7 +34,7 @@ function DecisionPanel({ decision, busy, onSubmit }: {
   const [note, setNote] = useState('');
   const resolved = decision?.action === 'resolved';
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (note.trim().length < 10 || busy || resolved) return;
     onSubmit(action, note.trim());
@@ -114,6 +114,10 @@ export function AdminEscalationsPage() {
 
   if (supportQuery.isLoading || moderationQuery.isLoading) return <LoadingState message="Loading Admin escalation queues..."/>;
   if (supportQuery.isError || moderationQuery.isError) return <ErrorState message="Unable to load both escalation queues." onRetry={() => { void supportQuery.refetch(); void moderationQuery.refetch(); }}/>;
+
+  if (supportDecision.isError || moderationDecision.isError) {
+    // The failed mutation remains visible so Admin can correct the note or retry.
+  }
 
   const support: AdminSupportEscalation[] = supportQuery.data ?? [];
   const moderation: AdminModerationEscalation[] = moderationQuery.data ?? [];
