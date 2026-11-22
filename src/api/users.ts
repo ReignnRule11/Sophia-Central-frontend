@@ -51,6 +51,7 @@ export interface PlatformAccount {
   lastName?: string;
   role: 'support' | 'moderator';
   platformRoleVerifiedAt?: string | null;
+  platformRoleStatus: 'pending' | 'approved' | 'suspended' | 'revoked';
   emailVerified: boolean;
   isSuspended: boolean;
   accountStatus: string;
@@ -62,6 +63,10 @@ export const usersApi = {
   platformAccounts: () => apiRequest<PlatformAccount[]>('/users/platform-accounts'),
   adminOverview: () => apiRequest<AdminOverview>('/users/admin/overview'),
   adminAuditEvents: (limit = 50) => apiRequest<AdminAuditEvent[]>(`/users/admin/audit-events?limit=${limit}`),
+  updatePlatformRoleAccess: (id: string, action: 'suspend' | 'restore' | 'revoke', reason?: string) =>
+    apiRequest<PlatformAccount>(`/users/${encodeURIComponent(id)}/platform-access`, {
+      method: 'PATCH', body: JSON.stringify({ action, ...(reason ? { reason } : {}) }),
+    }),
   assignPlatformRole: (id: string, role: 'support' | 'moderator') =>
     apiRequest<User>(`/users/${encodeURIComponent(id)}/platform-role`, {
       method: 'PATCH',
