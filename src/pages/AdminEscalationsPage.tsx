@@ -115,10 +115,6 @@ export function AdminEscalationsPage() {
   if (supportQuery.isLoading || moderationQuery.isLoading) return <LoadingState message="Loading Admin escalation queues..."/>;
   if (supportQuery.isError || moderationQuery.isError) return <ErrorState message="Unable to load both escalation queues." onRetry={() => { void supportQuery.refetch(); void moderationQuery.refetch(); }}/>;
 
-  if (supportDecision.isError || moderationDecision.isError) {
-    // The failed mutation remains visible so Admin can correct the note or retry.
-  }
-
   const support: AdminSupportEscalation[] = supportQuery.data ?? [];
   const moderation: AdminModerationEscalation[] = moderationQuery.data ?? [];
   return <div className="space-y-7">
@@ -132,6 +128,8 @@ export function AdminEscalationsPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900"><div className="flex items-center gap-3"><LifeBuoy className="text-violet-700" size={20}/><p className="text-sm font-medium text-slate-600 dark:text-slate-300">Support escalations</p></div><p className="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{support.length}</p></div>
       <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900"><div className="flex items-center gap-3"><Flag className="text-violet-700" size={20}/><p className="text-sm font-medium text-slate-600 dark:text-slate-300">Moderation escalations</p></div><p className="mt-3 text-3xl font-bold text-slate-950 dark:text-white">{moderation.length}</p></div>
     </div>
+
+    {(supportDecision.isError || moderationDecision.isError) && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200">The Admin decision could not be saved. Check the note and your connection, then retry. No decision was recorded unless the save succeeded.</p>}
 
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-2"><LifeBuoy size={19} className="text-violet-700"/><h3 className="text-lg font-bold text-slate-950 dark:text-white">Support escalations</h3></div><span className="text-xs text-slate-500">Latest 100</span></div>
