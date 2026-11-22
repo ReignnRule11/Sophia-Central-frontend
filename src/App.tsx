@@ -347,7 +347,11 @@ function LoginPage() {
   const [searchParams] = useSearchParams();
   const accountNotice = searchParams.get('account');
   const registrationIntent = searchParams.get('intent');
-  const [submitError, setSubmitError] = useState('');\n  const [mfaChallenge, setMfaChallenge] = useState('');\n  const [mfaSetupRequired, setMfaSetupRequired] = useState(false);\n  const [mfaProvisioningUri, setMfaProvisioningUri] = useState('');\n  const [mfaSecret, setMfaSecret] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [mfaChallenge, setMfaChallenge] = useState('');
+  const [mfaSetupRequired, setMfaSetupRequired] = useState(false);
+  const [mfaProvisioningUri, setMfaProvisioningUri] = useState('');
+  const [mfaSecret, setMfaSecret] = useState('');
   const [showDeletionCancellation, setShowDeletionCancellation] = useState(false);
   const [cancelEmail, setCancelEmail] = useState('');
   const [cancelPassword, setCancelPassword] = useState('');
@@ -394,7 +398,8 @@ function LoginPage() {
       setCancelError(error instanceof Error ? error.message : 'Unable to cancel the deletion request.');
     } finally { setCancellingDeletion(false); }
   };
-  if (mfaChallenge) return <AdminMfaChallengePage challengeToken={mfaChallenge} setupRequired={mfaSetupRequired} provisioningUri={mfaProvisioningUri} secret={mfaSecret} onBack={() => { setMfaChallenge(''); setMfaProvisioningUri(''); setMfaSecret(''); setSubmitError(''); }} />;\n  if (isAuthenticated && user) return <Navigate to={destinationForUser(user)} replace />;
+  if (mfaChallenge) return <AdminMfaChallengePage challengeToken={mfaChallenge} setupRequired={mfaSetupRequired} provisioningUri={mfaProvisioningUri} secret={mfaSecret} onBack={() => { setMfaChallenge(''); setMfaProvisioningUri(''); setMfaSecret(''); setSubmitError(''); }} />;
+  if (isAuthenticated && user) return <Navigate to={destinationForUser(user)} replace />;
   return (
     <main className="min-h-screen bg-[#F3F6FC] px-4 py-6 sm:px-6 sm:py-10">
       <div className="mx-auto grid min-h-[680px] w-full max-w-6xl overflow-hidden rounded-[28px] border border-[#DCE4EF] bg-white shadow-[0_24px_70px_rgba(7,30,84,0.10)] lg:grid-cols-[0.92fr_1.08fr]">
