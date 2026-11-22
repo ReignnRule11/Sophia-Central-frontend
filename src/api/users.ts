@@ -29,6 +29,14 @@ export interface AdminOverview {
   };
 }
 
+export interface AdminEscalationDecision {
+  id: string;
+  action: 'under_review' | 'awaiting_information' | 'returned_to_team' | 'resolved';
+  note: string;
+  actorEmail?: string | null;
+  createdAt: string;
+}
+
 export interface AdminSupportEscalation {
   id: string;
   ticketNumber: string;
@@ -95,6 +103,14 @@ export const usersApi = {
   adminOverview: () => apiRequest<AdminOverview>('/users/admin/overview'),
   adminSupportEscalations: () => apiRequest<AdminSupportEscalation[]>('/support-requests/admin/escalations'),
   adminModerationEscalations: () => apiRequest<AdminModerationEscalation[]>('/moderation/reports/admin/escalations'),
+  recordAdminSupportDecision: (id: string, action: AdminEscalationDecision['action'], note: string) =>
+    apiRequest<AdminEscalationDecision>(`/support-requests/${encodeURIComponent(id)}/admin-decision`, {
+      method: 'POST', body: JSON.stringify({ action, note }),
+    }),
+  recordAdminModerationDecision: (id: string, action: AdminEscalationDecision['action'], note: string) =>
+    apiRequest<AdminEscalationDecision>(`/moderation/reports/${encodeURIComponent(id)}/admin-decision`, {
+      method: 'POST', body: JSON.stringify({ action, note }),
+    }),
   adminAuditEvents: (limit = 50) => apiRequest<AdminAuditEvent[]>(`/users/admin/audit-events?limit=${limit}`),
   updatePlatformRoleAccess: (id: string, action: 'suspend' | 'restore' | 'revoke', reason?: string) =>
     apiRequest<PlatformAccount>(`/users/${encodeURIComponent(id)}/platform-access`, {
