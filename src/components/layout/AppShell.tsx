@@ -18,6 +18,7 @@ import {
   BriefcaseBusiness,
   MessageCircle,
   Flag,
+  Activity,
 } from 'lucide-react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -81,6 +82,7 @@ const adminNav = [
   { label: 'Dashboard', href: '/admin', icon: LayoutGrid },
   { label: 'Platform accounts', href: '/admin/accounts', icon: Users },
   { label: 'Reviewer governance', href: '/admin/reviewers?tab=applications', icon: ShieldCheck },
+  { label: 'Audit history', href: '/admin/audit', icon: Activity },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
