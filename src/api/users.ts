@@ -69,6 +69,7 @@ export interface AdminModerationEscalation {
   reporter?: { firstName?: string; lastName?: string; email?: string };
   assignedModerator?: { firstName?: string; lastName?: string; email?: string };
   adminDecision?: AdminEscalationDecision | null;
+  adminDecisionHistory?: AdminEscalationDecision[];
 }
 
 export interface AdminAuditEvent {
