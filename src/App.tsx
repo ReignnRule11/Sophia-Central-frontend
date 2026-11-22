@@ -382,6 +382,10 @@ function LoginPage() {
         navigate(`/login?intent=${encodeURIComponent(registrationIntent)}`, { replace: true });
       }
     } catch (error) {
+      setMfaChallenge('');
+      setMfaSetupRequired(false);
+      setMfaProvisioningUri('');
+      setMfaSecret('');
       setSubmitError(error instanceof Error ? error.message : 'Sign in failed. Check your email or username and password, then try again.');
     }
   };
