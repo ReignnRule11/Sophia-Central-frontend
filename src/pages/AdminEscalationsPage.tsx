@@ -51,7 +51,7 @@ export function AdminEscalationsPage() {
     <header className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-violet-950 p-6 text-white sm:p-8">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Admin workspace · Escalations</p>
       <h2 className="mt-2 text-2xl font-bold">Escalation centre</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Review issues escalated by the designated Support and Moderator accounts. Each escalation is stored with its reason and originator for traceability.</p>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Review issues escalated by the designated Support and Moderator accounts. New escalations are stored with their reason, originator and timestamp. Older Support escalations may not have retained their original reason.</p>
     </header>
 
     <div className="grid gap-4 sm:grid-cols-2">
