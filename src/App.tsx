@@ -1,5 +1,5 @@
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from './context/AuthContext';
@@ -285,7 +285,7 @@ function AdminMfaChallengePage({ challengeToken, setupRequired, provisioningUri,
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
 
-  const submit = async (event: React.FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
     setError('');
     setBusy(true);
@@ -327,7 +327,7 @@ function AdminMfaChallengePage({ challengeToken, setupRequired, provisioningUri,
         {setupRequired && <div className="mt-5 space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <div><p className="text-sm font-semibold text-slate-900">1. Add authenticator</p><p className="mt-1 text-xs leading-5 text-slate-600">In your authenticator app, choose to add an account manually and use this key.</p></div>
           <code className="block break-all rounded-xl bg-white p-3 text-center text-lg font-bold tracking-[0.16em] text-violet-900">{secret}</code>
-          <button type="button" onClick={() => void navigator.clipboard?.writeText(secret)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700">Copy setup key</button>
+          <button type="button" onClick={() => { void navigator.clipboard?.writeText(secret).catch(() => undefined); }} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700">Copy setup key</button>
           <details><summary className="cursor-pointer text-xs font-medium text-slate-600">Provisioning URI (advanced)</summary><code className="mt-2 block break-all text-xs text-slate-500">{provisioningUri}</code></details>
         </div>}
         <form onSubmit={submit} className="mt-6 space-y-4">
