@@ -28,7 +28,7 @@ const actionLabels: Record<DecisionAction, string> = {
 function DecisionPanel({ decision, busy, onSubmit }: {
   decision?: AdminEscalationDecision | null;
   busy?: boolean;
-  onSubmit: (action: DecisionAction, note: string) => void;
+  onSubmit: (action: DecisionAction, note: string) => Promise<unknown>;
 }) {
   const [action, setAction] = useState<DecisionAction>('under_review');
   const [note, setNote] = useState('');
@@ -37,8 +37,12 @@ function DecisionPanel({ decision, busy, onSubmit }: {
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (note.trim().length < 10 || busy || resolved) return;
-    onSubmit(action, note.trim());
-    setNote('');
+    try {
+      await onSubmit(action, note.trim());
+      setNote('');
+    } catch {
+      // Keep the note in place so Admin can retry after a failed request.
+    }
   }
 
   return <div className="mt-5 rounded-xl border border-violet-200 bg-violet-50/60 p-4 dark:border-violet-900 dark:bg-violet-950/30">
@@ -133,12 +137,12 @@ export function AdminEscalationsPage() {
 
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-2"><LifeBuoy size={19} className="text-violet-700"/><h3 className="text-lg font-bold text-slate-950 dark:text-white">Support escalations</h3></div><span className="text-xs text-slate-500">Latest 100</span></div>
-      {support.length ? support.map(ticket => <SupportEscalationCard key={ticket.id} ticket={ticket} busy={supportDecision.isPending} onDecision={(id, action, note) => supportDecision.mutate({ id, action, note })}/>) : <p className="rounded-xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">No Support escalations have been received.</p>}
+      {support.length ? support.map(ticket => <SupportEscalationCard key={ticket.id} ticket={ticket} busy={supportDecision.isPending} onDecision={(id, action, note) => supportDecision.mutateAsync({ id, action, note })}/>) : <p className="rounded-xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">No Support escalations have been received.</p>}
     </section>
 
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-2"><Flag size={19} className="text-violet-700"/><h3 className="text-lg font-bold text-slate-950 dark:text-white">Moderation escalations</h3></div><span className="text-xs text-slate-500">Latest 100</span></div>
-      {moderation.length ? moderation.map(report => <ModerationEscalationCard key={report.id} report={report} busy={moderationDecision.isPending} onDecision={(id, action, note) => moderationDecision.mutate({ id, action, note })}/>) : <p className="rounded-xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">No Moderation escalations have been received.</p>}
+      {moderation.length ? moderation.map(report => <ModerationEscalationCard key={report.id} report={report} busy={moderationDecision.isPending} onDecision={(id, action, note) => moderationDecision.mutateAsync({ id, action, note })}/>) : <p className="rounded-xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">No Moderation escalations have been received.</p>}
     </section>
 
     <p className="flex items-start gap-2 text-xs leading-5 text-slate-500"><AlertTriangle size={15} className="mt-0.5 shrink-0"/>Admin decisions are append-only and independently audited. Returning a case notifies the originating team; requesting information or recording resolution notifies the person who submitted the original request/report. The Support ticket and Moderation report statuses are not overwritten by this workflow.</p>
