@@ -5,7 +5,7 @@ export interface AdminOverview {
   generatedAt: string;
   admin: { id: string; email: string; firstName?: string; lastName?: string; role: 'admin'; emailVerified: boolean; isSuspended: boolean; accountStatus: string };
   accounts: { registeredAccounts: number; activeVerifiedAccounts: number; students: number; lecturers: number; externalReviewerAccounts: number; administrators: number };
-  platformAccounts: { total: number; pendingApproval: number; approved: number; unavailable: number };
+  platformAccounts: { total: number; pendingApproval: number; approved: number; suspended: number; revoked: number; unavailable: number };
   reviewerApplications: Record<string, number>;
   globalReviewer: null | {
     id: string;
