@@ -56,7 +56,7 @@ export function AdminDashboardPage() {
     <header className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-violet-950 p-6 text-white sm:p-8">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Sophis Central · Administration</p>
       <h2 className="mt-3 text-2xl font-bold sm:text-3xl">Platform overview</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Manage platform access, reviewer governance and operational oversight. Privileged permissions are enforced by the backend and recorded in append-only audit history.</p>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Manage platform access, reviewer governance and operational oversight. Privileged permissions are enforced by the backend and recorded in the Admin audit history.</p>
     </header>
 
     <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Platform summary">
