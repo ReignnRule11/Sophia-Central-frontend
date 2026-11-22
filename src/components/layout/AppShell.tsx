@@ -79,7 +79,7 @@ const reviewerNav = [
 
 const adminNav = [
   { label: 'Dashboard', href: '/admin', icon: LayoutGrid },
-  { label: 'Users', href: '/admin', icon: Users },
+  { label: 'Platform accounts', href: '/admin/accounts', icon: Users },
   { label: 'Reviewer governance', href: '/admin/reviewers?tab=applications', icon: ShieldCheck },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
