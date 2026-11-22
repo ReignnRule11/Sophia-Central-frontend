@@ -22,13 +22,16 @@ export interface AdminOverview {
     createdAt: string;
     lastLoginAt?: string | null;
     applicationHistoryCount: number;
+    moderationReviewCount: number;
+    assignmentEventCount: number;
+    latestModerationReview: null | { id: string; status: string; createdAt: string; resourceId: string; resourceTitle?: string | null };
     latestApplication: null | { id: string; status: string; createdAt: string; updatedAt: string; decidedAt?: string | null; decisionNote?: string | null };
   };
 }
 
 export interface AdminAuditEvent {
   id: string;
-  eventType: 'platform_role' | 'reviewer_application';
+  eventType: 'platform_role' | 'reviewer_application' | 'reviewer_assignment' | 'resource_review' | 'admin_bootstrap';
   action: string;
   role: string;
   actorId?: string | null;
