@@ -89,7 +89,7 @@ function SupportEscalationCard({ ticket, onDecision, busy }: {
 
 function ModerationEscalationCard({ report, onDecision, busy }: {
   report: AdminModerationEscalation;
-  onDecision: (id: string, action: DecisionAction, note: string) => void;
+  onDecision: (id: string, action: DecisionAction, note: string) => Promise<unknown>;
   busy?: boolean;
 }) {
   return <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
