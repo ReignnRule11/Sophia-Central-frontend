@@ -27,6 +27,9 @@ function formatDate(value: string) {
 
 function eventLabel(event: AdminAuditEvent) {
   if (event.eventType === 'platform_role') return `${event.role} account ${event.action}`;
+  if (event.eventType === 'reviewer_assignment') return `Reviewer assignment ${event.action}`;
+  if (event.eventType === 'resource_review') return `Academic resource review ${event.action}`;
+  if (event.eventType === 'admin_bootstrap') return `Admin bootstrap ${event.action}`;
   return `Reviewer application ${event.action.replace(/_/g, ' ')}`;
 }
 
@@ -73,9 +76,12 @@ export function AdminDashboardPage() {
           <p className="mt-1 text-sm text-slate-600">{globalReviewerStatus}</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Application records</p><p className="mt-1 text-xl font-bold text-slate-900">{globalReviewer.applicationHistoryCount}</p></div>
+            <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Resource reviews completed</p><p className="mt-1 text-xl font-bold text-slate-900">{globalReviewer.moderationReviewCount}</p></div>
+            <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Assignment history events</p><p className="mt-1 text-xl font-bold text-slate-900">{globalReviewer.assignmentEventCount}</p></div>
             <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Latest application</p><p className="mt-1 text-sm font-semibold capitalize text-slate-900">{globalReviewer.latestApplication?.status.replace(/_/g, ' ') ?? 'No application record'}</p></div>
           </div>
-          <p className="mt-4 text-xs leading-5 text-slate-500">This existing account and its application history are preserved. Global Reviewer authority is separate from Admin, Moderator and Support permissions.</p>
+          {globalReviewer.latestModerationReview && <p className="mt-3 text-xs leading-5 text-slate-600">Latest resource review: <span className="font-semibold">{globalReviewer.latestModerationReview.resourceTitle || 'Resource record'}</span> · {globalReviewer.latestModerationReview.status.replace(/_/g, ' ')} · {formatDate(globalReviewer.latestModerationReview.createdAt)}</p>}
+          <p className="mt-4 text-xs leading-5 text-slate-500">This existing account, application records, reviewer assignments and resource-review history are preserved. Global Reviewer authority is separate from Admin, Moderator and Support permissions.</p>
         </> : <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">The account using sophiscentral@gmail.com was not found. Do not create a replacement. Verify its existing record before changing reviewer access.</p>}
         <Link to="/admin/reviewers?tab=applications" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-900">Open reviewer governance <ArrowRight size={15}/></Link>
       </article>
