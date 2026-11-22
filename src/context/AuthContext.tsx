@@ -128,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     cacheUser(result.user);
     try { window.localStorage.setItem('sophis-central-has-authenticated', 'true'); } catch { /* Storage is optional. */ }
   }, [initializeCsrf]);
-  const register = useCallback(async (payload: RegisterPayload) {
+  const register = useCallback(async (payload: RegisterPayload) => {
     await initializeCsrf();
     const response = await authApi.register({
       email: payload.email,
