@@ -62,8 +62,8 @@ export function AdminDashboardPage() {
   if (failed) return <ErrorState message="Unable to load the complete administration overview. Check the connection and retry." onRetry={() => { void usersQuery.refetch(); void platformQuery.refetch(); void applicationsQuery.refetch(); }} />;
 
   const latestGlobalApplication = globalReviewerApplications[0];
-  const globalReviewerStatus = globalReviewer?.hasReviewerAccess
-    ? 'Academic Reviewer access active on the existing Global Reviewer identity'
+  const globalReviewerStatus = globalReviewer?.isGlobalReviewer === true && globalReviewer.hasReviewerAccess === true
+    ? 'Global Academic Reviewer authority active'
     : globalReviewer?.reviewerStatus
       ? `Reviewer status: ${globalReviewer.reviewerStatus.replace(/_/g, ' ')}`
       : 'Existing account found; reviewer capability needs review';
