@@ -51,6 +51,7 @@ export interface AdminSupportEscalation {
   links?: string[];
   user?: { firstName?: string; lastName?: string; email?: string };
   adminDecision?: AdminEscalationDecision | null;
+  adminDecisionHistory?: AdminEscalationDecision[];
 }
 
 export interface AdminModerationEscalation {
