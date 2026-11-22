@@ -70,7 +70,7 @@ export function AdminDashboardPage() {
     <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
       <article className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">
-          <div><p className="text-xs font-semibold uppercase tracking-wider text-violet-700">Existing designated identity</p><h3 className="mt-2 text-xl font-bold text-slate-950">Global Academic Reviewer</h3></div>
+          <div><p className="text-xs font-semibold uppercase tracking-wider text-violet-700">Reviewer governance</p><h3 className="mt-2 text-xl font-bold text-slate-950">Global Academic Reviewer</h3></div>
           <span className="rounded-xl bg-violet-50 p-3 text-violet-700"><ShieldCheck size={21}/></span>
         </div>
         {globalReviewer ? <>
