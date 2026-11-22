@@ -50,6 +50,7 @@ export interface AdminSupportEscalation {
   attachments?: string[];
   links?: string[];
   user?: { firstName?: string; lastName?: string; email?: string };
+  adminDecision?: AdminEscalationDecision | null;
 }
 
 export interface AdminModerationEscalation {
@@ -66,6 +67,7 @@ export interface AdminModerationEscalation {
   createdAt: string;
   reporter?: { firstName?: string; lastName?: string; email?: string };
   assignedModerator?: { firstName?: string; lastName?: string; email?: string };
+  adminDecision?: AdminEscalationDecision | null;
 }
 
 export interface AdminAuditEvent {
