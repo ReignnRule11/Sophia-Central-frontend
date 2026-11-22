@@ -35,7 +35,7 @@ function DecisionPanel({ decision, history = [], busy, onSubmit }: {
   const [note, setNote] = useState('');
   const resolved = decision?.action === 'resolved';
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (note.trim().length < 10 || busy || resolved) return;
     try {
@@ -73,7 +73,7 @@ function DecisionPanel({ decision, history = [], busy, onSubmit }: {
 
 function SupportEscalationCard({ ticket, onDecision, busy }: {
   ticket: AdminSupportEscalation;
-  onDecision: (id: string, action: DecisionAction, note: string) => void;
+  onDecision: (id: string, action: DecisionAction, note: string) => Promise<unknown>;
   busy?: boolean;
 }) {
   return <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
