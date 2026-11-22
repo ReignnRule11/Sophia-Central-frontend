@@ -62,10 +62,10 @@ export function AdminDashboardPage() {
   if (failed) return <ErrorState message="Unable to load the complete administration overview. Check the connection and retry." onRetry={() => { void usersQuery.refetch(); void platformQuery.refetch(); void applicationsQuery.refetch(); }} />;
 
   const latestGlobalApplication = globalReviewerApplications[0];
-  const globalReviewerStatus = globalReviewer?.isGlobalReviewer
-    ? 'Global Academic Reviewer access active'
+  const globalReviewerStatus = globalReviewer?.hasReviewerAccess
+    ? 'Academic Reviewer access active on the existing Global Reviewer identity'
     : globalReviewer?.reviewerStatus
-      ? `Reviewer status: ${globalReviewer.reviewerStatus.replaceAll('_', ' ')}`
+      ? `Reviewer status: ${globalReviewer.reviewerStatus.replace(/_/g, ' ')}`
       : 'Existing account found; reviewer capability needs review';
 
   return <div className="space-y-7">
@@ -93,7 +93,7 @@ export function AdminDashboardPage() {
           <p className="mt-1 text-sm text-slate-600">{globalReviewerStatus}</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Application records</p><p className="mt-1 text-xl font-bold text-slate-900">{globalReviewerApplications.length}</p></div>
-            <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Latest application</p><p className="mt-1 text-sm font-semibold capitalize text-slate-900">{latestGlobalApplication?.status?.replaceAll('_', ' ') ?? 'No application record returned'}</p></div>
+            <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs text-slate-500">Latest application</p><p className="mt-1 text-sm font-semibold capitalize text-slate-900">{latestGlobalApplication?.status?.replace(/_/g, ' ') ?? 'No application record returned'}</p></div>
           </div>
           <p className="mt-4 text-xs leading-5 text-slate-500">This is the existing account. Its identity and records must be preserved. Global Reviewer authority is limited to academic review governance and does not grant Admin, Moderator or Support permissions.</p>
         </> : <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
