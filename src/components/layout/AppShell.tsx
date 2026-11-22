@@ -83,6 +83,7 @@ const adminNav = [
   { label: 'Platform accounts', href: '/admin/accounts', icon: Users },
   { label: 'Reviewer governance', href: '/admin/reviewers?tab=applications', icon: ShieldCheck },
   { label: 'Audit history', href: '/admin/audit', icon: Activity },
+  { label: 'Escalation centre', href: '/admin/escalations', icon: LifeBuoy },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
   { label: 'My resources', href: '/my-resources', icon: Bookmark },
