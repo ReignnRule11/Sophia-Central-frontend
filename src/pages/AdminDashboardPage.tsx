@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, ShieldCheck, Users, UserCog, ClipboardList, LifeBuoy, Activity } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Users, UserCog, ClipboardList, Activity } from 'lucide-react';
 import { usersApi, type AdminAuditEvent, type AdminOverview } from '../api/users';
 import { LoadingState } from '../components/states/LoadingState';
 import { ErrorState } from '../components/states/ErrorState';
@@ -51,7 +51,7 @@ export function AdminDashboardPage() {
     ? 'Global Academic Reviewer authority active'
     : globalReviewer
       ? `Reviewer status: ${globalReviewer.reviewerStatus.replace(/_/g, ' ')}`
-      : 'Existing account was not returned; verify its identity before changing access';
+      : 'Account status unavailable';
 
   return <div className="space-y-7">
     <header className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-6 text-slate-950 shadow-sm sm:p-8 dark:border-slate-700 dark:from-slate-950 dark:via-slate-900 dark:to-violet-950 dark:text-white">
@@ -113,8 +113,5 @@ export function AdminDashboardPage() {
       </div> : <p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">No platform-role or reviewer decision events have been recorded yet.</p>}
     </section>
 
-    <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-      <div className="flex items-center gap-3"><LifeBuoy size={19} className="text-violet-700"/><div><h3 className="font-semibold text-slate-900">Privileged account provisioning</h3><p className="mt-1 text-sm leading-6 text-slate-600">Admin is provisioned through a controlled bootstrap. Support and Moderator remain unavailable to their workspaces until identity setup, verification requirements and explicit Admin approval are complete.</p></div></div>
-    </section>
   </div>;
 }
