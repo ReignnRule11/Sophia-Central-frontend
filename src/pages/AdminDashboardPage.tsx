@@ -93,6 +93,7 @@ export function AdminDashboardPage() {
           <AdminLink to="/admin/accounts" title="Platform accounts" description="Review the existing Moderator identity and dedicated Support account approval."/>
           <AdminLink to="/admin/reviewers?tab=applications" title="Reviewer governance" description="Review applications, decisions, suspensions, revocations and reviewer history."/>
           <AdminLink to="/admin/audit" title="Audit history" description="Inspect recorded platform-role and reviewer access decisions."/>
+          <AdminLink to="/admin/escalations" title="Escalation centre" description="Review issues escalated by Support and Moderation."/>
         </div>
       </article>
     </section>
