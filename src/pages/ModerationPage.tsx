@@ -21,6 +21,7 @@ export function ModerationPage() {
   const isAdmin = user?.role === 'admin';
   const isGlobalReviewer = user?.isGlobalReviewer === true;
   const canGovernReviewers = isAdmin;
+  const canManageAssignments = isAdmin || isGlobalReviewer;
   const showReviewerGovernanceAdminTools = canGovernReviewers;
   const isReviewer = user?.role === 'reviewer' || user?.hasReviewerAccess === true;
   const [items, setItems] = useState<ModerationItem[]>([]);
@@ -57,9 +58,9 @@ export function ModerationPage() {
       setItems(Array.isArray(queue) ? queue : []);
       setConflictDeclarations(Object.fromEntries((Array.isArray(queue) ? queue : []).map(item => [item.id, item.reviewConflictDeclaration ?? ''])));
       setConflictAcknowledged({});
-      if (canGovernReviewers) {
+      if (canManageAssignments) {
         try {
-          const accounts = await apiRequest<ReviewerOption[]>('/moderation/reviewers');
+          const accounts = await apiRequest<ReviewerOption[]>(isAdmin ? '/moderation/reviewers' : '/moderation/assignable-reviewers');
           setReviewers(accounts.filter((account) => account.hasReviewerAccess === true && !account.isSuspended));
         } catch {
           setReviewers([]);
