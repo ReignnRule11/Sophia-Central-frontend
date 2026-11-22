@@ -23,11 +23,11 @@ export function AdminAuditPage() {
   return <div className="space-y-6">
     <header className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-violet-950 p-6 text-white sm:p-8">
       <div className="flex items-center gap-3"><span className="rounded-xl bg-white/10 p-3"><Activity size={22}/></span><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Administration · Security</p><h2 className="mt-1 text-2xl font-bold">Audit history</h2></div></div>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Review recorded platform-role approvals and academic reviewer application decisions. These records are append-only and cannot be edited or deleted through the application.</p>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Review recorded platform-role approvals, reviewer application decisions, reviewer assignments and academic resource reviews. Audit-event records are read-only in this workspace.</p>
     </header>
 
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div><p className="text-lg font-semibold text-slate-950">Recent recorded events</p><p className="mt-1 text-sm text-slate-500">Showing the latest {events.length} events, up to 100.</p></div>
+      <div><p className="text-lg font-semibold text-slate-950">Recent recorded events</p><p className="mt-1 text-sm text-slate-500">Showing the latest {events.length} recorded events, up to 100.</p></div>
       <div className="flex gap-2 text-xs text-slate-600"><span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-3 py-1.5"><ShieldCheck size={14}/> Platform access</span><span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5"><ClipboardList size={14}/> Reviewer decisions</span></div>
     </div>
 
@@ -36,9 +36,9 @@ export function AdminAuditPage() {
         {events.map(event => <li key={`${event.eventType}-${event.id}`} className="p-4 sm:p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2"><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${event.eventType === 'platform_role' ? 'bg-violet-50 text-violet-800' : 'bg-slate-100 text-slate-700'}`}>{event.eventType === 'platform_role' ? 'Platform role' : 'Reviewer application'}</span><span className="text-sm font-semibold capitalize text-slate-950">{event.action.replace(/_/g, ' ')}{event.eventType === 'platform_role' ? ` · ${event.role}` : ''}</span></div>
+              <div className="flex flex-wrap items-center gap-2"><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${event.eventType === 'platform_role' ? 'bg-violet-50 text-violet-800' : 'bg-slate-100 text-slate-700'}`}>{event.eventType === 'platform_role' ? 'Platform role' : event.eventType === 'reviewer_application' ? 'Reviewer application' : event.eventType === 'reviewer_assignment' ? 'Reviewer assignment' : event.eventType === 'resource_review' ? 'Resource review' : 'Admin bootstrap'}</span><span className="text-sm font-semibold capitalize text-slate-950">{event.action.replace(/_/g, ' ')}{event.eventType === 'platform_role' ? ` · ${event.role}` : ''}</span></div>
               <p className="mt-2 break-words text-sm text-slate-700">Actor: <span className="font-medium">{event.actorName || event.actorEmail || 'Unavailable account'}</span></p>
-              <p className="mt-1 break-words text-sm text-slate-700">Affected account: <span className="font-medium">{event.targetName || event.targetEmail || 'Unavailable account'}</span></p>
+              <p className="mt-1 break-words text-sm text-slate-700">Affected account / record: <span className="font-medium">{event.targetName || event.targetEmail || 'Unavailable account'}</span></p>
               {event.note && <p className="mt-2 rounded-lg bg-slate-50 p-3 text-sm leading-5 text-slate-600">Decision note: {event.note}</p>}
             </div>
             <time className="shrink-0 text-xs text-slate-500">{dateLabel(event.createdAt)}</time>
