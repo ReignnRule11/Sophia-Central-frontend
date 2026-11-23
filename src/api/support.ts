@@ -27,7 +27,7 @@ export type SupportRequest = {
   user?: { id: string; firstName?: string; lastName?: string; name?: string; email: string; role: string; institution?: string; faculty?: string; department?: string; profileImage?: string } | null;
   createdAt: string;
   concludedAt?: string | null;
-  confirmationMessage?: string;
+  confirmationMessage?: string;\n  responseEmailSent?: boolean;
 };
 
 export const supportApi = {
