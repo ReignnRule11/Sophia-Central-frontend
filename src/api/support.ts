@@ -15,7 +15,9 @@ export type SupportAnalytics = {
     overdueBacklog: number;
     averageBacklogAgeHours: number;
     averageResponseMinutes: number;
+    responseCount: number;
     averageResolutionMinutes: number;
+    resolutionCount: number;
     escalatedTickets: number;
     escalationRate: number;
   };
