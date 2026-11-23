@@ -7,7 +7,7 @@ export type SupportTicketTracking = Pick<SupportRequest, 'id' | 'ticketNumber' |
 export type SupportRequest = {
   id: string;
   ticketNumber?: string;
-  userId: string | null;
+  userId: string | null;\n  requesterType?: 'registered' | 'guest';
   senderName?: string | null;
   senderEmail?: string | null;
   senderInstitution?: string | null;
