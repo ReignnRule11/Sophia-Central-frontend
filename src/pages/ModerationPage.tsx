@@ -50,7 +50,7 @@ export function ModerationPage() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [queueSearch, setQueueSearch] = useState(() => new URLSearchParams(window.location.search).get('resource') ?? '');
+  const [queueSearch, setQueueSearch] = useState(() => new URLSearchParams(window.location.search).get('resource') ?? new URLSearchParams(window.location.search).get('focus') ?? '');
   const [historySearch, setHistorySearch] = useState('');
   const [historyStatus, setHistoryStatus] = useState('all');
   const focusedResourceId = new URLSearchParams(window.location.search).get('focus');
@@ -152,7 +152,7 @@ export function ModerationPage() {
   const approvedCount = history.filter(item => String(item.status || item.resource?.moderationStatus || '').toLowerCase() === 'approved').length;
   const approvalRate = decisionsCount ? `${Math.round(approvedCount / decisionsCount * 100)}%` : '—';
   useEffect(() => {
-    const resourceId = new URLSearchParams(window.location.search).get('resource');
+    const resourceId = new URLSearchParams(window.location.search).get('resource') ?? new URLSearchParams(window.location.search).get('focus');
     if (!resourceId || loading) return;
     const target = document.getElementById(`review-resource-${resourceId}`);
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -219,7 +219,7 @@ export function ModerationPage() {
     } finally { setProcessingId(null); }
   };
 
-  const assignReviewer = async (resourceId: string) => {
+  const autoAssignReviewer = async (resourceId: string) => {\n    const reviewer = reviewerWorkloads[0];\n    if (!reviewer || processingId) return;\n    setProcessingId(resourceId); setError(''); setNotice('');\n    try {\n      await moderationApi.assignReviewer(resourceId, reviewer.id);\n      setItems(current => current.map(item => item.id === resourceId ? { ...item, assignedReviewerId: reviewer.id } : item));\n      setAssignments(current => ({ ...current, [resourceId]: reviewer.id }));\n      setNotice(`Auto-assigned to ${[reviewer.firstName, reviewer.lastName].filter(Boolean).join(' ') || reviewer.email} (lowest pending workload).`);\n    } catch (err) { setError(err instanceof Error ? err.message : 'Automatic assignment failed.'); }\n    finally { setProcessingId(null); }\n  };\n\n  const assignReviewer = async (resourceId: string) => {
     const reviewerId = assignments[resourceId];
     if (!reviewerId || processingId) return;
     setProcessingId(resourceId); setError(''); setNotice('');
@@ -299,7 +299,7 @@ export function ModerationPage() {
                       {reviewers.map((reviewer) => <option key={reviewer.id} value={reviewer.id}>{[reviewer.firstName, reviewer.lastName].filter(Boolean).join(' ') || reviewer.email} — {(reviewer.reviewerExpertise ?? []).join(', ')}</option>)}
                     </select>
                   </label>
-                  <button type="button" onClick={() => void assignReviewer(item.id)} disabled={busy || !(assignments[item.id] ?? item.assignedReviewerId)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#091F5B] px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"><UserCheck size={14} /> Assign reviewer</button>
+                  <button type="button" onClick={() => void assignReviewer(item.id)} disabled={busy || !(assignments[item.id] ?? item.assignedReviewerId)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#091F5B] px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"><UserCheck size={14} /> Assign reviewer</button>{isGlobalReviewer && !item.assignedReviewerId && <button type="button" onClick={() => void autoAssignReviewer(item.id)} disabled={busy || reviewerWorkloads.length === 0} className="inline-flex items-center justify-center gap-2 rounded-lg border border-violet-200 bg-white px-3 py-2 text-xs font-semibold text-violet-900 disabled:opacity-50">Auto-assign lowest workload</button>}
                 </div>}
                 {isReviewer && <label className="mt-4 block text-xs font-semibold text-[#091F5B]">Reviewer feedback (required for rejection or revision requests)
                   <textarea rows={2} value={notes[item.id] ?? ''} onChange={(event) => setNotes((current) => ({ ...current, [item.id]: event.target.value }))} className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-normal" placeholder="Give specific, actionable academic feedback…" />
