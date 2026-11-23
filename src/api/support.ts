@@ -7,7 +7,8 @@ export type SupportTicketTracking = Pick<SupportRequest, 'id' | 'ticketNumber' |
 export type SupportRequest = {
   id: string;
   ticketNumber?: string;
-  userId: string | null;\n  requesterType?: 'registered' | 'guest';
+  userId: string | null;
+  requesterType?: 'registered' | 'guest';
   senderName?: string | null;
   senderEmail?: string | null;
   senderInstitution?: string | null;
@@ -27,7 +28,8 @@ export type SupportRequest = {
   user?: { id: string; firstName?: string; lastName?: string; name?: string; email: string; role: string; institution?: string; faculty?: string; department?: string; profileImage?: string } | null;
   createdAt: string;
   concludedAt?: string | null;
-  confirmationMessage?: string;\n  responseEmailSent?: boolean;
+  confirmationMessage?: string;
+  responseEmailSent?: boolean;
 };
 
 export const supportApi = {
