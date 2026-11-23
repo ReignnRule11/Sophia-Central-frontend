@@ -230,7 +230,10 @@ export function ModerationPage() {
       if (declaration === 'recuse') {
         setConflictAcknowledged(current => ({ ...current, [resourceId]: false }));
         setItems(current => current.filter(item => item.id !== resourceId));
-        setNotice('You have recused yourself. The assignment has been released for independent reassignment.');
+        const currentItem = items.find(item => item.id === resourceId);
+        setNotice(isGlobalReviewer && currentItem?.assignedReviewerId && currentItem.assignedReviewerId !== user?.id
+          ? 'Your oversight recusal has been recorded. The assigned reviewer keeps the active assignment.'
+          : 'You have recused yourself. The assignment has been released for independent reassignment.');
       } else {
         setConflictDeclarations(current => ({ ...current, [resourceId]: 'no_conflict' }));
         setNotice('Your no-conflict declaration has been recorded for this assignment.');
@@ -339,7 +342,7 @@ export function ModerationPage() {
                   <textarea rows={2} value={notes[item.id] ?? ''} onChange={(event) => setNotes((current) => ({ ...current, [item.id]: event.target.value }))} className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-normal" placeholder="Give specific, actionable academic feedback…" />
                 </label>}
                 {isReviewer && <div className="mt-4 space-y-3 rounded-xl border border-[#E4DDF8] bg-[#F8F6FF] p-3 dark:border-[#40365A] dark:bg-[#211A34]">
-                  {conflictDeclarations[item.id] === 'no_conflict' ? <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">No-conflict declaration recorded for this assignment.</p> : <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-[#091F5B] dark:text-white"><input type="checkbox" checked={Boolean(conflictAcknowledged[item.id])} onChange={event => setConflictAcknowledged(current => ({ ...current, [item.id]: event.target.checked }))} className="mt-1 h-4 w-4 shrink-0 accent-[#6121D0]" /><span>I have checked this resource and its contributors, and confirm that I have no personal, academic, financial or authorship conflict. This declaration will be recorded when I submit my review.</span></label>}
+                  {conflictDeclarations[item.id] === 'no_conflict' ? <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">No-conflict declaration recorded for this review.</p> : <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-[#091F5B] dark:text-white"><input type="checkbox" checked={Boolean(conflictAcknowledged[item.id])} onChange={event => setConflictAcknowledged(current => ({ ...current, [item.id]: event.target.checked }))} className="mt-1 h-4 w-4 shrink-0 accent-[#6121D0]" /><span>I have checked this resource and its contributors, and confirm that I have no personal, academic, financial or authorship conflict. This declaration will be recorded when I submit my review.</span></label>}
                   <label className="block text-xs font-semibold text-[#091F5B] dark:text-slate-100">If a conflict exists or emerges, explain it before recusing
                     <textarea rows={2} value={conflictReasons[item.id] ?? ''} onChange={event => setConflictReasons(current => ({ ...current, [item.id]: event.target.value }))} className="mt-1 w-full rounded-xl border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-normal text-[#26364F] dark:border-slate-700 dark:bg-slate-950 dark:text-white" placeholder="Describe the relationship or conflict…" />
                   </label>
