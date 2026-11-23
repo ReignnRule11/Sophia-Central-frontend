@@ -38,7 +38,8 @@ export const reportsApi = {
     if (filters.assignedToMe) params.set('assignedToMe', 'true');
     if (filters.unassigned) params.set('unassigned', 'true');
     if (filters.severity) params.set('severity', filters.severity);
-    return apiRequest<ContentReport[]>(`/moderation/reports${params.size ? `?${params.toString()}` : ''}`);
+    const query = params.toString();
+    return apiRequest<ContentReport[]>(`/moderation/reports${query ? `?${query}` : ''}`);
   },
   claim: (id: string, reason: string) => apiRequest<ContentReport>(`/moderation/reports/${encodeURIComponent(id)}/assignment`, { method: 'PATCH', body: JSON.stringify({ reason }) }),
   setSeverity: (id: string, severity: ReportSeverity, reason: string) => apiRequest<ContentReport>(`/moderation/reports/${encodeURIComponent(id)}/severity`, { method: 'PATCH', body: JSON.stringify({ severity, reason }) }),
