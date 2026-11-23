@@ -132,8 +132,8 @@ export function SupportRequestsPanel() {
             ['Open backlog', analytics.summary.openBacklog],
             ['Overdue backlog', analytics.summary.overdueBacklog],
             ['Avg. backlog age', `${analytics.summary.averageBacklogAgeHours.toFixed(1)}h`],
-            ['Avg. response time', `${Math.round(analytics.summary.averageResponseMinutes)}m`],
-            ['Avg. resolution time', `${Math.round(analytics.summary.averageResolutionMinutes)}m`],
+            ['Avg. response time', analytics.summary.responseCount ? `${Math.round(analytics.summary.averageResponseMinutes)}m` : '—'],
+            ['Avg. resolution time', analytics.summary.resolutionCount ? `${Math.round(analytics.summary.averageResolutionMinutes)}m` : '—'],
             ['Escalated tickets', analytics.summary.escalatedTickets],
             ['Escalation rate', `${analytics.summary.escalationRate}%`],
           ].map(([label, value]) => <div key={String(label)} className="min-w-0 rounded-xl bg-[#F8FAFD] p-3"><p className="text-[11px] font-medium text-[#71809A]">{label}</p><p className="mt-1 break-words text-xl font-bold text-[#091F5B]">{value}</p></div>)}
