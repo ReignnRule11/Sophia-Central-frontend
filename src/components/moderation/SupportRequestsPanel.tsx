@@ -44,11 +44,11 @@ export function SupportRequestsPanel() {
     if (processingId) return;
     setProcessingId(item.id); setError(''); setNotice('');
     try {
-      await supportApi.conclude(item.id, message);
+      const result = await supportApi.conclude(item.id, message);
       setItems(current => current.filter(request => request.id !== item.id));
       if (item.status === 'pending') setPendingCount(current => Math.max(0, current - 1));
       setResolution(current => { const next = { ...current }; delete next[item.id]; return next; });
-      setNotice('Support response sent by email. Verified account holders can also read the full response in My Activity.');
+      setNotice(result.responseEmailSent ? 'Response saved and email notification sent. Registered users can read the full response in My Activity.' : 'Response saved, but email notification was not confirmed. Check the Support email configuration; the response remains recorded in the workspace.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to conclude this request.');
     } finally { setProcessingId(null); }
