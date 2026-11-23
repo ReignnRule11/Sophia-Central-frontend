@@ -24,7 +24,8 @@ export function SupportRequestsPanel() {
 
   const load = useCallback(async () => {
     setLoading(true); setError('');
-    void supportApi.emailStatus().then(setEmailStatus).catch(() => setEmailStatus(null));\n    void supportApi.caseAssignees().then(setAssignees).catch(() => setAssignees([]));
+    void supportApi.emailStatus().then(setEmailStatus).catch(() => setEmailStatus(null));
+    void supportApi.caseAssignees().then(setAssignees).catch(() => setAssignees([]));
     try {
       const pending = await supportApi.queue('pending');
       const underReview = await supportApi.queue('under_review');
@@ -87,7 +88,8 @@ export function SupportRequestsPanel() {
       setError(cause instanceof Error ? cause.message : 'Unable to save internal note.');
     } finally { setCaseActionId(null); }
   };
-\n  const visibleItems = useMemo(() => {
+
+  const visibleItems = useMemo(() => {
     const term = query.trim().toLowerCase();
     if (!term) return items;
     return items.filter(item => [item.ticketNumber, item.id, item.subject, item.category, item.description, item.senderName, item.senderEmail, item.senderInstitution, item.senderFaculty, item.senderDepartment, item.user?.email, item.user?.firstName, item.user?.lastName, item.user?.name].filter(Boolean).join(' ').toLowerCase().includes(term));
