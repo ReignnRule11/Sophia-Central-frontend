@@ -34,6 +34,10 @@ export type SupportRequest = {
   concludedAt?: string | null;
   confirmationMessage?: string;
   responseEmailSent?: boolean;
+  priority?: SupportPriority;
+  assignedSupportId?: string | null;
+  slaDueAt?: string | null;
+  overdue?: boolean;
 };
 
 export const supportApi = {
