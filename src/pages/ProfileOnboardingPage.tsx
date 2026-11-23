@@ -152,7 +152,7 @@ export function ProfileOnboardingPage() {
   };
   const saveExternalReviewer = async () => {
     if (!isGlobalReviewerBootstrap && (!externalAffiliation.trim() || !externalBio.trim())) {
-      setError('Ordinary External Reviewers must provide both an institution or research affiliation and a research/professional summary.');
+      setError('Please provide both an institution or research affiliation and a research/professional summary.');
       return;
     }
     setSaving(true);
