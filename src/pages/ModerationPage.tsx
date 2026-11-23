@@ -53,6 +53,7 @@ export function ModerationPage() {
   const [queueSearch, setQueueSearch] = useState(() => new URLSearchParams(window.location.search).get('resource') ?? '');
   const [historySearch, setHistorySearch] = useState('');
   const [historyStatus, setHistoryStatus] = useState('all');
+  const focusedResourceId = new URLSearchParams(window.location.search).get('focus');
 
   const loadQueue = async () => {
     try {
@@ -133,16 +134,23 @@ export function ModerationPage() {
   };
 
   useEffect(() => { if (isReviewer || isAdmin) void loadQueue(); }, [user?.id, isReviewer, isAdmin]);
-  useEffect(() => { if (tab === 'history' && (isReviewer || isAdmin)) void loadHistory(); }, [tab, isReviewer, isAdmin]);
+  useEffect(() => { if ((tab === 'history' && (isReviewer || isAdmin)) || (isGlobalReviewer && tab === 'queue')) void loadHistory(); }, [tab, isReviewer, isAdmin, isGlobalReviewer]);
   useEffect(() => { if (showReviewerGovernanceAdminTools && tab === 'conflicts') void loadConflictAudit(); }, [tab, canGovernReviewers]);
   useEffect(() => { if (showReviewerGovernanceAdminTools && (tab === 'applications' || tab === 'reviewers')) void loadReviewerGovernance(); }, [tab, canGovernReviewers]);
 
   const pending = useMemo(() => items.filter((item) => (item.status ?? 'pending').toLowerCase() === 'pending'), [items]);
   const visiblePending = useMemo(() => {
     const term = queueSearch.trim().toLowerCase();
-    if (!term) return pending;
-    return pending.filter(item => [item.id, item.title, item.course, item.institution, item.topic, item.type, item.level, item.uploadedBy].filter(Boolean).join(' ').toLowerCase().includes(term));
-  }, [pending, queueSearch]);
+    const candidates = focusedResourceId ? pending.filter(item => item.id === focusedResourceId) : pending;
+    if (!term) return candidates;
+    return candidates.filter(item => [item.id, item.title, item.course, item.institution, item.topic, item.type, item.level, item.uploadedBy].filter(Boolean).join(' ').toLowerCase().includes(term));
+  }, [pending, queueSearch, focusedResourceId]);
+  const reviewerWorkloads = useMemo(() => reviewers.map(reviewer => ({ ...reviewer, pendingCount: pending.filter(item => item.assignedReviewerId === reviewer.id).length })).sort((a,b) => a.pendingCount - b.pendingCount || (a.firstName || a.email).localeCompare(b.firstName || b.email)), [reviewers, pending]);
+  const assignedPendingCount = pending.filter(item => Boolean(item.assignedReviewerId)).length;
+  const unassignedPendingCount = pending.length - assignedPendingCount;
+  const decisionsCount = history.length;
+  const approvedCount = history.filter(item => String(item.status || item.resource?.moderationStatus || '').toLowerCase() === 'approved').length;
+  const approvalRate = decisionsCount ? `${Math.round(approvedCount / decisionsCount * 100)}%` : '—';
   useEffect(() => {
     const resourceId = new URLSearchParams(window.location.search).get('resource');
     if (!resourceId || loading) return;
@@ -243,6 +251,7 @@ export function ModerationPage() {
   return <div className="space-y-6">
     {isGlobalReviewer ? <header className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-4 text-slate-950 shadow-sm sm:p-8 dark:border-slate-700 dark:from-slate-950 dark:via-slate-900 dark:to-violet-950 dark:text-white"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-700 dark:text-violet-200">Academic governance</p><h1 className="mt-3 break-words text-2xl font-bold tracking-tight sm:text-3xl">Global Academic Reviewer</h1><h2 className="mt-2 text-base font-semibold text-slate-900 dark:text-white sm:text-lg">All subjects · all academic levels</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-600 dark:text-slate-300">Review pending Student and Lecturer materials across every field and level, manage academic review assignments, and maintain platform-wide academic quality. This capability does not include moderator support, user-administration, wallet or platform-settings permissions.</p></header> : <SectionTitle eyebrow={isReviewer ? "Academic quality & trust" : isAdmin ? "Platform governance" : "Moderator workspace"} title={isReviewer ? "Assigned academic reviews" : isAdmin ? "Reviewer assignment" : "User & content reports"} />}
     {user?.role === 'reviewer' && user.academicAccountType === 'external_reviewer' && user.hasReviewerAccess === true && !isGlobalReviewer && <section className="flex flex-col gap-4 rounded-2xl border border-[#E4DDF8] bg-[#F7F4FF] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 dark:border-[#40365A] dark:bg-[#211A34]"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#6121D0] dark:text-[#C4A7FF]">Additional account access</p><h2 className="mt-1 text-lg font-bold text-[#091F5B] dark:text-white">Become a Student or Lecturer</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-[#52627B] dark:text-slate-300">Add either a Student or Lecturer workspace to this same account. Your reviewer access and history will be retained; the choice is one-time.</p></div><Link to="/reviewer-account-transition" className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#6121D0] px-4 py-3 text-sm font-semibold text-white hover:bg-[#5120B0]">Choose academic identity</Link></section>}
+    {focusedResourceId && <div className="rounded-xl border border-violet-200 bg-violet-50 p-4 text-sm text-violet-950"><p className="font-semibold">Focused academic review</p><p className="mt-1">You are reviewing one resource. The queue will show only this assignment.</p><Link to="/reviewer/queue" className="mt-2 inline-flex font-semibold underline">Return to full queue</Link></div>}
     {error && <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{error}</div>}
     {notice && <div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">{notice}</div>}
     <div className="flex flex-wrap gap-2" role="tablist" aria-label="Moderation sections">
@@ -271,7 +280,7 @@ export function ModerationPage() {
                   <div><dt className="inline font-medium text-[#091F5B]">Course: </dt><dd className="inline">{item.course || 'Not specified'}</dd></div>
                   <div><dt className="inline font-medium text-[#091F5B]">Submitted: </dt><dd className="inline">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Date unavailable'}</dd></div>
                 </dl>
-                {item.hasFile && <Link to={`/resource/${encodeURIComponent(item.id)}`} className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#6121D0] underline underline-offset-4 hover:text-[#2C36D9]"><FileText size={15} /> Open attached upload in reader <ArrowUpRight size={14} /></Link>}
+                {item.hasFile && <Link to={`/reviewer/resource/${encodeURIComponent(item.id)}`} className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#6121D0] underline underline-offset-4 hover:text-[#2C36D9]"><FileText size={15} /> Open dedicated review workspace <ArrowUpRight size={14} /></Link>}
                 {canManageAssignments && <div className="mt-4 flex flex-col gap-2 rounded-xl bg-[#F8FAFD] p-3 sm:flex-row sm:items-center">
                   <label className="min-w-0 flex-1 text-xs font-semibold text-[#091F5B]">Assign subject-matter reviewer
                     <select value={assignments[item.id] ?? item.assignedReviewerId ?? ''} onChange={(event) => setAssignments((current) => ({ ...current, [item.id]: event.target.value }))} className="mt-1 w-full rounded-lg border border-[#DCE4EF] bg-white px-3 py-2 text-sm font-normal">
@@ -302,6 +311,18 @@ export function ModerationPage() {
           </article>;
         })}
       </div>
+    </OverviewCard> : (tab === 'queue' && isGlobalReviewer) ? <OverviewCard title="Academic quality & assignment workload" action="Live queue metrics">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4"><p className="text-xs text-[#64748B]">Pending reviews</p><p className="mt-1 text-2xl font-bold text-[#091F5B]">{pending.length}</p></div>
+        <div className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4"><p className="text-xs text-[#64748B]">Assigned</p><p className="mt-1 text-2xl font-bold text-[#091F5B]">{assignedPendingCount}</p></div>
+        <div className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4"><p className="text-xs text-[#64748B]">Unassigned</p><p className="mt-1 text-2xl font-bold text-[#091F5B]">{unassignedPendingCount}</p></div>
+        <div className="rounded-xl border border-[#DCE4EF] bg-[#F8FAFD] p-4"><p className="text-xs text-[#64748B]">Approval rate</p><p className="mt-1 text-2xl font-bold text-[#091F5B]">{approvalRate}</p><p className="text-xs text-[#64748B]">{approvedCount} approved of {decisionsCount} decisions</p></div>
+      </div>
+      <div className="mt-4"><h3 className="font-semibold text-[#091F5B]">Reviewer workload</h3><p className="mt-1 text-sm text-[#64748B]">Pending assignment counts, lowest workload first. Use the assignment control on each resource to balance work.</p>
+        {reviewerWorkloads.length ? <div className="mt-3 space-y-2">{reviewerWorkloads.map(reviewer => <div key={reviewer.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#DCE4EF] p-3"><div className="min-w-0"><p className="break-words text-sm font-semibold text-[#091F5B]">{[reviewer.firstName, reviewer.lastName].filter(Boolean).join(' ') || reviewer.email}{reviewer.isGlobalReviewer ? ' · Global Reviewer' : ''}</p><p className="text-xs text-[#64748B]">{reviewer.email} · {(reviewer.reviewerExpertise || []).includes('*') ? 'All subjects' : (reviewer.reviewerExpertise || []).join(', ') || 'Expertise not listed'}</p></div><span className="shrink-0 rounded-full bg-violet-50 px-3 py-1 text-sm font-bold text-violet-900">{reviewer.pendingCount} pending</span></div>)}</div> : <p className="mt-3 text-sm text-[#64748B]">No eligible reviewers are currently available.</p>}
+      </div>
+    </OverviewCard> : (tab === 'queue' && (isReviewer || isAdmin)) ? <OverviewCard title="Academic review queue" action="Review workspace">
+      <div className="mb-3 flex items-center justify-between gap-3"><p className="text-sm text-[#64748B]">Open a focused review page from any assignment.</p><Link to="/reviewer/dashboard" className="text-sm font-semibold text-[#6121D0]">Reviewer dashboard</Link></div>
     </OverviewCard> : (tab === 'history' && (isReviewer || isAdmin)) ? <OverviewCard title="Review decisions" action={`${visibleHistory.length} of ${history.length} decisions`}>
       <div className="space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row">
