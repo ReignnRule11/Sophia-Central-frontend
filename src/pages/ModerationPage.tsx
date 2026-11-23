@@ -230,7 +230,9 @@ export function ModerationPage() {
       setNotice(`Auto-assigned to ${[reviewer.firstName, reviewer.lastName].filter(Boolean).join(' ') || reviewer.email} (lowest pending workload).`);
     } catch (err) { setError(err instanceof Error ? err.message : 'Automatic assignment failed.'); }
     finally { setProcessingId(null); }
-  };\n\n  const assignReviewer = async (resourceId: string) => {
+  };
+
+  const assignReviewer = async (resourceId: string) => {
     const reviewerId = assignments[resourceId];
     if (!reviewerId || processingId) return;
     setProcessingId(resourceId); setError(''); setNotice('');
