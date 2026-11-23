@@ -219,7 +219,18 @@ export function ModerationPage() {
     } finally { setProcessingId(null); }
   };
 
-  const autoAssignReviewer = async (resourceId: string) => {\n    const reviewer = reviewerWorkloads[0];\n    if (!reviewer || processingId) return;\n    setProcessingId(resourceId); setError(''); setNotice('');\n    try {\n      await moderationApi.assignReviewer(resourceId, reviewer.id);\n      setItems(current => current.map(item => item.id === resourceId ? { ...item, assignedReviewerId: reviewer.id } : item));\n      setAssignments(current => ({ ...current, [resourceId]: reviewer.id }));\n      setNotice(`Auto-assigned to ${[reviewer.firstName, reviewer.lastName].filter(Boolean).join(' ') || reviewer.email} (lowest pending workload).`);\n    } catch (err) { setError(err instanceof Error ? err.message : 'Automatic assignment failed.'); }\n    finally { setProcessingId(null); }\n  };\n\n  const assignReviewer = async (resourceId: string) => {
+  const autoAssignReviewer = async (resourceId: string) => {
+    const reviewer = reviewerWorkloads[0];
+    if (!reviewer || processingId) return;
+    setProcessingId(resourceId); setError(''); setNotice('');
+    try {
+      await moderationApi.assignReviewer(resourceId, reviewer.id);
+      setItems(current => current.map(item => item.id === resourceId ? { ...item, assignedReviewerId: reviewer.id } : item));
+      setAssignments(current => ({ ...current, [resourceId]: reviewer.id }));
+      setNotice(`Auto-assigned to ${[reviewer.firstName, reviewer.lastName].filter(Boolean).join(' ') || reviewer.email} (lowest pending workload).`);
+    } catch (err) { setError(err instanceof Error ? err.message : 'Automatic assignment failed.'); }
+    finally { setProcessingId(null); }
+  };\n\n  const assignReviewer = async (resourceId: string) => {
     const reviewerId = assignments[resourceId];
     if (!reviewerId || processingId) return;
     setProcessingId(resourceId); setError(''); setNotice('');
