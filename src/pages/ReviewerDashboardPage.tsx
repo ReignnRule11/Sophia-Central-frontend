@@ -46,7 +46,9 @@ export function ReviewerDashboardPage() {
   const approvalRate = history.length ? `${Math.round((approvedCount / history.length) * 100)}%` : '—';
   const submittedAge = (createdAt?: string) => {
     if (!createdAt) return 'Submission date unavailable';
-    const days = Math.max(0, Math.floor((Date.now() - new Date(createdAt).getTime()) / 86400000));
+    const submittedAt = new Date(createdAt).getTime();
+    if (!Number.isFinite(submittedAt)) return 'Submission date unavailable';
+    const days = Math.max(0, Math.floor((Date.now() - submittedAt) / 86400000));
     return days === 0 ? 'Submitted today' : `Submitted ${days} day${days === 1 ? '' : 's'} ago`;
   };
   const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Reviewer';
