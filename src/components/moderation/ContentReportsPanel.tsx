@@ -86,8 +86,10 @@ export function ContentReportsPanel() {
     const next = !historyOpen[id];
     setHistoryOpen(current => ({ ...current, [id]: next }));
     if (next && !history[id]) {
-      try { setHistory(current => ({ ...current, [id]: await reportsApi.history(id) })); }
-      catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load case history.'); }
+      try {
+        const caseEvents = await reportsApi.history(id);
+        setHistory(current => ({ ...current, [id]: caseEvents }));
+      } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load case history.'); }
     }
   };
 
