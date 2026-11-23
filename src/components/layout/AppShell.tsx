@@ -71,6 +71,8 @@ const supportNav = [
 
 const reviewerNav = [
   { label: 'Academic review queue', href: '/reviewer/dashboard', icon: ShieldCheck },
+  { label: 'Review history', href: '/reviewer/queue?tab=history', icon: Activity },
+  { label: 'Re-review escalations', href: '/reviewer/escalations', icon: LifeBuoy },
   { label: 'Become a Student or Lecturer', href: '/reviewer-account-transition', icon: LayoutGrid },
   { label: 'Academic Library', href: '/library', icon: BookOpen },
   { label: 'Open Source Library', href: '/open-source-library', icon: BookOpen },
@@ -140,7 +142,7 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
 
 
   const academicNav = user?.role === 'lecturer' ? lecturerNav : studentNav;
-  const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? reviewerNav.filter(item => !(user.isGlobalReviewer && item.href === '/reviewer-account-transition')) : ['suspended', 'revoked'].includes(user.reviewerStatus || '') ? [] : [{ label: ['submitted', 'under_review', 'more_information_required'].includes(user.reviewerStatus || '') ? 'View reviewer application' : 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'support' ? supportNav : user?.role === 'admin' ? adminNav : [
+  const navItems = user?.role === 'reviewer' ? (user.hasReviewerAccess ? reviewerNav.filter(item => (user.isGlobalReviewer || item.href !== '/reviewer/escalations') && !(user.isGlobalReviewer && item.href === '/reviewer-account-transition')) : ['suspended', 'revoked'].includes(user.reviewerStatus || '') ? [] : [{ label: ['submitted', 'under_review', 'more_information_required'].includes(user.reviewerStatus || '') ? 'View reviewer application' : 'Become an Academic Reviewer', href: '/reviewer-application', icon: ShieldCheck }]) : user?.role === 'moderator' ? moderatorNav : user?.role === 'support' ? supportNav : user?.role === 'admin' ? adminNav : [
     ...academicNav,
     ...(user?.hasReviewerAccess ? [{ label: 'Academic Reviewer workspace', href: '/reviewer/dashboard', icon: ShieldCheck }] : []),
     ...(user?.hasReviewerAccess && location.pathname.startsWith('/reviewer/') ? [{ label: 'Reviewer notifications', href: '/reviewer/notifications', icon: Bell }] : []),
