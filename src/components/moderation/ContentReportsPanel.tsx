@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Flag, RefreshCw, History, UserCheck, AlertTriangle } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Flag, RefreshCw, History, UserCheck, AlertTriangle, Search, ChevronLeft, ChevronRight, Clock3, ShieldAlert } from 'lucide-react';
 import { reportsApi, type ContentReport, type ContentReportStatus, type ReportSeverity } from '../../api/reports';
 import { useAuth } from '../../context/AuthContext';
 
@@ -7,7 +7,7 @@ const statuses: Array<{ value: ContentReportStatus | 'all'; label: string }> = [
   { value: 'all', label: 'All reports' }, { value: 'pending', label: 'Pending' },
   { value: 'reviewing', label: 'Under review' }, { value: 'actioned', label: 'Actioned' }, { value: 'dismissed', label: 'Dismissed' },
 ];
-const label = (value: string) => value.replace(/_/g, ' ');
+const label = (value: string) => value.replace(/_/g, ' ');\nconst PAGE_SIZE = 10;
 const severityStyle: Record<ReportSeverity, string> = {
   low: 'bg-slate-100 text-slate-700', normal: 'bg-blue-50 text-blue-800',
   high: 'bg-amber-50 text-amber-900', critical: 'bg-rose-50 text-rose-900',
@@ -18,7 +18,7 @@ export function ContentReportsPanel() {
   const isModerator = user?.role === 'moderator';
   const [items, setItems] = useState<ContentReport[]>([]);
   const [filter, setFilter] = useState<ContentReportStatus | 'all'>('pending');
-  const [ownership, setOwnership] = useState<'all' | 'mine' | 'unassigned'>('all');
+  const [ownership, setOwnership] = useState<'all' | 'mine' | 'unassigned'>('all');\n  const [severityFilter, setSeverityFilter] = useState<ReportSeverity | 'all'>('all');\n  const [query, setQuery] = useState('');\n  const [page, setPage] = useState(1);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [assignmentReasons, setAssignmentReasons] = useState<Record<string, string>>({});
   const [severityReasons, setSeverityReasons] = useState<Record<string, string>>({});
@@ -41,7 +41,7 @@ export function ContentReportsPanel() {
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load reports.'); }
     finally { setLoading(false); }
   };
-  useEffect(() => { void load(); }, [filter, ownership]);
+  useEffect(() => { void load(); }, [filter, ownership, severityFilter]);\n\n  const filteredItems = useMemo(() => {\n    const term = query.trim().toLowerCase();\n    return items.filter(item => !term || [item.ticketNumber, item.targetLabel, item.targetType, item.reason, item.details, item.moderatorNote, item.assignedModerator?.firstName, item.assignedModerator?.lastName, item.assignedModerator?.email].filter(Boolean).join(' ').toLowerCase().includes(term)).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());\n  }, [items, query]);\n  const pendingCount = items.filter(item => item.status === 'pending').length;\n  const reviewingCount = items.filter(item => item.status === 'reviewing').length;\n  const criticalCount = items.filter(item => item.severity === 'critical').length;\n  const unassignedCount = items.filter(item => !item.assignedModeratorId && item.escalatedToRole !== 'admin' && item.status !== 'actioned' && item.status !== 'dismissed').length;\n  const pageCount = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));\n  const currentPage = Math.min(page, pageCount);\n  const pageItems = filteredItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);\n  useEffect(() => { setPage(1); }, [query]);
 
   const claim = async (item: ContentReport) => {
     const reason = (assignmentReasons[item.id] ?? '').trim();
