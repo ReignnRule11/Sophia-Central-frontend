@@ -19,7 +19,7 @@ type AiChatResponse = {
 export const aiService = {
   async ask(payload: {
     question: string;
-    resourceId?: string;
+    resourceId?: string | null;
     sessionId?: string;
   }) {
     // AI requests must always reach the authenticated backend. Never substitute a canned mock answer.
