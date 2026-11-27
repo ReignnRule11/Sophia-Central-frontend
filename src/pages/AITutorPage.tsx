@@ -213,7 +213,7 @@ export function AITutorPage() {
                     <button type="button" onClick={() => void saveEditedQuestion(message.id!)} disabled={!editDraft.trim() || isLoading} className="text-xs font-bold text-white underline underline-offset-2 disabled:opacity-40">Save and regenerate</button>
                     <button type="button" onClick={() => { setEditingMessageId(null); setEditDraft(''); }} className="text-xs font-medium text-white/80 underline underline-offset-2">Cancel</button>
                   </div>
-                  <p className="text-[11px] leading-4 text-white/75">Regenerating an answer uses 2 Wisdom Points. Messages after this question will be replaced.</p>
+                  <p className="text-[11px] leading-4 text-white/75">{selectedResourceId ? 'Regenerating an answer with the selected resource uses 2 Wisdom Points.' : 'Regenerating an answer without a resource uses 1 Wisdom Point.'} Messages after this question will be replaced.</p>
                 </div>
               ) : message.role === 'assistant' ? (
                 <div className="ai-tutor-assistant-content"><MarkdownContent content={message.content} /></div>
