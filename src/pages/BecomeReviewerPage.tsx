@@ -9,7 +9,6 @@ import { useAuth } from '../context/AuthContext';
 export function BecomeReviewerPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  if (user?.role === 'student') return <Navigate to="/student/dashboard" replace />;
   const [email, setEmail] = useState('');
   const [academicHandle, setAcademicHandle] = useState('');
   const [busy, setBusy] = useState(false);
@@ -17,6 +16,7 @@ export function BecomeReviewerPage() {
   const [comingSoon, setComingSoon] = useState(false);
   const recruitmentOpen = import.meta.env.VITE_REVIEWER_RECRUITMENT_OPEN === 'true';
   const testAccountEmail = (import.meta.env.VITE_REVIEWER_TEST_ACCOUNT_EMAIL || '').trim().toLowerCase();
+  if (user?.role === 'student') return <Navigate to="/student/dashboard" replace />;
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
