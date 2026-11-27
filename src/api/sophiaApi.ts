@@ -13,7 +13,7 @@ type AiChatResponse = {
   balance?: number;
   messages?: Array<{ id: string; role: 'user' | 'assistant' | 'system'; content: string; createdAt?: string }>;
   title?: string;
-  resourceId?: string;
+  resourceId?: string | null;
 };
 
 export const aiService = {
