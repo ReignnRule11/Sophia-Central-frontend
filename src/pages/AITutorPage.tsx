@@ -169,7 +169,7 @@ export function AITutorPage() {
               ))}
             </ul>
           </div>
-          <p className="text-xs leading-5 text-[#71809A]">Sophis AI provides study assistance at 2 Wisdom Points per question. If a response cannot be generated, no points are deducted.</p>
+          <p className="text-xs leading-5 text-[#71809A]">A question without a selected academic resource costs 1 Wisdom Point. A question using a selected academic resource costs 2 Wisdom Points. Resource summaries cost 5 Wisdom Points. Failed generations are not charged.</p>
         </div>
       </OverviewCard></div>
 
