@@ -106,7 +106,7 @@ export function ProfileSettingsPage() {
       });
       await refreshSession();
       setEditingInstitution(false);
-      setMessage(`Academic placement updated successfully. ${user.role === 'student' ? 'Your Student Group Chat now uses institution, faculty and department; program remains a separate profile field.' : 'Your academic sections use the selected institution, faculty and department.'} Missing catalogue entries are saved to your profile and are not sent for moderation review.`);
+      setMessage(`Academic placement updated successfully. ${user.role === 'student' ? 'Your Student Group Chat now uses institution, faculty and department; program remains a separate profile field.' : 'Your academic sections use the selected institution, faculty and department.'}`);
       return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to update academic placement.');
@@ -282,7 +282,7 @@ export function ProfileSettingsPage() {
               {form.department.trim() && !departmentOptions.some((item) => item.name.toLocaleLowerCase() === form.department.trim().toLocaleLowerCase()) && <p className="mt-1 text-xs leading-5 text-amber-700">This department is not in the selected faculty's catalogue yet. You can still save it directly to your profile.</p>}
             </div>
           </div>
-          <p className="text-xs leading-5 text-[#5C6982]">Choose a matching suggestion when available, or type your exact faculty and department names. Missing entries are saved directly to your profile and are not sent for moderation review. Group Chat membership uses institution, faculty/school/college and department only; program is stored separately.</p>
+          <p className="text-xs leading-5 text-[#5C6982]">Choose a matching suggestion when available, or type your exact faculty and department names. Group Chat membership uses institution, faculty/school/college and department only.</p>
           <div className="flex justify-end"><button type="button" onClick={() => void saveAcademicPlacement()} disabled={savingField !== null || !form.faculty.trim() || !form.department.trim() || !selectedInstitution} className="rounded-lg bg-[#6121D0] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">{savingField === 'faculty' ? 'Saving…' : 'Save academic placement'}</button></div>
         </div>
         {user.role === 'student' && textField('program', 'Program / Course of Study', 'e.g. B.Sc. Computer Science')}
