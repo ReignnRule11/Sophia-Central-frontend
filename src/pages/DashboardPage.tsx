@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { UserRound, Settings, RefreshCw, Eye, EyeOff, BrainCircuit, Flame, Copy, Check } from 'lucide-react';
+import { UserRound, Settings, RefreshCw, Eye, EyeOff, BrainCircuit, Flame, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { OverviewCard, UserBadge } from '../components/layout/AppShell';
 import { resourcesApi } from '../api/resources';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,7 @@ import { apiRequest } from '../lib/api/client';
 export function DashboardPage() {
   const { user } = useAuth();
   const [resources, setResources] = useState<Resource[]>([]);
+  const resourceCarouselRef = useRef<HTMLDivElement>(null);
   const [resourceTotal, setResourceTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -44,7 +45,7 @@ export function DashboardPage() {
         if (background) setRefreshing(true);
         else setLoading(true);
         setError('');
-        const data = await resourcesApi.publicList({ page: 1, limit: 3 });
+        const data = await resourcesApi.publicList({ page: 1, limit: 12 });
         if (active) { setResources(data.items); setResourceTotal(data.total); }
       } catch (cause) {
         if (active) setError(cause instanceof Error ? cause.message : 'Unable to refresh approved resources.');
@@ -53,7 +54,7 @@ export function DashboardPage() {
       }
     };
     void fetchResources(refreshVersion > 0);
-    const interval = window.setInterval(() => { void fetchResources(true); }, 60_000);
+    const interval = window.setInterval(() => { void fetchResources(true); }, 15_000);
     const onFocus = () => { void fetchResources(true); };
     window.addEventListener('focus', onFocus);
     return () => { active = false; window.clearInterval(interval); window.removeEventListener('focus', onFocus); };
@@ -94,15 +95,42 @@ export function DashboardPage() {
 
     </div>
 
-    <section aria-label="Latest resources for your academic community" className="rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm sm:p-6">
+    <section aria-label="Approved resources for my department" className="rounded-2xl border border-[#DCE4EF] bg-white p-5 shadow-sm sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Your academic community</p><h2 className="mt-1 text-xl font-bold text-[#091F5B]">Latest resources</h2><p className="mt-1 text-sm text-[#5C6982]">{[user?.institution, user?.faculty, user?.department].filter(Boolean).join(' · ') || 'Set your academic profile to see relevant resources.'}</p></div>
-        <div className="flex items-center gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECFDF3] px-2.5 py-1 text-xs font-semibold text-[#166534]"><span className="h-2 w-2 animate-pulse rounded-full bg-[#16A34A]" /> Live</span><button type="button" onClick={() => setRefreshVersion((value) => value + 1)} disabled={refreshing} aria-label="Refresh latest resources" title="Refresh latest resources" className="rounded-lg border border-[#DCE4EF] p-2 text-[#6121D0] hover:bg-[#F3F0FF] disabled:opacity-50"><RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} /></button></div>
+        <div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6121D0]">Your department library</p><h2 className="mt-1 text-xl font-bold text-[#091F5B]">Approved Resources for My Department</h2><p className="mt-1 text-sm text-[#5C6982]">{[user?.faculty, user?.department].filter(Boolean).join(' · ') || 'Your approved department resources'}</p></div>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECFDF3] px-2.5 py-1 text-xs font-semibold text-[#166534]"><span className="h-2 w-2 animate-pulse rounded-full bg-[#16A34A]" /> Live · refreshes every 15 seconds</span>
+          <button type="button" onClick={() => setRefreshVersion(value => value + 1)} disabled={refreshing} aria-label="Refresh approved department resources" title="Refresh resources" className="rounded-lg border border-[#DCE4EF] p-2 text-[#6121D0] hover:bg-[#F3F0FF] disabled:opacity-50"><RefreshCw size={16} className={refreshing ? 'animate-spin' : ''}/></button>
+          <button type="button" onClick={() => resourceCarouselRef.current?.scrollBy({ left: -280, behavior: 'smooth' })} aria-label="Show previous department resources" className="rounded-lg border border-[#DCE4EF] p-2 text-[#6121D0] transition hover:border-[#6121D0] hover:bg-[#F3F0FF]"><ChevronLeft size={18}/></button>
+          <button type="button" onClick={() => resourceCarouselRef.current?.scrollBy({ left: 280, behavior: 'smooth' })} aria-label="Show next department resources" className="rounded-lg border border-[#DCE4EF] p-2 text-[#6121D0] transition hover:border-[#6121D0] hover:bg-[#F3F0FF]"><ChevronRight size={18}/></button>
+        </div>
       </div>
       {loading ? <p className="rounded-xl bg-[#F8FAFD] p-5 text-sm text-[#5C6982]">Loading approved resources for your department…</p>
-        : !user?.institution || !user?.faculty || !user?.department ? <div className="rounded-xl border border-dashed border-[#DCE4EF] bg-[#F8FAFD] p-5 text-sm text-[#4B5563]">Your school, faculty and department need to be set on your account before we can personalize this feed. <Link to="/profile" className="font-semibold text-[#6121D0] underline">Update academic profile</Link>.</div>
-        : resources.length === 0 ? <div className="rounded-xl border border-dashed border-[#DCE4EF] bg-[#F8FAFD] p-5"><p className="font-semibold text-[#091F5B]">No approved resources for your department yet.</p><p className="mt-1 text-sm text-[#5C6982]">As resources for your academic community are approved, they will appear here automatically.</p><Link to={`/library?departmentOnly=1&institution=${encodeURIComponent(user?.institution || '')}&faculty=${encodeURIComponent(user?.faculty || '')}&department=${encodeURIComponent(user?.department || '')}`} className="mt-3 inline-flex text-sm font-semibold text-[#6121D0] hover:underline">Browse department resources →</Link></div>
-        : <><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{resources.map((resource) => <article key={resource.id} className="flex min-w-0 flex-col rounded-2xl border border-[#DCE4EF] bg-[#F8FAFD] p-4 transition hover:border-[#6121D0]/50 hover:shadow-sm"><div className="mb-3 flex items-center justify-between gap-2"><span className="rounded-full bg-[#6121D0]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#6121D0]">{resource.type.replace(/_/g, ' ')}</span><span className="text-xs font-semibold text-[#166534]">Approved</span></div><h3 className="font-semibold leading-6 text-[#091F5B]">{resource.title}</h3><p className="mt-2 text-sm text-[#5C6982]">{[resource.course, resource.topic].filter(Boolean).join(' · ') || 'Academic resource'}</p><div className="mt-auto pt-4"><Link to={`/library?departmentOnly=1&institution=${encodeURIComponent(user?.institution || '')}&faculty=${encodeURIComponent(user?.faculty || '')}&department=${encodeURIComponent(user?.department || '')}`} className="text-sm font-semibold text-[#6121D0] hover:underline">Open department library →</Link></div></article>)}</div>{resourceTotal > resources.length && <p className="mt-5 text-xs text-[#5C6982]">Showing the {resources.length} latest of {resourceTotal} approved department resources.</p>}</>}
+        : !user?.institutionId || !user?.faculty?.trim() || !user?.department?.trim() ? <div className="rounded-xl border border-dashed border-[#DCE4EF] bg-[#F8FAFD] p-5 text-sm text-[#4B5563]">Complete your institution, faculty and department details to see approved resources for your department. <Link to="/profile" className="font-semibold text-[#6121D0] underline">Update academic profile</Link>.</div>
+        : resources.length === 0 ? <div className="rounded-xl border border-dashed border-[#DCE4EF] bg-[#F8FAFD] p-5"><p className="font-semibold text-[#091F5B]">No approved resources for your department yet.</p><p className="mt-1 text-sm text-[#5C6982]">Newly approved department resources will appear here automatically.</p></div>
+        : <><div ref={resourceCarouselRef} className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 [scrollbar-width:thin]">
+          {resources.map((resource, index) => {
+            const covers = [
+              'from-[#24245B] via-[#3F3C91] to-[#7C5CE7]',
+              'from-[#123C4A] via-[#176B70] to-[#51A6A0]',
+              'from-[#63351D] via-[#A65B2D] to-[#D79B55]',
+              'from-[#26334D] via-[#435C7E] to-[#8CA7C7]',
+            ];
+            return <Link key={resource.id} to={`/resource/${encodeURIComponent(resource.id)}`} aria-label={`Open ${resource.title}`} className="group w-[190px] shrink-0 snap-start sm:w-[220px]">
+              <div className={`relative flex h-[250px] flex-col overflow-hidden rounded-r-xl rounded-l-md border border-black/10 bg-gradient-to-br ${covers[index % covers.length]} p-4 text-white shadow-[5px_7px_14px_rgba(15,23,42,0.18)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[8px_12px_20px_rgba(15,23,42,0.24)] sm:h-[285px] sm:p-5`}>
+                <span className="absolute inset-y-0 left-0 w-2 bg-black/20 shadow-[2px_0_5px_rgba(0,0,0,0.18)]"/>
+                <span className="absolute inset-3 rounded-r-lg rounded-l-sm border border-white/20"/>
+                <div className="relative flex items-center justify-between gap-2 pl-2"><span className="rounded-full bg-white/15 px-2 py-1 text-[9px] font-bold uppercase tracking-[.12em] text-white/95">{String(resource.type).replace(/_/g, ' ')}</span><span className="text-[9px] font-semibold uppercase tracking-wider text-white/75">Approved</span></div>
+                <div className="relative mt-auto pl-2">
+                  <p className="mb-2 text-[9px] font-semibold uppercase tracking-[.2em] text-white/70">Academic resource</p>
+                  <h3 className="line-clamp-4 break-words text-lg font-bold leading-tight sm:text-xl">{resource.title}</h3>
+                  <p className="mt-3 line-clamp-2 text-xs leading-5 text-white/80">{[resource.course, resource.topic].filter(Boolean).join(' · ') || 'Department learning material'}</p>
+                  <div className="mt-4 border-t border-white/20 pt-2 text-[8px] font-semibold uppercase tracking-[.18em] text-white/65">Sophis Central · Department Library</div>
+                </div>
+              </div>
+            </Link>;
+          })}
+        </div><div className="flex items-center justify-between gap-3 text-xs text-[#71809A]"><span>Swipe or use the arrows to explore resources.</span><span>{resourceTotal.toLocaleString()} approved resources</span></div></>}
     </section>
   </div>;
 }
