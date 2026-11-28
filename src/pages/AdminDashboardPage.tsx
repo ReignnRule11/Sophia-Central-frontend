@@ -93,6 +93,7 @@ export function AdminDashboardPage() {
         <h3 className="mt-2 text-xl font-bold text-slate-950">Quick access</h3>
         <div className="mt-4 space-y-3">
           <AdminLink to="/admin/accounts" title="Platform accounts" description="Review the existing Moderator identity and dedicated Support account approval."/>
+          <AdminLink to="/analytics" title="Platform analytics" description="Review institution-wide platform activity, student and lecturer engagement, resource discovery and usage."/>
           <AdminLink to="/admin/reviewers?tab=applications" title="Reviewer governance" description="Review applications, decisions, suspensions, revocations and reviewer history."/>
           <AdminLink to="/admin/audit" title="Audit history" description="Inspect recorded platform-role and reviewer access decisions."/>
           <AdminLink to="/admin/escalations" title="Escalation centre" description="Review issues escalated by Support and Moderation."/>
