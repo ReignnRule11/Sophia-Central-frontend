@@ -124,7 +124,7 @@ export function DashboardPage() {
                 <div className="relative mt-auto pl-2">
                   <p className="mb-2 text-[9px] font-semibold uppercase tracking-[.2em] text-white/70">Academic resource</p>
                   <h3 className="line-clamp-4 break-words text-lg font-bold leading-tight sm:text-xl">{resource.title}</h3>
-                  <p className="mt-3 line-clamp-2 text-xs leading-5 text-white/80">{[resource.course, resource.topic].filter(Boolean).join(' · ') || 'Department learning material'}</p>
+                  <p className="mt-3 line-clamp-2 text-xs leading-5 text-white/80">{[resource.author || resource.attribution, resource.course, resource.topic].filter(Boolean).join(' · ') || 'Department learning material'}</p>
                   <div className="mt-4 border-t border-white/20 pt-2 text-[8px] font-semibold uppercase tracking-[.18em] text-white/65">Sophis Central · Department Library</div>
                 </div>
               </div>
