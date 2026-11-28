@@ -80,6 +80,10 @@ export const resourcesApi = {
     const page = await apiRequest<PublicResourcePage>(`/resources/public${queryString(filters)}`, { method: 'GET' });
     return { ...page, items: page.items.map(mapResource) };
   },
+  institutionSearchList: async (filters: PublicResourceFilters = {}) => {
+    const page = await apiRequest<PublicResourcePage>(`/resources/public/institution-search${queryString(filters)}`, { method: 'GET' });
+    return { ...page, items: page.items.map(mapResource) };
+  },
   publicById: async (id: string) => mapResource(await apiRequest<ApiResource>(`/resources/public/${encodeURIComponent(id)}`, { method: 'GET' })),
   publicFileUrl: (id: string) => apiRequest<{ url: string; filename: string; contentType?: string; license: string; attribution: string }>(`/resources/public/${encodeURIComponent(id)}/file-url`, { method: 'GET' }),
   list: async (token?: string | null) => (await apiRequest<ApiResource[]>('/resources', { method: 'GET' }, token ?? null)).map(mapResource),
