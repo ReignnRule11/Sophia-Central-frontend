@@ -10,7 +10,8 @@ import { ReportContentButton } from '../components/ReportContentButton';
 
 export function LibraryPage() {
   const { user } = useAuth();
-  const hasProfile = Boolean(user?.institution && user?.faculty && user?.department);
+  // Match the backend's required catalogue-backed institution ID and academic scope.
+  const hasProfile = Boolean(user?.institutionId && user?.faculty?.trim() && user?.department?.trim());
   const [searchInput, setSearchInput] = useState('');
   const [q, setQ] = useState('');
   const [author, setAuthor] = useState('');
@@ -21,7 +22,7 @@ export function LibraryPage() {
   const [topicInput, setTopicInput] = useState('');
   const [page, setPage] = useState(1);
   const publicQuery = useQuery({
-    queryKey: ['academic-library-own-department', q, author, course, topic, page, user?.id, user?.institution, user?.faculty, user?.department],
+    queryKey: ['academic-library-own-department', q, author, course, topic, page, user?.id, user?.institutionId, user?.institution, user?.faculty, user?.department],
     queryFn: () => resourcesApi.publicList({ q, author, course, topic, page, limit: 18 }),
     enabled: Boolean(user && hasProfile),
     staleTime: 60_000,
