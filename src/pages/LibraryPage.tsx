@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, FileText, Search } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { resourcesApi } from '../api/resources';
-import type { Resource } from '../types';
 import { LoadingState } from '../components/states/LoadingState';
 import { ErrorState } from '../components/states/ErrorState';
 import { ReportContentButton } from '../components/ReportContentButton';
 
-type LibraryResource = Resource & { origin?: string; license?: string; attribution?: string };
 export function LibraryPage() {
-  const [params] = useSearchParams();
   const { user } = useAuth();
   const hasProfile = Boolean(user?.institution && user?.faculty && user?.department);
   const [searchInput, setSearchInput] = useState('');
